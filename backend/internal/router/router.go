@@ -8,6 +8,8 @@ import (
 
 func SetupRoutes() *http.ServeMux {
 	mux := http.NewServeMux()
+	static := http.FileServer(http.Dir("../frontend/static"))
+	mux.Handle("/static/", http.StripPrefix("/static/", static))
 
 	mux.HandleFunc("/", handler.HomeHandler)
 	mux.HandleFunc("/health", handler.HealthHandler)
