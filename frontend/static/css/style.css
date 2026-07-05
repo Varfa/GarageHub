@@ -124,3 +124,64 @@ header {
     font-weight: bold;
     color: #1f2937;
 }
+
+.clients-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.btn-primary {
+    padding: 10px 16px;
+
+    background: #2563eb;
+    color: white;
+
+    border: none;
+    border-radius: 6px;
+
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.search-input {
+    width: 280px;
+    padding: 10px 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+
+.clients-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    background: white;
+    border: 1px solid #d1d5db;
+}
+
+.clients-table th,
+.clients-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #e5e7eb;
+
+    text-align: left;
+}
+
+.clients-table th {
+    background: #f9fafb;
+    color: #374151;
+    font-weight: bold;
+}
+
+.empty-table {
+    text-align: center;
+    color: #6b7280;
+    padding: 30px;
+}

@@ -1,0 +1,38 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <h1 data-i18n="title.clients">Клиенты</h1>
+    <p data-i18n="message.clients_description">Управление клиентской базой.</p>
+</div>
+
+<div class="clients-toolbar">
+    <button class="btn-primary" data-i18n="button.add_client">
+        ➕ Добавить клиента
+    </button>
+
+    <input class="search-input" type="text" placeholder="Поиск клиента..."
+        data-i18n-placeholder="placeholder.search_client">
+</div>
+
+<table class="clients-table">
+    <thead>
+        <tr>
+            <th data-i18n="table.id">ID</th>
+            <th data-i18n="table.name">Имя</th>
+            <th data-i18n="table.phone">Телефон</th>
+            <th data-i18n="table.cars_count">Автомобилей</th>
+            <th data-i18n="table.last_visit">Последний визит</th>
+            <th data-i18n="table.actions">Действия</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td colspan="6" class="empty-table" data-i18n="message.no_clients">
+                Клиенты пока не добавлены.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+{{ end }}

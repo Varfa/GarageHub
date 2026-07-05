@@ -23,6 +23,7 @@ func ConnectPostgres(dbCfg config.DatabaseConfig) (*pgxpool.Pool, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("✅ Connected to PostgreSQL")
 	return pool, nil
 
 }
