@@ -7,7 +7,10 @@ import (
 
 	"github.com/Varfa/GarageHub/internal/config"
 	"github.com/Varfa/GarageHub/internal/database"
+	"github.com/Varfa/GarageHub/internal/handler"
+	"github.com/Varfa/GarageHub/internal/repository"
 	"github.com/Varfa/GarageHub/internal/router"
+	"github.com/Varfa/GarageHub/internal/service"
 )
 
 func main() {
@@ -21,8 +24,11 @@ func main() {
 	}
 	defer dbPool.Close()
 
-	mux := router.SetupRoutes()
+	clientRepo := repository.NewClientRepository(dbPool)
+	clientService := service.NewClientService(clientRepo)
+	clientHandler := handler.NewClientHandler(clientService)
 
+	mux := router.SetupRoutes(clientHandler)
 	addr := ":" + cfg.Server.Port
 
 	fmt.Println("Server started on", addr)
