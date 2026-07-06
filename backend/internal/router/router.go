@@ -17,6 +17,7 @@ func SetupRoutes(clientHandler *handler.ClientHandler) *http.ServeMux {
 	mux.HandleFunc("/", handler.HomeHandler)
 	mux.HandleFunc("/dashboard", handler.DashboardHandler)
 	mux.HandleFunc("/clients", clientHandler.Clients)
+	mux.HandleFunc("/clients/create", clientHandler.Create)
 	mux.HandleFunc("/cars", handler.CarsHandler)
 	mux.HandleFunc("/orders", handler.OrdersHandler)
 	mux.HandleFunc("/parts", handler.PartsHandler)

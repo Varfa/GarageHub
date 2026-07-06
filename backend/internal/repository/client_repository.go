@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Varfa/GarageHub/internal/models"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -47,4 +48,39 @@ func (r *ClientRepository) Create(ctx context.Context, client models.Client) err
 	)
 
 	return err
+}
+
+func (r *ClientRepository) List(ctx context.Context) ([]models.Client, error) {
+	rows, err := r.db.Query(ctx, "SELECT id, number, name, phone, email, address, note, last_visit_at, created_at, updated_at FROM clients")
+	if err != nil {
+		return nil, fmt.Errorf("получение списка клиентов %w", err)
+	}
+
+	defer rows.Close()
+	var clients []models.Client
+	for rows.Next() {
+		var c models.Client
+		if err := rows.Scan(
+			&c.ID,
+			&c.Number,
+			&c.Name,
+			&c.Phone,
+			&c.Email,
+			&c.Address,
+			&c.Note,
+			&c.LastVisitAt,
+			&c.CreatedAt,
+			&c.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("сканирование клиента: %w", err)
+		}
+		clients = append(clients, c)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("итерация по клиентам: %w", err)
+	}
+
+	return clients, nil
+
 }
