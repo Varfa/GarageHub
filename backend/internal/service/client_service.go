@@ -29,3 +29,7 @@ func (s *ClientService) Create(ctx context.Context, client models.Client) error 
 func (s *ClientService) List(ctx context.Context) ([]models.Client, error) {
 	return s.repo.List(ctx)
 }
+
+func (s *ClientService) Delete(ctx context.Context, id int) error {
+	return s.repo.Delete(ctx, id)
+}

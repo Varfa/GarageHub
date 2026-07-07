@@ -84,3 +84,14 @@ func (r *ClientRepository) List(ctx context.Context) ([]models.Client, error) {
 	return clients, nil
 
 }
+
+// Удаление клиена
+
+func (r *ClientRepository) Delete(ctx context.Context, id int) error {
+	_, err := r.db.Exec(ctx, "DELETE FROM clients WHERE id = $1", id)
+	if err != nil {
+		return fmt.Errorf("удаление клиента: %w", err)
+
+	}
+	return nil
+}
