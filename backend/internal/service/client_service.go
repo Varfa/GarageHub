@@ -33,3 +33,9 @@ func (s *ClientService) List(ctx context.Context) ([]models.Client, error) {
 func (s *ClientService) Delete(ctx context.Context, id int) error {
 	return s.repo.Delete(ctx, id)
 }
+func (s *ClientService) GetByID(ctx context.Context, id int) (*models.Client, error) {
+	return s.repo.GetByID(ctx, id)
+}
+func (s *ClientService) Update(ctx context.Context, client models.Client) error {
+	return s.repo.Update(ctx, client)
+}

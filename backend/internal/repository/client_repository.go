@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/Varfa/GarageHub/internal/models"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -93,5 +95,69 @@ func (r *ClientRepository) Delete(ctx context.Context, id int) error {
 		return fmt.Errorf("удаление клиента: %w", err)
 
 	}
+	return nil
+}
+
+var ErrClientNotFound = errors.New("клиент не найден")
+
+func (r *ClientRepository) GetByID(ctx context.Context, id int) (*models.Client, error) {
+	var c models.Client
+
+	err := r.db.QueryRow(
+		ctx,
+		`SELECT id, number, name, phone, email, address, note, last_visit_at, created_at, updated_at
+		 FROM clients
+		 WHERE id = $1`,
+		id,
+	).Scan(
+		&c.ID,
+		&c.Number,
+		&c.Name,
+		&c.Phone,
+		&c.Email,
+		&c.Address,
+		&c.Note,
+		&c.LastVisitAt,
+		&c.CreatedAt,
+		&c.UpdatedAt,
+	)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrClientNotFound
+		}
+		return nil, err
+	}
+
+	return &c, nil
+}
+
+func (r *ClientRepository) Update(ctx context.Context, client models.Client) error {
+	query := `
+	UPDATE clients
+	SET
+    	name = $1,
+    	phone = $2,
+    	email = $3,
+    	address = $4,
+   		note = $5,
+    	updated_at = NOW()
+		WHERE id = $6
+	`
+	_, err := r.db.Exec(
+		ctx,
+		query,
+		client.Name,
+		client.Phone,
+		client.Email,
+		client.Address,
+		client.Note,
+		client.ID,
+	)
+
+	if err != nil {
+		return fmt.Errorf("обновление клиента: %w", err)
+	}
+
 	return nil
 }
