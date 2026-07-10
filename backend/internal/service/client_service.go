@@ -17,25 +17,51 @@ func NewClientService(repo *repository.ClientRepository) *ClientService {
 		repo: repo,
 	}
 }
+
 func (s *ClientService) Create(ctx context.Context, client models.Client) error {
 	if client.Name == "" {
 		return errors.New("необходимо указать имя")
 	}
+
 	if client.Phone == "" {
 		return errors.New("необходимо указать номер телефона")
 	}
+
 	return s.repo.Create(ctx, client)
 }
-func (s *ClientService) List(ctx context.Context) ([]models.Client, error) {
-	return s.repo.List(ctx)
+
+func (s *ClientService) List(ctx context.Context, search string) ([]models.Client, error) {
+	return s.repo.List(ctx, search)
+}
+
+func (s *ClientService) GetByID(ctx context.Context, id int) (*models.Client, error) {
+	if id <= 0 {
+		return nil, errors.New("некорректный id клиента")
+	}
+
+	return s.repo.GetByID(ctx, id)
+}
+
+func (s *ClientService) Update(ctx context.Context, client models.Client) error {
+	if client.ID <= 0 {
+		return errors.New("некорректный id клиента")
+	}
+
+	if client.Name == "" {
+		return errors.New("необходимо указать имя")
+	}
+
+	if client.Phone == "" {
+		return errors.New("необходимо указать номер телефона")
+	}
+
+	return s.repo.Update(ctx, client)
 }
 
 func (s *ClientService) Delete(ctx context.Context, id int) error {
+	if id <= 0 {
+		return errors.New("некорректный id клиента")
+	}
+
 	return s.repo.Delete(ctx, id)
-}
-func (s *ClientService) GetByID(ctx context.Context, id int) (*models.Client, error) {
-	return s.repo.GetByID(ctx, id)
-}
-func (s *ClientService) Update(ctx context.Context, client models.Client) error {
-	return s.repo.Update(ctx, client)
 }

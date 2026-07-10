@@ -14,7 +14,11 @@ type ClientHandler struct {
 
 type ClientsPageData struct {
 	Clients []models.Client
-	Error   string
+	Search  string
+}
+
+type ClientCreatePageData struct {
+	Error string
 }
 
 type ClientPageData struct {
@@ -29,7 +33,9 @@ func NewClientHandler(service *service.ClientService) *ClientHandler {
 }
 
 func (h *ClientHandler) Clients(w http.ResponseWriter, r *http.Request) {
-	clients, err := h.service.List(r.Context())
+	search := r.URL.Query().Get("search")
+
+	clients, err := h.service.List(r.Context(), search)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -37,20 +43,24 @@ func (h *ClientHandler) Clients(w http.ResponseWriter, r *http.Request) {
 
 	data := ClientsPageData{
 		Clients: clients,
+		Search:  search,
 	}
 
 	RenderTemplate(w, "clients", data)
 }
 
+func (h *ClientHandler) CreatePage(w http.ResponseWriter, r *http.Request) {
+	RenderTemplate(w, "client_create", ClientCreatePageData{})
+}
+
 func (h *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "метод не разрешён", http.StatusMethodNotAllowed)
 		return
 	}
 
-	err := r.ParseForm()
-	if err != nil {
-		http.Error(w, "Bad request", http.StatusBadRequest)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "некорректный запрос", http.StatusBadRequest)
 		return
 	}
 
@@ -62,36 +72,22 @@ func (h *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
 		Note:    r.FormValue("note"),
 	}
 
-	err = h.service.Create(r.Context(), client)
-	if err != nil {
-		clients, listErr := h.service.List(r.Context())
-		if listErr != nil {
-			http.Error(w, listErr.Error(), http.StatusInternalServerError)
-			return
+	if err := h.service.Create(r.Context(), client); err != nil {
+		data := ClientCreatePageData{
+			Error: err.Error(),
 		}
 
-		data := ClientsPageData{
-			Clients: clients,
-			Error:   err.Error(),
-		}
-
-		RenderTemplate(w, "clients", data)
+		RenderTemplate(w, "client_create", data)
 		return
 	}
 
 	http.Redirect(w, r, "/clients", http.StatusSeeOther)
 }
 
-// =========================
-// Просмотр карточки клиента
-// =========================
-
 func (h *ClientHandler) View(w http.ResponseWriter, r *http.Request) {
-	idStr := r.URL.Query().Get("id")
-
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
-		http.Error(w, "Invalid client ID", http.StatusBadRequest)
+		http.Error(w, "некорректный id клиента", http.StatusBadRequest)
 		return
 	}
 
@@ -109,25 +105,20 @@ func (h *ClientHandler) View(w http.ResponseWriter, r *http.Request) {
 	RenderTemplate(w, "client", data)
 }
 
-// =========================
-// Обновление клиента
-// =========================
-
 func (h *ClientHandler) Update(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "метод не разрешён", http.StatusMethodNotAllowed)
 		return
 	}
 
-	err := r.ParseForm()
-	if err != nil {
-		http.Error(w, "Bad request", http.StatusBadRequest)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "некорректный запрос", http.StatusBadRequest)
 		return
 	}
 
 	id, err := strconv.Atoi(r.FormValue("id"))
 	if err != nil {
-		http.Error(w, "Invalid client ID", http.StatusBadRequest)
+		http.Error(w, "некорректный id клиента", http.StatusBadRequest)
 		return
 	}
 
@@ -140,8 +131,7 @@ func (h *ClientHandler) Update(w http.ResponseWriter, r *http.Request) {
 		Note:    r.FormValue("note"),
 	}
 
-	err = h.service.Update(r.Context(), client)
-	if err != nil {
+	if err := h.service.Update(r.Context(), client); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -149,31 +139,25 @@ func (h *ClientHandler) Update(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/clients/view?id="+strconv.Itoa(id), http.StatusSeeOther)
 }
 
-// =========================
-// Удаление клиента
-// =========================
-
 func (h *ClientHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "метод не разрешён", http.StatusMethodNotAllowed)
 		return
 	}
 
-	err := r.ParseForm()
-	if err != nil {
-		http.Error(w, "Bad request", http.StatusBadRequest)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "некорректный запрос", http.StatusBadRequest)
 		return
 	}
 
 	id, err := strconv.Atoi(r.FormValue("id"))
 	if err != nil {
-		http.Error(w, "Invalid client ID", http.StatusBadRequest)
+		http.Error(w, "некорректный id клиента", http.StatusBadRequest)
 		return
 	}
 
-	err = h.service.Delete(r.Context(), id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := h.service.Delete(r.Context(), id); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
