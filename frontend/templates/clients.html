@@ -6,18 +6,25 @@
 </div>
 
 <div class="clients-toolbar">
-    <button class="btn-primary" data-i18n="button.add_client">
-        ➕ Добавить клиента
-    </button>
+    <form method="GET" action="/clients" class="search-form">
+        <input class="search-input" type="text" name="search" value="{{ .Search }}" placeholder="Поиск клиента..."
+            data-i18n-placeholder="placeholder.search_client">
 
-    <input class="search-input" type="text" placeholder="Поиск клиента..."
-        data-i18n-placeholder="placeholder.search_client">
+        <button class="btn-secondary" type="submit">
+            🔍 Найти
+        </button>
+    </form>
+</div>
+
+<div class="clients-actions">
+    <a class="btn-primary" href="/clients/create">
+        ➕ Создать клиента
+    </a>
 </div>
 
 <table class="clients-table">
     <thead>
         <tr>
-            <th data-i18n="table.id">ID</th>
             <th data-i18n="table.name">Имя</th>
             <th data-i18n="table.phone">Телефон</th>
             <th data-i18n="table.cars_count">Автомобилей</th>
@@ -27,11 +34,39 @@
     </thead>
 
     <tbody>
+        {{ if .Clients }}
+        {{ range .Clients }}
         <tr>
-            <td colspan="6" class="empty-table" data-i18n="message.no_clients">
-                Клиенты пока не добавлены.
+            <td>{{ .Name }}</td>
+            <td>{{ .Phone }}</td>
+            <td>0</td>
+            <td>{{ .LastVisitAt }}</td>
+
+            <td class="actions-cell">
+                <button class="actions-btn" type="button" onclick="toggleMenu(this)">
+                    ⋯
+                </button>
+
+                <div class="actions-menu">
+                    <a href="/clients/view?id={{ .ID }}">👁 Открыть</a>
+
+                    <form method="POST" action="/clients/delete">
+                        <input type="hidden" name="id" value="{{ .ID }}">
+                        <button type="submit" onclick="return confirm('Вы действительно хотите удалить клиента?')">
+                            🗑️ Удалить
+                        </button>
+                    </form>
+                </div>
             </td>
         </tr>
+        {{ end }}
+        {{ else }}
+        <tr>
+            <td colspan="5" class="empty-table">
+                Клиентов еще нет
+            </td>
+        </tr>
+        {{ end }}
     </tbody>
 </table>
 

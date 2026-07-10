@@ -1,0 +1,46 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <h1>Создать клиента</h1>
+    <p>Добавление нового клиента в базу.</p>
+</div>
+
+{{ if .Error }}
+<div class="form-error">
+    {{ .Error }}
+</div>
+{{ end }}
+
+<form id="client-form" class="client-edit-form" method="POST" action="/clients/create">
+    <label>
+        Имя
+        <input type="text" name="name">
+    </label>
+
+    <label>
+        Телефон
+        <input type="text" name="phone">
+    </label>
+
+    <label>
+        Email
+        <input type="email" name="email">
+    </label>
+
+    <label>
+        Адрес
+        <input type="text" name="address">
+    </label>
+
+    <label class="full-width">
+        Примечание
+        <textarea name="note"></textarea>
+    </label>
+
+    <div class="edit-actions">
+        <button class="btn-primary" type="submit">💾 Создать</button>
+        <a class="btn-secondary" href="/clients">← Назад</a>
+    </div>
+</form>
+
+{{ end }}

@@ -1,0 +1,136 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <h1>Карточка клиента</h1>
+    <p>Полная информация о выбранном клиенте.</p>
+</div>
+
+<div class="client-card">
+
+    {{ if .Edit }}
+
+    <form method="POST" action="/clients/update" class="client-edit-form">
+
+        <input type="hidden" name="id" value="{{ .Client.ID }}">
+
+        <label>
+            Имя
+            <input type="text" name="name" value="{{ .Client.Name }}">
+        </label>
+
+        <label>
+            Телефон
+            <input type="text" name="phone" value="{{ .Client.Phone }}">
+        </label>
+
+        <label>
+            Email
+            <input type="email" name="email" value="{{ .Client.Email }}">
+        </label>
+
+        <label>
+            Адрес
+            <input type="text" name="address" value="{{ .Client.Address }}">
+        </label>
+
+        <label class="full-width">
+            Примечание
+            <textarea name="note">{{ .Client.Note }}</textarea>
+        </label>
+
+        <div class="edit-actions">
+            <button class="btn-primary" type="submit">
+                💾 Сохранить
+            </button>
+
+            <a class="btn-secondary" href="/clients/view?id={{ .Client.ID }}">
+                ❌ Отмена
+            </a>
+        </div>
+
+    </form>
+
+    {{ else }}
+
+    <div class="client-card-header">
+
+        <div>
+            <h2>{{ .Client.Name }}</h2>
+            <p>Клиент #{{ .Client.ID }}</p>
+        </div>
+
+        <div class="client-card-actions">
+
+            <a class="btn-primary" href="/clients/view?id={{ .Client.ID }}&edit=1">
+                ✏️ Редактировать
+            </a>
+
+            <form method="POST" action="/clients/delete" class="inline-form">
+
+                <input type="hidden" name="id" value="{{ .Client.ID }}">
+
+                <button class="btn-danger" type="submit"
+                    onclick="return confirm('Вы действительно хотите удалить клиента?')">
+
+                    🗑️ Удалить
+
+                </button>
+
+            </form>
+
+            <a class="btn-secondary" href="/clients">
+                ← Назад
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="client-info-grid">
+
+        <div class="client-info-item">
+            <span>Телефон</span>
+            <strong>{{ .Client.Phone }}</strong>
+        </div>
+
+        <div class="client-info-item">
+            <span>Email</span>
+            <strong>{{ .Client.Email }}</strong>
+        </div>
+
+        <div class="client-info-item">
+            <span>Адрес</span>
+            <strong>{{ .Client.Address }}</strong>
+        </div>
+
+        <div class="client-info-item">
+            <span>Последний визит</span>
+            <strong>{{ .Client.LastVisitAt }}</strong>
+        </div>
+
+    </div>
+
+    <div class="client-note">
+        <span>Примечание</span>
+        <p>{{ .Client.Note }}</p>
+    </div>
+
+    {{ end }}
+
+</div>
+
+<div class="client-section">
+    <h3>🚗 Автомобили клиента</h3>
+    <p class="empty-table">
+        Автомобили пока не добавлены.
+    </p>
+</div>
+
+<div class="client-section">
+    <h3>🛠 История ремонтов</h3>
+    <p class="empty-table">
+        История ремонтов пока пуста.
+    </p>
+</div>
+
+{{ end }}
