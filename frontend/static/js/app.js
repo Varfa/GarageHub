@@ -17,3 +17,8 @@ document.addEventListener("click", function (event) {
         });
     }
 });
+function toggleCarForm() {
+    const form = document.getElementById("car-create-form");
+
+    form.classList.toggle("is-open");
+}

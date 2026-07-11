@@ -26,9 +26,13 @@ func main() {
 
 	clientRepo := repository.NewClientRepository(dbPool)
 	clientService := service.NewClientService(clientRepo)
-	clientHandler := handler.NewClientHandler(clientService)
 
-	mux := router.SetupRoutes(clientHandler)
+	carRepository := repository.NewCarRepository(dbPool)
+	carService := service.NewCarService(carRepository)
+
+	clientHandler := handler.NewClientHandler(clientService, carService)
+	carHandler := handler.NewCarHandler(carService, clientService)
+	mux := router.SetupRoutes(clientHandler, carHandler)
 	addr := ":" + cfg.Server.Port
 
 	fmt.Println("Server started on", addr)

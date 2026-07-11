@@ -518,3 +518,69 @@ header {
 .btn-danger:hover {
     background: #b91c1c;
 }
+
+.client-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.client-section-header h3 {
+    margin: 0;
+}
+
+.car-create-form {
+    display: none;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.car-create-form.is-open {
+    display: block;
+}
+
+.cars-list {
+    display: grid;
+    gap: 12px;
+}
+
+.car-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px 16px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.car-item>div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.car-item span {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.client-edit-form select {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font: inherit;
+    background: #fff;
+}
+
+.create-related-link {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 14px;
+    text-decoration: none;
+}

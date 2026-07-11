@@ -1,0 +1,156 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <h1>Карточка автомобиля</h1>
+    <p>Полная информация об автомобиле.</p>
+</div>
+
+<div class="client-card">
+
+    {{ if .Edit }}
+
+    <form method="POST" action="/cars/update" class="client-edit-form">
+        <input type="hidden" name="id" value="{{ .Car.ID }}">
+        <input type="hidden" name="client_id" value="{{ .Car.ClientID }}">
+
+        <label>
+            Марка
+            <input type="text" name="brand" value="{{ .Car.Brand }}">
+        </label>
+
+        <label>
+            Модель
+            <input type="text" name="model" value="{{ .Car.Model }}">
+        </label>
+
+        <label>
+            Год выпуска
+            <input type="number" name="year" value="{{ .Car.Year }}">
+        </label>
+
+        <label>
+            Госномер
+            <input type="text" name="plate_number" value="{{ .Car.PlateNumber }}">
+        </label>
+
+        <label>
+            VIN
+            <input type="text" name="vin" value="{{ .Car.VIN }}">
+        </label>
+
+        <label>
+            Двигатель
+            <input type="text" name="engine" value="{{ .Car.Engine }}">
+        </label>
+
+        <label>
+            Мощность, кВт
+            <input type="number" name="power_kw" value="{{ .Car.PowerKW }}">
+        </label>
+
+        <label>
+            Цвет
+            <input type="text" name="color" value="{{ .Car.Color }}">
+        </label>
+
+        <label>
+            Пробег, км
+            <input type="number" name="mileage" value="{{ .Car.Mileage }}">
+        </label>
+
+        <label class="full-width">
+            Примечание
+            <textarea name="note">{{ .Car.Note }}</textarea>
+        </label>
+
+        <div class="edit-actions">
+            <button class="btn-primary" type="submit">
+                💾 Сохранить
+            </button>
+
+            <a class="btn-secondary" href="/cars/view?id={{ .Car.ID }}">
+                ❌ Отмена
+            </a>
+        </div>
+    </form>
+
+    {{ else }}
+
+    <div class="client-card-header">
+        <div>
+            <h2>{{ .Car.Brand }} {{ .Car.Model }}</h2>
+            <p>Автомобиль #{{ .Car.ID }}</p>
+        </div>
+
+        <div class="client-card-actions">
+            <a class="btn-primary" href="/cars/view?id={{ .Car.ID }}&edit=1">
+                ✏️ Редактировать
+            </a>
+
+            <a class="btn-secondary" href="/cars">
+                ← Назад
+            </a>
+        </div>
+    </div>
+
+    <div class="client-info-grid">
+        <div class="client-info-item">
+            <span>Госномер</span>
+            <strong>{{ .Car.PlateNumber }}</strong>
+        </div>
+
+        <div class="client-info-item">
+            <span>VIN</span>
+            <strong>{{ .Car.VIN }}</strong>
+        </div>
+
+        <div class="client-info-item">
+            <span>Год выпуска</span>
+            <strong>{{ .Car.Year }}</strong>
+        </div>
+
+        <div class="client-info-item">
+            <span>Пробег</span>
+            <strong>{{ .Car.Mileage }} км</strong>
+        </div>
+
+        <div class="client-info-item">
+            <span>Двигатель</span>
+            <strong>{{ .Car.Engine }}</strong>
+        </div>
+
+        <div class="client-info-item">
+            <span>Мощность</span>
+            <strong>{{ .Car.PowerKW }} кВт</strong>
+        </div>
+
+        <div class="client-info-item">
+            <span>Цвет</span>
+            <strong>{{ .Car.Color }}</strong>
+        </div>
+
+        <div class="client-info-item">
+            <span>Владелец</span>
+            <a href="/clients/view?id={{ .Client.ID }}">
+                👤 {{ .Client.Name }}
+            </a>
+        </div>
+    </div>
+
+    <div class="client-note">
+        <span>Примечание</span>
+        <p>{{ .Car.Note }}</p>
+    </div>
+
+    {{ end }}
+
+</div>
+
+<div class="client-section">
+    <h3>🛠 История ремонтов</h3>
+    <p class="empty-table">
+        История ремонтов пока пуста.
+    </p>
+</div>
+
+{{ end }}

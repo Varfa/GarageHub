@@ -6,17 +6,20 @@ type Car struct {
 	ID       int
 	ClientID int
 
+	Brand string
+	Model string
+	Year  int
+
 	VIN         string
 	PlateNumber string
 
-	Brand string
-	Model string
-
-	PowerKW int
 	Engine  string
+	PowerKW int
 
-	Mileage   int
-	Color     string
+	Color   string
+	Mileage int
+	Note    string
+
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

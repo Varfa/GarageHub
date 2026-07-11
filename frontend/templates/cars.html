@@ -1,4 +1,86 @@
 {{ define "content" }}
-<h1>Автомобили</h1>
-<p>Страница находится в разработке.</p>
+
+<div class="page-header">
+    <h1>Автомобили</h1>
+    <p>Общий список автомобилей сервиса.</p>
+</div>
+
+<div class="clients-toolbar">
+    <form method="GET" action="/cars" class="search-form">
+        <input class="search-input" type="text" name="search" value="{{ .Search }}"
+            placeholder="Поиск по марке, модели, VIN или номеру">
+
+        <button class="btn-secondary" type="submit">
+            🔍 Найти
+        </button>
+        <div class="clients-actions">
+            <a class="btn-primary" href="/cars/create">
+                ➕ Создать автомобиль
+            </a>
+        </div>
+    </form>
+</div>
+
+<table class="clients-table">
+    <thead>
+        <tr>
+            <th>Автомобиль</th>
+            <th>Госномер</th>
+            <th>VIN</th>
+            <th>Год</th>
+            <th>Пробег</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{ if .Cars }}
+        {{ range .Cars }}
+        <tr>
+            <td>{{ .Brand }} {{ .Model }}</td>
+            <td>{{ .PlateNumber }}</td>
+            <td>{{ .VIN }}</td>
+            <td>{{ .Year }}</td>
+            <td>{{ .Mileage }} км</td>
+            <td>
+                <span>
+            <td class="actions-cell">
+
+                <button class="actions-btn" type="button" onclick="toggleMenu(this)">
+                    ⋯
+                </button>
+
+                <div class="actions-menu">
+                    <a href="/cars/view?id={{ .ID }}">
+                        👁 Открыть
+                    </a>
+
+                    <a href="/cars/view?id={{ .ID }}&edit=1">
+                        ✏️ Редактировать
+                    </a>
+
+                    <form method="POST" action="/cars/delete">
+                        <input type="hidden" name="id" value="{{ .ID }}">
+                        <button type="submit" onclick="return confirm('Удалить автомобиль?')">
+                            🗑️ Удалить
+                        </button>
+                    </form>
+                    </form>
+
+                </div>
+
+            </td></span>
+            </td>
+        </tr>
+        {{ end }}
+        {{ else }}
+        <tr>
+            <td colspan="6" class="empty-table">
+                Автомобили не найдены.
+            </td>
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
+
 {{ end }}

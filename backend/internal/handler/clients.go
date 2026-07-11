@@ -9,7 +9,8 @@ import (
 )
 
 type ClientHandler struct {
-	service *service.ClientService
+	service    *service.ClientService
+	carService *service.CarService
 }
 
 type ClientsPageData struct {
@@ -23,13 +24,19 @@ type ClientCreatePageData struct {
 
 type ClientPageData struct {
 	Client models.Client
+	Cars   []models.Car
 	Edit   bool
 }
 
-func NewClientHandler(service *service.ClientService) *ClientHandler {
+func NewClientHandler(
+	service *service.ClientService,
+	carService *service.CarService,
+) *ClientHandler {
 	return &ClientHandler{
-		service: service,
+		service:    service,
+		carService: carService,
 	}
+
 }
 
 func (h *ClientHandler) Clients(w http.ResponseWriter, r *http.Request) {
@@ -96,9 +103,14 @@ func (h *ClientHandler) View(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-
+	cars, err := h.carService.ListByClientID(r.Context(), id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	data := ClientPageData{
 		Client: *client,
+		Cars:   cars,
 		Edit:   r.URL.Query().Get("edit") == "1",
 	}
 

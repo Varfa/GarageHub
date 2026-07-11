@@ -1,0 +1,94 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <h1>Создать автомобиль</h1>
+    <p>Добавление нового автомобиля в базу.</p>
+</div>
+
+{{ if .Error }}
+<div class="form-error">
+    {{ .Error }}
+</div>
+{{ end }}
+
+<form method="POST" action="/cars/create" class="client-edit-form">
+    <label class="full-width">
+        Владелец
+
+        <select name="client_id">
+            <option value="">Выберите клиента</option>
+
+            {{ range .Clients }}
+            <option value="{{ .ID }}">
+                {{ .Name }} — {{ .Phone }}
+            </option>
+            {{ end }}
+        </select>
+
+        <a class="create-related-link" href="/clients/create">
+            ➕ Создать нового клиента
+        </a>
+    </label>
+
+    <label>
+        Марка
+        <input type="text" name="brand">
+    </label>
+
+    <label>
+        Модель
+        <input type="text" name="model">
+    </label>
+
+    <label>
+        Год выпуска
+        <input type="number" name="year">
+    </label>
+
+    <label>
+        Госномер
+        <input type="text" name="plate_number">
+    </label>
+
+    <label>
+        VIN
+        <input type="text" name="vin">
+    </label>
+
+    <label>
+        Двигатель
+        <input type="text" name="engine">
+    </label>
+
+    <label>
+        Мощность, кВт
+        <input type="number" name="power_kw">
+    </label>
+
+    <label>
+        Цвет
+        <input type="text" name="color">
+    </label>
+
+    <label>
+        Пробег, км
+        <input type="number" name="mileage">
+    </label>
+
+    <label class="full-width">
+        Примечание
+        <textarea name="note"></textarea>
+    </label>
+
+    <div class="edit-actions">
+        <button class="btn-primary" type="submit">
+            💾 Создать автомобиль
+        </button>
+
+        <a class="btn-secondary" href="/cars">
+            ❌ Отмена
+        </a>
+    </div>
+</form>
+
+{{ end }}

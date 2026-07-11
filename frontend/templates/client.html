@@ -120,10 +120,111 @@
 </div>
 
 <div class="client-section">
-    <h3>🚗 Автомобили клиента</h3>
-    <p class="empty-table">
-        Автомобили пока не добавлены.
-    </p>
+    <div class="client-section">
+        <div class="client-section">
+            <div class="client-section-header">
+                <h3>🚗 Автомобили клиента ({{ len .Cars }})</h3>
+
+                <button class="btn-primary" type="button" onclick="toggleCarForm()">
+                    ➕ Добавить автомобиль
+                </button>
+            </div>
+
+            <div id="car-create-form" class="car-create-form">
+                <form method="POST" action="/cars/create" class="client-edit-form">
+                    <input type="hidden" name="client_id" value="{{ .Client.ID }}">
+
+                    <label>
+                        Марка
+                        <input type="text" name="brand">
+                    </label>
+
+                    <label>
+                        Модель
+                        <input type="text" name="model">
+                    </label>
+
+                    <label>
+                        Год
+                        <input type="number" name="year">
+                    </label>
+
+                    <label>
+                        Госномер
+                        <input type="text" name="plate_number">
+                    </label>
+
+                    <label>
+                        VIN
+                        <input type="text" name="vin">
+                    </label>
+
+                    <label>
+                        Двигатель
+                        <input type="text" name="engine">
+                    </label>
+
+                    <label>
+                        Мощность, кВт
+                        <input type="number" name="power_kw">
+                    </label>
+
+                    <label>
+                        Цвет
+                        <input type="text" name="color">
+                    </label>
+
+                    <label>
+                        Пробег
+                        <input type="number" name="mileage">
+                    </label>
+
+                    <label class="full-width">
+                        Примечание
+                        <textarea name="note"></textarea>
+                    </label>
+
+                    <div class="edit-actions">
+                        <button class="btn-primary" type="submit">
+                            💾 Сохранить автомобиль
+                        </button>
+
+                        <button class="btn-secondary" type="button" onclick="toggleCarForm()">
+                            ❌ Отмена
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {{ if .Cars }}
+
+            <div class="cars-list">
+                {{ range .Cars }}
+                <div class="car-item">
+                    <div>
+                        <strong>{{ .Brand }} {{ .Model }}</strong>
+                        <span>{{ .PlateNumber }}</span>
+                    </div>
+
+                    <div>
+                        <span>{{ .Year }} год</span>
+                        <span>{{ .Mileage }} км</span>
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+
+            {{ else }}
+
+            <p class="empty-table">
+                Автомобили пока не добавлены.
+            </p>
+
+            {{ end }}
+        </div>
+
+        <p class="empty-table">Автомобили пока не добавлены.</p>
+    </div>
 </div>
 
 <div class="client-section">
