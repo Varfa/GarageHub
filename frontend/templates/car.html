@@ -131,9 +131,32 @@
 
         <div class="client-info-item">
             <span>Владелец</span>
+
             <a href="/clients/view?id={{ .Client.ID }}">
                 👤 {{ .Client.Name }}
             </a>
+
+            <form method="POST" action="/cars/change-owner" class="change-owner-form">
+                <input type="hidden" name="car_id" value="{{ .Car.ID }}">
+                <input type="hidden" name="old_client_id" value="{{ .Client.ID }}">
+                <input type="hidden" name="return_to" value="car">
+
+                <select name="client_id" required>
+                    <option value="">Сменить владельца</option>
+
+                    {{ range .AllClients }}
+                    {{ if ne .ID $.Client.ID }}
+                    <option value="{{ .ID }}">
+                        {{ .Name }} — {{ .Phone }}
+                    </option>
+                    {{ end }}
+                    {{ end }}
+                </select>
+
+                <button class="btn-secondary" type="submit">
+                    Сохранить
+                </button>
+            </form>
         </div>
     </div>
 

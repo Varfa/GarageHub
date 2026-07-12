@@ -585,3 +585,40 @@ header {
     font-size: 14px;
     text-decoration: none;
 }
+
+.car-item-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.car-item-link:hover {
+    border-color: #9ca3af;
+    background: #f3f4f6;
+}
+
+.car-item {
+    align-items: center;
+}
+
+.car-item-link {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+    gap: 20px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.change-owner-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.change-owner-form select {
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+}

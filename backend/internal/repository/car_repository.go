@@ -64,10 +64,7 @@ func (r *CarRepository) Create(ctx context.Context, car models.Car) error {
 	return nil
 }
 
-func (r *CarRepository) ListByClientID(
-	ctx context.Context,
-	clientID int,
-) ([]models.Car, error) {
+func (r *CarRepository) ListByClientID(ctx context.Context, clientID int) ([]models.Car, error) {
 	query := `
 		SELECT
 			id,
@@ -130,34 +127,34 @@ func (r *CarRepository) ListByClientID(
 	return cars, nil
 
 }
-func (r *CarRepository) List(
-	ctx context.Context,
-	search string,
-) ([]models.Car, error) {
+func (r *CarRepository) List(ctx context.Context, search string) ([]models.Car, error) {
 	query := `
-		SELECT
-			id,
-			client_id,
-			brand,
-			model,
-			year,
-			vin,
-			plate_number,
-			engine,
-			power_kw,
-			color,
-			mileage,
-			note,
-			created_at,
-			updated_at
-		FROM cars
-		WHERE $1 = ''
-			OR brand ILIKE '%' || $1 || '%'
-			OR model ILIKE '%' || $1 || '%'
-			OR vin ILIKE '%' || $1 || '%'
-			OR plate_number ILIKE '%' || $1 || '%'
-		ORDER BY id DESC
-	`
+	SELECT
+		cars.id,
+		cars.client_id,
+		cars.brand,
+		cars.model,
+		cars.year,
+		cars.vin,
+		cars.plate_number,
+		cars.engine,
+		cars.power_kw,
+		cars.color,
+		cars.mileage,
+		cars.note,
+		cars.created_at,
+		cars.updated_at,
+		clients.name
+	FROM cars
+	JOIN clients ON clients.id = cars.client_id
+	WHERE $1 = ''
+		OR cars.brand ILIKE '%' || $1 || '%'
+		OR cars.model ILIKE '%' || $1 || '%'
+		OR cars.vin ILIKE '%' || $1 || '%'
+		OR cars.plate_number ILIKE '%' || $1 || '%'
+		OR clients.name ILIKE '%' || $1 || '%'
+	ORDER BY cars.id DESC
+`
 
 	rows, err := r.db.Query(ctx, query, search)
 	if err != nil {
@@ -185,6 +182,7 @@ func (r *CarRepository) List(
 			&car.Note,
 			&car.CreatedAt,
 			&car.UpdatedAt,
+			&car.OwnerName,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("сканирование автомобиля: %w", err)
@@ -333,6 +331,29 @@ func (r *CarRepository) Delete(ctx context.Context, id int) error {
 	)
 	if err != nil {
 		return fmt.Errorf("удаление автомобиля: %w", err)
+	}
+
+	return nil
+}
+func (r *CarRepository) ChangeOwner(
+	ctx context.Context,
+	carID int,
+	clientID int,
+) error {
+	_, err := r.db.Exec(
+		ctx,
+		`
+		UPDATE cars
+		SET
+			client_id = $1,
+			updated_at = NOW()
+		WHERE id = $2
+		`,
+		clientID,
+		carID,
+	)
+	if err != nil {
+		return fmt.Errorf("смена владельца автомобиля: %w", err)
 	}
 
 	return nil

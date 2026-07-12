@@ -22,4 +22,6 @@ type Car struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
+
+	OwnerName string
 }

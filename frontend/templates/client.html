@@ -198,19 +198,47 @@
 
             {{ if .Cars }}
 
+            {{ $page := . }}
+
             <div class="cars-list">
                 {{ range .Cars }}
-                <div class="car-item">
-                    <div>
-                        <strong>{{ .Brand }} {{ .Model }}</strong>
-                        <span>{{ .PlateNumber }}</span>
-                    </div>
 
-                    <div>
-                        <span>{{ .Year }} год</span>
-                        <span>{{ .Mileage }} км</span>
-                    </div>
+                <div class="car-item">
+                    <a class="car-item-link" href="/cars/view?id={{ .ID }}">
+                        <div>
+                            <strong>{{ .Brand }} {{ .Model }}</strong>
+                            <span>{{ .PlateNumber }}</span>
+                        </div>
+
+                        <div>
+                            <span>{{ .Year }} год</span>
+                            <span>{{ .Mileage }} км</span>
+                        </div>
+                    </a>
+
+                    <form method="POST" action="/cars/change-owner" class="change-owner-form">
+                        <input type="hidden" name="car_id" value="{{ .ID }}">
+                        <input type="hidden" name="old_client_id" value="{{ $page.Client.ID }}">
+                        <input type="hidden" name="return_to" value="client">
+
+                        <select name="client_id" required>
+                            <option value="">Новый владелец</option>
+
+                            {{ range $page.AllClients }}
+                            {{ if ne .ID $page.Client.ID }}
+                            <option value="{{ .ID }}">
+                                {{ .Name }} — {{ .Phone }}
+                            </option>
+                            {{ end }}
+                            {{ end }}
+                        </select>
+
+                        <button class="btn-secondary" type="submit">
+                            Сменить владельца
+                        </button>
+                    </form>
                 </div>
+
                 {{ end }}
             </div>
 
@@ -223,15 +251,11 @@
             {{ end }}
         </div>
 
-        <p class="empty-table">Автомобили пока не добавлены.</p>
-    </div>
-</div>
+        <div class="client-section">
+            <h3>🛠 История ремонтов</h3>
+            <p class="empty-table">
+                История ремонтов пока пуста.
+            </p>
+        </div>
 
-<div class="client-section">
-    <h3>🛠 История ремонтов</h3>
-    <p class="empty-table">
-        История ремонтов пока пуста.
-    </p>
-</div>
-
-{{ end }}
+        {{ end }}

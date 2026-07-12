@@ -24,12 +24,15 @@
 <table class="clients-table">
     <thead>
         <tr>
+        <tr>
             <th>Автомобиль</th>
             <th>Госномер</th>
             <th>VIN</th>
+            <th>Владелец</th>
             <th>Год</th>
             <th>Пробег</th>
             <th>Действия</th>
+        </tr>
         </tr>
     </thead>
 
@@ -40,20 +43,23 @@
             <td>{{ .Brand }} {{ .Model }}</td>
             <td>{{ .PlateNumber }}</td>
             <td>{{ .VIN }}</td>
+
+            <td>
+                <a href="/clients/view?id={{ .ClientID }}">
+                    👤 {{ .OwnerName }}
+                </a>
+            </td>
+
             <td>{{ .Year }}</td>
             <td>{{ .Mileage }} км</td>
-            <td>
-                <span>
-            <td class="actions-cell">
 
+            <td class="actions-cell">
                 <button class="actions-btn" type="button" onclick="toggleMenu(this)">
                     ⋯
                 </button>
 
                 <div class="actions-menu">
-                    <a href="/cars/view?id={{ .ID }}">
-                        👁 Открыть
-                    </a>
+                    <a href="/cars/view?id={{ .ID }}">👁 Открыть</a>
 
                     <a href="/cars/view?id={{ .ID }}&edit=1">
                         ✏️ Редактировать
@@ -61,22 +67,18 @@
 
                     <form method="POST" action="/cars/delete">
                         <input type="hidden" name="id" value="{{ .ID }}">
+
                         <button type="submit" onclick="return confirm('Удалить автомобиль?')">
                             🗑️ Удалить
                         </button>
                     </form>
-                    </form>
-
                 </div>
-
-            </td></span>
             </td>
         </tr>
         {{ end }}
         {{ else }}
         <tr>
-            <td colspan="6" class="empty-table">
-                Автомобили не найдены.
+            <td colspan="7" class="empty-table"> Автомобили не найдены.
             </td>
         </tr>
         {{ end }}

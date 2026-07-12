@@ -38,7 +38,7 @@ func SetupRoutes(clientHandler *handler.ClientHandler,
 	mux.HandleFunc("/employees", handler.EmployeesHandler)
 	mux.HandleFunc("/reports", handler.ReportsHandler)
 	mux.HandleFunc("/settings", handler.SettingsHandler)
-
+	mux.HandleFunc("/cars/change-owner", carHandler.ChangeOwner)
 	// CARS
 	mux.HandleFunc("/cars/create", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {

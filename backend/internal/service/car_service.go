@@ -97,3 +97,19 @@ func (s *CarService) Delete(ctx context.Context, id int) error {
 
 	return s.repo.Delete(ctx, id)
 }
+
+func (s *CarService) ChangeOwner(
+	ctx context.Context,
+	carID int,
+	clientID int,
+) error {
+	if carID <= 0 {
+		return errors.New("некорректный id автомобиля")
+	}
+
+	if clientID <= 0 {
+		return errors.New("некорректный id нового владельца")
+	}
+
+	return s.repo.ChangeOwner(ctx, carID, clientID)
+}

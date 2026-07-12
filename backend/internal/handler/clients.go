@@ -23,15 +23,13 @@ type ClientCreatePageData struct {
 }
 
 type ClientPageData struct {
-	Client models.Client
-	Cars   []models.Car
-	Edit   bool
+	Client     models.Client
+	Cars       []models.Car
+	AllClients []models.Client
+	Edit       bool
 }
 
-func NewClientHandler(
-	service *service.ClientService,
-	carService *service.CarService,
-) *ClientHandler {
+func NewClientHandler(service *service.ClientService, carService *service.CarService) *ClientHandler {
 	return &ClientHandler{
 		service:    service,
 		carService: carService,
@@ -103,15 +101,22 @@ func (h *ClientHandler) View(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+
 	cars, err := h.carService.ListByClientID(r.Context(), id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	allClients, err := h.service.List(r.Context(), "")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	data := ClientPageData{
-		Client: *client,
-		Cars:   cars,
-		Edit:   r.URL.Query().Get("edit") == "1",
+		Client:     *client,
+		Cars:       cars,
+		AllClients: allClients,
+		Edit:       r.URL.Query().Get("edit") == "1",
 	}
 
 	RenderTemplate(w, "client", data)
