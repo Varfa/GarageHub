@@ -27,6 +27,19 @@ func (s *ClientService) Create(ctx context.Context, client models.Client) error 
 		return errors.New("необходимо указать номер телефона")
 	}
 
+	exists, err := s.repo.ExistsByNameAndPhone(
+		ctx,
+		client.Name,
+		client.Phone,
+	)
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		return errors.New("клиент с таким именем и телефоном уже существует")
+	}
+
 	return s.repo.Create(ctx, client)
 }
 

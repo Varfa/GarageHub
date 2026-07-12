@@ -7,6 +7,7 @@ import (
 
 	"github.com/Varfa/GarageHub/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -195,8 +196,44 @@ func (r *ClientRepository) Delete(ctx context.Context, id int) error {
 		id,
 	)
 	if err != nil {
+		var pgErr *pgconn.PgError
+
+		if errors.As(err, &pgErr) && pgErr.Code == "23503" {
+			return errors.New(
+				"невозможно удалить клиента: сначала переназначьте или удалите его автомобили",
+			)
+		}
+
 		return fmt.Errorf("удаление клиента: %w", err)
 	}
 
 	return nil
+}
+func (r *ClientRepository) ExistsByNameAndPhone(
+	ctx context.Context,
+	name string,
+	phone string,
+) (bool, error) {
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM clients
+			WHERE LOWER(TRIM(name)) = LOWER(TRIM($1))
+			  AND phone = $2
+		)
+	`
+
+	var exists bool
+
+	err := r.db.QueryRow(
+		ctx,
+		query,
+		name,
+		phone,
+	).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("проверка клиента на дубликат: %w", err)
+	}
+
+	return exists, nil
 }

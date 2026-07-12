@@ -32,7 +32,18 @@ func (s *CarService) Create(ctx context.Context, car models.Car) error {
 	if car.ClientID <= 0 {
 		return errors.New("необходимо выбрать клиента")
 	}
+	exists, err := s.repo.ExistsByPlateOrVIN(
+		ctx,
+		car.PlateNumber,
+		car.VIN,
+	)
+	if err != nil {
+		return err
+	}
 
+	if exists {
+		return errors.New("автомобиль с таким номером или VIN уже существует")
+	}
 	return s.repo.Create(ctx, car)
 }
 

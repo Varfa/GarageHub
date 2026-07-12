@@ -200,6 +200,37 @@ func (r *CarRepository) List(
 	return cars, nil
 }
 
+var ErrCarAlreadyExists = errors.New("автомобиль уже существует")
+
+func (r *CarRepository) ExistsByPlateOrVIN(
+	ctx context.Context,
+	plateNumber string,
+	vin string,
+) (bool, error) {
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM cars
+			WHERE plate_number = $1
+			   OR ($2 <> '' AND vin = $2)
+		)
+	`
+
+	var exists bool
+
+	err := r.db.QueryRow(
+		ctx,
+		query,
+		plateNumber,
+		vin,
+	).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("проверка автомобиля на дубликат: %w", err)
+	}
+
+	return exists, nil
+}
+
 var ErrCarNotFound = errors.New("автомобиль не найден")
 
 func (r *CarRepository) GetByID(

@@ -17,3 +17,11 @@ type Client struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+func (c Client) FormattedDate() string {
+	if c.LastVisitAt.IsZero() {
+		return "—"
+	}
+
+	return c.LastVisitAt.Format("02.01.2006")
+}

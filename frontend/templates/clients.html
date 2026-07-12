@@ -7,7 +7,7 @@
 
 <div class="clients-toolbar">
     <form method="GET" action="/clients" class="search-form">
-        <input class="search-input" type="text" name="search" value="{{ .Search }}" placeholder="Поиск клиента..."
+        <input class="search-input" type="search" name="search" value="{{ .Search }}" placeholder="Поиск клиента..."
             data-i18n-placeholder="placeholder.search_client">
 
         <button class="btn-secondary" type="submit">
@@ -40,7 +40,7 @@
             <td>{{ .Name }}</td>
             <td>{{ .Phone }}</td>
             <td>0</td>
-            <td>{{ .LastVisitAt }}</td>
+            <td>{{ .FormattedDate }}</td>
 
             <td class="actions-cell">
                 <button class="actions-btn" type="button" onclick="toggleMenu(this)">
