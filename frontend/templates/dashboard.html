@@ -1,28 +1,320 @@
 {{ define "content" }}
-<div class="page-header">
-    <h1 data-i18n="title.dashboard">Dashboard</h1>
-    <p data-i18n="message.dashboard_welcome">Обзор работы автосервиса</p>
-</div>
+<div class="dashboard-page">
+    <section class="dashboard-welcome">
+        <div>
+            <p class="dashboard-eyebrow">
+                GARAGEHUB OVERVIEW
+            </p>
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <h3 data-i18n="card.clients">Клиенты</h3>
-        <p>0</p>
-    </div>
+            <h1 id="dashboard-greeting">
+                Добро пожаловать, Roman
+            </h1>
 
-    <div class="stat-card">
-        <h3 data-i18n="card.cars">Автомобили</h3>
-        <p>0</p>
-    </div>
+            <p class="dashboard-welcome-text">
+                Здесь собрана основная информация о работе автосервиса.
+            </p>
+        </div>
 
-    <div class="stat-card">
-        <h3 data-i18n="card.active_orders">Активные заказы</h3>
-        <p>0</p>
-    </div>
+        <div class="dashboard-date-card">
+            <span id="dashboard-weekday">Сегодня</span>
+            <strong id="dashboard-date">—</strong>
+        </div>
+    </section>
 
-    <div class="stat-card">
-        <h3 data-i18n="card.month_income">Доход за месяц</h3>
-        <p>0 €</p>
-    </div>
+    <section class="dashboard-stats">
+        <a class="dashboard-stat-card" href="/clients">
+            <div class="dashboard-stat-header">
+                <span class="dashboard-stat-label">
+                    Клиенты
+                </span>
+
+                <span class="dashboard-stat-icon">
+                    C
+                </span>
+            </div>
+
+            <strong class="dashboard-stat-value">
+                0
+            </strong>
+
+            <span class="dashboard-stat-description">
+                Всего клиентов
+            </span>
+        </a>
+
+        <a class="dashboard-stat-card" href="/cars">
+            <div class="dashboard-stat-header">
+                <span class="dashboard-stat-label">
+                    Автомобили
+                </span>
+
+                <span class="dashboard-stat-icon">
+                    A
+                </span>
+            </div>
+
+            <strong class="dashboard-stat-value">
+                0
+            </strong>
+
+            <span class="dashboard-stat-description">
+                В базе автосервиса
+            </span>
+        </a>
+
+        <a class="dashboard-stat-card" href="/employees">
+            <div class="dashboard-stat-header">
+                <span class="dashboard-stat-label">
+                    Сотрудники
+                </span>
+
+                <span class="dashboard-stat-icon">
+                    S
+                </span>
+            </div>
+
+            <strong class="dashboard-stat-value">
+                0
+            </strong>
+
+            <span class="dashboard-stat-description">
+                Активных сотрудников
+            </span>
+        </a>
+
+        <a class="dashboard-stat-card" href="/orders">
+            <div class="dashboard-stat-header">
+                <span class="dashboard-stat-label">
+                    Активные заказы
+                </span>
+
+                <span class="dashboard-stat-icon">
+                    O
+                </span>
+            </div>
+
+            <strong class="dashboard-stat-value">
+                0
+            </strong>
+
+            <span class="dashboard-stat-description">
+                Сейчас в работе
+            </span>
+        </a>
+
+        <div class="dashboard-stat-card dashboard-stat-income">
+            <div class="dashboard-stat-header">
+                <span class="dashboard-stat-label">
+                    Доход месяца
+                </span>
+
+                <span class="dashboard-stat-icon">
+                    €
+                </span>
+            </div>
+
+            <strong class="dashboard-stat-value">
+                0 €
+            </strong>
+
+            <span class="dashboard-stat-description">
+                За текущий месяц
+            </span>
+        </div>
+    </section>
+
+    <section class="dashboard-grid dashboard-grid-main">
+        <div class="dashboard-card dashboard-quick-actions">
+            <div class="dashboard-card-header">
+                <div>
+                    <h2>Быстрые действия</h2>
+                    <p>Основные операции автосервиса</p>
+                </div>
+            </div>
+
+            <div class="quick-actions-grid">
+                <a class="quick-action" href="/clients/create">
+                    <span class="quick-action-icon">
+                        C
+                    </span>
+
+                    <span>
+                        <strong>Новый клиент</strong>
+                        <small>Добавить клиента в базу</small>
+                    </span>
+                </a>
+
+                <a class="quick-action" href="/cars/create">
+                    <span class="quick-action-icon">
+                        A
+                    </span>
+
+                    <span>
+                        <strong>Новый автомобиль</strong>
+                        <small>Добавить автомобиль клиента</small>
+                    </span>
+                </a>
+
+                <a class="quick-action" href="/orders">
+                    <span class="quick-action-icon">
+                        O
+                    </span>
+
+                    <span>
+                        <strong>Новый заказ</strong>
+                        <small>Создать заказ на ремонт</small>
+                    </span>
+                </a>
+
+                <a class="quick-action" href="/employees/create">
+                    <span class="quick-action-icon">
+                        S
+                    </span>
+
+                    <span>
+                        <strong>Новый сотрудник</strong>
+                        <small>Добавить сотрудника</small>
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <div class="dashboard-card dashboard-attention">
+            <div class="dashboard-card-header">
+                <div>
+                    <h2>Требует внимания</h2>
+                    <p>Важные события и предупреждения</p>
+                </div>
+            </div>
+
+            <div class="attention-list">
+                <div class="attention-item">
+                    <span class="attention-indicator attention-warning"></span>
+
+                    <div>
+                        <strong>Просроченные заказы</strong>
+                        <p>Нет заказов, требующих внимания.</p>
+                    </div>
+
+                    <span class="attention-count">
+                        0
+                    </span>
+                </div>
+
+                <div class="attention-item">
+                    <span class="attention-indicator attention-info"></span>
+
+                    <div>
+                        <strong>Ожидают запчасти</strong>
+                        <p>Автомобилей в ожидании нет.</p>
+                    </div>
+
+                    <span class="attention-count">
+                        0
+                    </span>
+                </div>
+
+                <div class="attention-item">
+                    <span class="attention-indicator attention-danger"></span>
+
+                    <div>
+                        <strong>Низкий остаток на складе</strong>
+                        <p>Критических остатков не обнаружено.</p>
+                    </div>
+
+                    <span class="attention-count">
+                        0
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard-grid dashboard-grid-activity">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h2>Последние клиенты</h2>
+                    <p>Недавно добавленные клиенты</p>
+                </div>
+
+                <a href="/clients">
+                    Смотреть все
+                </a>
+            </div>
+
+            <div class="dashboard-empty">
+                <span class="dashboard-empty-icon">
+                    C
+                </span>
+
+                <strong>Клиентов пока нет</strong>
+
+                <p>
+                    Новые клиенты будут отображаться здесь.
+                </p>
+
+                <a class="btn-secondary" href="/clients/create">
+                    Добавить клиента
+                </a>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h2>Последние автомобили</h2>
+                    <p>Недавно добавленные автомобили</p>
+                </div>
+
+                <a href="/cars">
+                    Смотреть все
+                </a>
+            </div>
+
+            <div class="dashboard-empty">
+                <span class="dashboard-empty-icon">
+                    A
+                </span>
+
+                <strong>Автомобилей пока нет</strong>
+
+                <p>
+                    Новые автомобили будут отображаться здесь.
+                </p>
+
+                <a class="btn-secondary" href="/cars/create">
+                    Добавить автомобиль
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard-card dashboard-orders-card">
+        <div class="dashboard-card-header">
+            <div>
+                <h2>Сегодняшние работы</h2>
+                <p>Заказы, запланированные на сегодня</p>
+            </div>
+
+            <a href="/orders">
+                Перейти к заказам
+            </a>
+        </div>
+
+        <div class="dashboard-empty dashboard-empty-horizontal">
+            <span class="dashboard-empty-icon">
+                O
+            </span>
+
+            <div>
+                <strong>Работы на сегодня не запланированы</strong>
+
+                <p>
+                    После создания заказов здесь появится текущая загрузка сервиса.
+                </p>
+            </div>
+        </div>
+    </section>
 </div>
 {{ end }}

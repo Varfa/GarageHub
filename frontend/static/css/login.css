@@ -1,0 +1,347 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    background: #f4f7fb;
+    color: #172033;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+.login-page {
+    display: grid;
+    grid-template-columns: minmax(420px, 1.05fr) minmax(460px, 0.95fr);
+    min-height: 100vh;
+}
+
+.login-info {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 42px 64px;
+    overflow: hidden;
+    color: #ffffff;
+    background:
+        radial-gradient(circle at 85% 15%,
+            rgba(55, 132, 255, 0.35),
+            transparent 28%),
+        radial-gradient(circle at 15% 85%,
+            rgba(26, 188, 156, 0.16),
+            transparent 30%),
+        linear-gradient(145deg, #111d35 0%, #0b1427 100%);
+}
+
+.login-info::after {
+    position: absolute;
+    right: -160px;
+    bottom: -190px;
+    width: 480px;
+    height: 480px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    content: "";
+}
+
+.brand {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 14px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2f80ed, #1761c0);
+    box-shadow: 0 12px 30px rgba(47, 128, 237, 0.3);
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.brand-name {
+    font-size: 21px;
+    font-weight: 750;
+}
+
+.brand-caption {
+    margin-top: 3px;
+    color: #9eacc4;
+    font-size: 13px;
+}
+
+.login-info-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 630px;
+    margin: auto 0;
+    padding: 60px 0;
+}
+
+.eyebrow,
+.welcome {
+    margin: 0 0 18px;
+    color: #55a0ff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.login-info h1 {
+    max-width: 650px;
+    margin: 0;
+    font-size: clamp(43px, 5vw, 70px);
+    font-weight: 750;
+    line-height: 1.04;
+    letter-spacing: -2.5px;
+}
+
+.description {
+    max-width: 570px;
+    margin: 28px 0 36px;
+    color: #b5c0d3;
+    font-size: 18px;
+    line-height: 1.7;
+}
+
+.features {
+    display: grid;
+    gap: 17px;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    color: #dbe3f0;
+    font-size: 15px;
+}
+
+.feature-icon {
+    display: grid;
+    flex: 0 0 27px;
+    width: 27px;
+    height: 27px;
+    place-items: center;
+    border: 1px solid rgba(81, 160, 255, 0.35);
+    border-radius: 50%;
+    color: #72b2ff;
+    background: rgba(47, 128, 237, 0.13);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.copyright {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: #697994;
+    font-size: 13px;
+}
+
+.login-form-section {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 48px;
+    background:
+        radial-gradient(circle at 100% 0%,
+            rgba(47, 128, 237, 0.09),
+            transparent 28%),
+        #f7f9fc;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 440px;
+}
+
+.mobile-brand {
+    display: none;
+}
+
+.login-heading {
+    margin-bottom: 34px;
+}
+
+.login-heading h2 {
+    margin: 0 0 10px;
+    color: #182237;
+    font-size: 34px;
+    line-height: 1.2;
+    letter-spacing: -1px;
+}
+
+.login-heading>p:last-child {
+    margin: 0;
+    color: #718096;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label,
+.password-label {
+    color: #303b50;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.password-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.password-label span {
+    color: #2f80ed;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: default;
+}
+
+.form-group input {
+    width: 100%;
+    height: 52px;
+    margin-top: 9px;
+    padding: 0 16px;
+    border: 1px solid #d9e0ea;
+    border-radius: 11px;
+    outline: none;
+    color: #182237;
+    background: #ffffff;
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.form-group input::placeholder {
+    color: #a4afbf;
+}
+
+.form-group input:focus {
+    border-color: #2f80ed;
+    box-shadow: 0 0 0 4px rgba(47, 128, 237, 0.11);
+}
+
+.remember {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 25px;
+    color: #657188;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.remember input {
+    width: 16px;
+    height: 16px;
+    accent-color: #2f80ed;
+}
+
+button {
+    display: flex;
+    width: 100%;
+    height: 54px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 0;
+    border-radius: 11px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2f80ed, #1768d2);
+    box-shadow: 0 14px 28px rgba(47, 128, 237, 0.22);
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        transform 150ms ease,
+        box-shadow 150ms ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 17px 32px rgba(47, 128, 237, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.demo-note {
+    margin: 25px 0 0;
+    color: #9aa5b5;
+    font-size: 12px;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .login-page {
+        display: block;
+    }
+
+    .login-info {
+        display: none;
+    }
+
+    .login-form-section {
+        padding: 30px 22px;
+    }
+
+    .mobile-brand {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin-bottom: 55px;
+        color: #182237;
+        font-size: 20px;
+        font-weight: 750;
+    }
+
+    .mobile-brand .brand-icon {
+        width: 43px;
+        height: 43px;
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-form-section {
+        align-items: start;
+        padding-top: 24px;
+    }
+
+    .mobile-brand {
+        margin-bottom: 45px;
+    }
+
+    .login-heading h2 {
+        font-size: 29px;
+    }
+}

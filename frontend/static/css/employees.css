@@ -1,0 +1,830 @@
+/* ===========================
+   EMPLOYEES
+=========================== */
+
+.employees-page,
+.employee-details-page {
+    width: 100%;
+}
+
+.employees-page .page-header,
+.employee-details-page .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.employees-toolbar {
+    margin-bottom: 20px;
+}
+
+.employees-search-form {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+}
+
+.employees-search-form .search-input {
+    flex: 0 1 520px;
+}
+
+
+/* ===========================
+   EMPLOYEES TABLE
+=========================== */
+
+.employees-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-small);
+}
+
+.employees-table {
+    width: 100%;
+    min-width: 880px;
+    border-collapse: collapse;
+}
+
+.employees-table th,
+.employees-table td {
+    padding: 13px 15px;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.employees-table th {
+    color: #526078;
+    background: var(--color-surface-muted);
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+}
+
+.employees-table td {
+    color: var(--color-text);
+    font-size: 14px;
+}
+
+.employees-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.employee-row {
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.employee-row:hover {
+    background: #f6f9fd;
+}
+
+.employee-row:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+}
+
+.employee-identity {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 12px;
+}
+
+.employee-avatar {
+    display: inline-flex;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    color: #1d5fae;
+    background: #deebfc;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.employee-identity-text {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.employee-name-link {
+    overflow: hidden;
+    color: var(--color-text);
+    font-weight: 750;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.employee-name-link:hover {
+    color: var(--color-primary);
+}
+
+.employee-code {
+    color: var(--color-text-muted);
+    font-size: 11px;
+}
+
+.employee-phone {
+    white-space: nowrap;
+}
+
+.employee-email {
+    color: var(--color-text-secondary);
+}
+
+.employee-position {
+    display: inline-flex;
+    min-height: 28px;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: #40506a;
+    background: #eef3f9;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.employee-empty-value {
+    color: var(--color-text-muted);
+}
+
+
+/* ===========================
+   EMPLOYEE STATUS
+=========================== */
+
+.employee-status {
+    display: inline-flex;
+    min-width: 82px;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.employee-status-active {
+    color: #166534;
+    background: #dcfce7;
+}
+
+.employee-status-inactive {
+    color: #64748b;
+    background: #f1f5f9;
+}
+
+
+/* ===========================
+   EMPLOYEE PROFILE
+=========================== */
+
+.employee-profile-card,
+.employee-section-card {
+    margin-bottom: 20px;
+    padding: 24px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-small);
+}
+
+.employee-profile-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.employee-profile-main {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.employee-profile-avatar {
+    display: inline-flex;
+    flex: 0 0 58px;
+    width: 58px;
+    height: 58px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    color: #1d5fae;
+    background: #deebfc;
+    font-size: 20px;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.employee-profile-main h2 {
+    margin: 0 0 5px;
+    color: var(--color-text);
+    font-size: 24px;
+}
+
+.employee-profile-main p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+}
+
+.employee-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.employee-info-item {
+    padding: 15px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface-muted);
+}
+
+.employee-info-item span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--color-text-secondary);
+    font-size: 12px;
+}
+
+.employee-info-item strong {
+    color: var(--color-text);
+    font-size: 14px;
+}
+
+
+/* ===========================
+   EMPLOYEE SECTIONS
+=========================== */
+
+.employee-section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.employee-section-header h2 {
+    margin: 0 0 4px;
+    color: var(--color-text);
+    font-size: 18px;
+}
+
+.employee-section-header p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+}
+
+.employee-phones-list {
+    display: grid;
+    gap: 10px;
+}
+
+.employee-phone-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 15px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface-muted);
+}
+
+.employee-phone-item>div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.employee-phone-item strong {
+    color: var(--color-text);
+    font-size: 14px;
+}
+
+.employee-phone-item span {
+    color: var(--color-text-secondary);
+    font-size: 12px;
+}
+
+.employee-primary-phone {
+    display: inline-flex;
+    min-height: 27px;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    color: #166534 !important;
+    background: #dcfce7;
+    font-size: 11px !important;
+    font-weight: 750;
+}
+
+.employee-section-empty {
+    padding: 25px;
+    border: 1px dashed var(--color-border-strong);
+    border-radius: 10px;
+    color: var(--color-text-secondary);
+    background: var(--color-surface-muted);
+    text-align: center;
+}
+
+.employee-actions-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
+/* ===========================
+   CREATE FORM
+=========================== */
+
+.employee-form-card {
+    max-width: 900px;
+}
+
+.employee-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.employee-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.employee-form label {
+    color: #40506a;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.employee-form input,
+.employee-form select,
+.employee-form textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 13px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+    outline: none;
+    color: var(--color-text);
+    background: var(--color-surface);
+    font: inherit;
+}
+
+.employee-form input:focus,
+.employee-form select:focus,
+.employee-form textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+.employee-form .form-actions {
+    grid-column: 1 / -1;
+}
+
+
+/* ===========================
+   EMPTY STATE
+=========================== */
+
+.employees-empty {
+    padding: 54px 24px;
+    border: 1px dashed var(--color-border-strong);
+    border-radius: var(--radius-medium);
+    background: var(--color-surface-muted);
+    text-align: center;
+}
+
+.employees-empty h2 {
+    margin-bottom: 8px;
+    color: var(--color-text);
+    font-size: 21px;
+}
+
+.employees-empty p {
+    margin-bottom: 20px;
+    color: var(--color-text-secondary);
+}
+
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width: 760px) {
+
+    .employees-page .page-header,
+    .employee-details-page .page-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .employees-search-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .employees-search-form .search-input {
+        width: 100%;
+        flex-basis: auto;
+    }
+
+    .employees-search-form .btn-primary,
+    .employees-search-form .btn-secondary {
+        width: 100%;
+    }
+
+    .employee-profile-header,
+    .employee-section-header {
+        flex-direction: column;
+    }
+
+    .employee-info-grid,
+    .employee-form {
+        grid-template-columns: 1fr;
+    }
+
+    .employee-form .form-actions {
+        grid-column: auto;
+    }
+
+    .employee-actions-panel {
+        flex-direction: column;
+    }
+
+    .employee-actions-panel .btn-primary,
+    .employee-actions-panel .btn-danger {
+        width: 100%;
+    }
+}
+
+/* ===========================
+   EMPLOYEE PHONE CREATE
+=========================== */
+
+.employee-phone-create {
+    margin-bottom: 18px;
+}
+
+.employee-phone-create>summary {
+    width: fit-content;
+    list-style: none;
+    user-select: none;
+}
+
+.employee-phone-create>summary::-webkit-details-marker {
+    display: none;
+}
+
+.employee-phone-create[open]>summary {
+    margin-bottom: 14px;
+}
+
+.employee-phone-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding: 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 11px;
+    background: var(--color-surface-muted);
+}
+
+.employee-phone-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.employee-phone-form input[type="tel"],
+.employee-phone-form select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 13px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+    outline: none;
+    color: var(--color-text);
+    background: var(--color-surface);
+    font: inherit;
+}
+
+.employee-phone-form input[type="tel"]:focus,
+.employee-phone-form select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+.employee-primary-checkbox {
+    grid-column: 1 / -1;
+    display: inline-flex !important;
+    width: fit-content;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 9px !important;
+    cursor: pointer;
+}
+
+.employee-primary-checkbox input {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--color-primary);
+}
+
+.employee-phone-form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.form-success {
+    margin-bottom: 18px;
+    padding: 13px 15px;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    color: #166534;
+    background: #f0fdf4;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+@media (max-width: 760px) {
+    .employee-phone-form {
+        grid-template-columns: 1fr;
+    }
+
+    .employee-primary-checkbox,
+    .employee-phone-form-actions {
+        grid-column: auto;
+    }
+
+    .employee-phone-form-actions {
+        justify-content: stretch;
+    }
+
+    .employee-phone-form-actions .btn-primary {
+        width: 100%;
+    }
+}
+
+/* ===========================
+   EMPLOYEE PHONE ACTIONS
+=========================== */
+
+.employee-phone-content {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.employee-phone-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+}
+
+.employee-phone-actions .inline-form {
+    margin: 0;
+}
+
+.btn-small {
+    min-height: 34px;
+    padding: 6px 11px;
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .employee-phone-item {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .employee-phone-actions {
+        justify-content: flex-start;
+    }
+
+    .employee-phone-actions .btn-secondary {
+        width: 100%;
+    }
+}
+
+.employee-phone-actions .btn-danger {
+    min-height: 34px;
+    padding: 6px 11px;
+    font-size: 12px;
+}
+
+/* ===========================
+   EMPLOYEE EDIT
+=========================== */
+
+.employee-edit-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.employee-edit-form label {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 7px;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.employee-edit-form input,
+.employee-edit-form select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 13px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+    outline: none;
+    color: var(--color-text);
+    background: var(--color-surface);
+    font: inherit;
+}
+
+.employee-edit-form input:focus,
+.employee-edit-form select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+.employee-edit-phone-note {
+    grid-column: 1 / -1;
+    padding: 15px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface-muted);
+}
+
+.employee-edit-phone-note span {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--color-text-secondary);
+    font-size: 12px;
+}
+
+.employee-edit-phone-note strong {
+    display: block;
+    color: var(--color-text);
+    font-size: 14px;
+}
+
+.employee-edit-phone-note p {
+    margin: 6px 0 0;
+    color: var(--color-text-muted);
+    font-size: 12px;
+}
+
+.employee-edit-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+@media (max-width: 760px) {
+    .employee-edit-form {
+        grid-template-columns: 1fr;
+    }
+
+    .employee-edit-phone-note,
+    .employee-edit-actions {
+        grid-column: auto;
+    }
+
+    .employee-edit-actions {
+        flex-direction: column;
+    }
+
+    .employee-edit-actions .btn-primary,
+    .employee-edit-actions .btn-secondary {
+        width: 100%;
+    }
+}
+
+/* ===========================
+   EMPLOYEE ARCHIVE
+=========================== */
+
+.employee-row-archived {
+    opacity: 0.82;
+}
+
+.employee-row-archived:hover {
+    opacity: 1;
+}
+
+.employee-avatar-archived {
+    color: #64748b;
+    background: #e2e8f0;
+}
+
+.employee-empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.employee-actions-panel .inline-form {
+    margin: 0;
+}
+
+@media (max-width: 760px) {
+    .employee-empty-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .employee-empty-actions .btn-primary,
+    .employee-empty-actions .btn-secondary {
+        width: 100%;
+    }
+
+    .employee-actions-panel .inline-form,
+    .employee-actions-panel .inline-form button {
+        width: 100%;
+    }
+}
+
+/* ===========================
+   ARCHIVED EMPLOYEE NOTICE
+=========================== */
+
+.employee-archive-notice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding: 16px 18px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.employee-archive-notice strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #334155;
+    font-size: 14px;
+}
+
+.employee-archive-notice p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.employee-archive-notice .inline-form {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+@media (max-width: 760px) {
+    .employee-archive-notice {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .employee-archive-notice .inline-form,
+    .employee-archive-notice .btn-primary {
+        width: 100%;
+    }
+}

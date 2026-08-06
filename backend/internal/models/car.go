@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type Car struct {
 	ID       int
@@ -24,4 +27,8 @@ type Car struct {
 	UpdatedAt time.Time
 
 	OwnerName string
+}
+
+func (c Car) Code() string {
+	return fmt.Sprintf("CAR-%06d", c.ID)
 }

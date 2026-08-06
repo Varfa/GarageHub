@@ -1,0 +1,351 @@
+/* ===========================
+   CARS
+=========================== */
+
+.cars-page {
+    width: 100%;
+}
+
+.cars-page .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.cars-toolbar {
+    margin-bottom: 20px;
+}
+
+.cars-toolbar .search-form {
+    width: 100%;
+}
+
+.cars-toolbar .search-input {
+    flex: 0 1 520px;
+}
+
+
+/* ===========================
+   CARS TABLE
+=========================== */
+
+.cars-table-wrapper {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: visible;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-small);
+}
+
+.cars-table {
+    width: 100%;
+    min-width: 980px;
+    border-collapse: collapse;
+}
+
+.cars-table th,
+.cars-table td {
+    padding: 13px 15px;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.cars-table th {
+    color: #526078;
+    background: var(--color-surface-muted);
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+}
+
+.cars-table td {
+    color: var(--color-text);
+    font-size: 14px;
+}
+
+.cars-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.car-row {
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.car-row:hover {
+    background: #f6f9fd;
+}
+
+.car-row:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+}
+
+.car-identity {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 12px;
+}
+
+.car-avatar {
+    display: inline-flex;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    color: #1d5fae;
+    background: #deebfc;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.car-identity-text {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.car-title-link {
+    overflow: hidden;
+    color: var(--color-text);
+    font-weight: 750;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.car-title-link:hover {
+    color: var(--color-primary);
+}
+
+.car-code {
+    color: var(--color-text-muted);
+    font-size: 11px;
+}
+
+.car-plate,
+.car-year,
+.car-mileage {
+    white-space: nowrap;
+}
+
+.car-plate-badge {
+    display: inline-flex;
+    min-height: 28px;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 8px;
+    color: #26364f;
+    background: #eef2f6;
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 0.035em;
+}
+
+.car-vin {
+    max-width: 220px;
+    overflow: hidden;
+    color: var(--color-text-secondary);
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        "Liberation Mono",
+        monospace;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.car-owner-link {
+    color: var(--color-primary);
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.car-owner-link:hover {
+    text-decoration: underline;
+}
+
+.car-mileage-value {
+    display: inline-flex;
+    min-height: 28px;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    color: #40506a;
+    background: #eef3f9;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.car-empty-value {
+    color: var(--color-text-muted);
+}
+
+
+/* ===========================
+   EMPTY STATE
+=========================== */
+
+.cars-empty {
+    padding: 52px 24px;
+    text-align: center;
+}
+
+.cars-empty h2 {
+    margin-bottom: 8px;
+    color: var(--color-text);
+    font-size: 21px;
+}
+
+.cars-empty p {
+    margin-bottom: 20px;
+    color: var(--color-text-secondary);
+}
+
+
+/* ===========================
+   CAR DETAILS
+=========================== */
+
+.car-details-page {
+    width: 100%;
+}
+
+.car-code {
+    color: var(--color-text-secondary);
+    font-size: 13px;
+}
+
+.owner-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.owner-current {
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.owner-current:hover {
+    text-decoration: underline;
+}
+
+.owner-change-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.owner-change-form select {
+    min-width: 180px;
+    min-height: 40px;
+    padding: 8px 11px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+    outline: none;
+    color: var(--color-text);
+    background: var(--color-surface);
+}
+
+.owner-change-form select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+.car-details-note {
+    margin-top: 16px;
+    padding: 15px;
+    border: 1px solid #edf1f6;
+    border-radius: 10px;
+    background: var(--color-surface-muted);
+}
+
+.car-details-note span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.car-details-note p {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+
+/* ===========================
+   CAR CREATE / EDIT
+=========================== */
+
+.car-form-card {
+    max-width: 980px;
+}
+
+.related-entity-field {
+    grid-column: 1 / -1;
+}
+
+.create-related-link {
+    display: inline-flex;
+    width: fit-content;
+    margin-top: 3px;
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.create-related-link:hover {
+    text-decoration: underline;
+}
+
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width: 900px) {
+    .owner-change-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .owner-change-form select {
+        width: 100%;
+    }
+
+    .owner-change-form .btn-secondary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 760px) {
+
+    .cars-page .page-header,
+    .car-details-page .page-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .cars-toolbar .search-input {
+        flex-basis: auto;
+    }
+}

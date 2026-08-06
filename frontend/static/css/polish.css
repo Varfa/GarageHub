@@ -1,0 +1,203 @@
+/* ===========================
+   GLOBAL POLISH
+=========================== */
+
+::selection {
+    color: #ffffff;
+    background: var(--color-primary);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    scrollbar-color: #bac6d6 transparent;
+    scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background: #bac6d6;
+    background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+    background-clip: padding-box;
+}
+
+
+/* ===========================
+   KEYBOARD FOCUS
+=========================== */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid rgba(47, 128, 237, 0.28);
+    outline-offset: 2px;
+}
+
+nav a:focus-visible {
+    outline-color: rgba(112, 173, 250, 0.55);
+    outline-offset: -2px;
+}
+
+
+/* ===========================
+   DISABLED ELEMENTS
+=========================== */
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-danger:disabled {
+    box-shadow: none;
+    pointer-events: none;
+    transform: none;
+}
+
+.btn-primary:disabled {
+    border-color: #9ebee9;
+    background: #9ebee9;
+}
+
+.btn-secondary:disabled {
+    border-color: var(--color-border);
+    color: var(--color-text-muted);
+    background: var(--color-surface-muted);
+}
+
+.btn-danger:disabled {
+    border-color: #f3a7a7;
+    background: #f3a7a7;
+}
+
+
+/* ===========================
+   FORM DETAILS
+=========================== */
+
+input,
+select,
+textarea {
+    caret-color: var(--color-primary);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    cursor: pointer;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: var(--color-primary);
+}
+
+textarea {
+    line-height: 1.55;
+}
+
+select {
+    cursor: pointer;
+}
+
+
+/* ===========================
+   LINKS
+=========================== */
+
+.content a:not(.btn-primary,
+    .btn-secondary,
+    .btn-danger,
+    .quick-action,
+    .dashboard-stat-card,
+    .car-item-link) {
+    text-underline-offset: 3px;
+}
+
+
+/* ===========================
+   INTERACTIVE CARDS
+=========================== */
+
+.details-card,
+.section-card,
+.module-card,
+.dashboard-card,
+.clients-table-wrapper,
+.cars-table-wrapper,
+.employees-table-wrapper {
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.details-card:hover,
+.section-card:hover,
+.module-card:hover {
+    border-color: var(--color-border-strong);
+}
+
+
+/* ===========================
+   PAGE APPEARANCE
+=========================== */
+
+.content>* {
+    animation: page-appear 180ms ease-out;
+}
+
+@keyframes page-appear {
+    from {
+        opacity: 0;
+        transform: translateY(3px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ===========================
+   REDUCED MOTION
+=========================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

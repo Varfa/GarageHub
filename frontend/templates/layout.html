@@ -1,56 +1,200 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/style.css">
+
     <title>GarageHub</title>
+
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/clients.css">
+    <link rel="stylesheet" href="/static/css/cars.css">
+    <link rel="stylesheet" href="/static/css/employees.css">
+    <link rel="stylesheet" href="/static/css/modules.css">
+    <link rel="stylesheet" href="/static/css/polish.css">
+    <link rel="stylesheet" href="/static/css/mobile.css">
+    <link rel="stylesheet" href="/static/css/modal.css">
 </head>
 
 <body>
-    <script src="/static/js/app.js"></script>
-    <header>
-        <div class="logo">GarageHub</div>
+    <header class="app-header">
+        <a class="app-brand" href="/dashboard">
+            <span class="app-brand-mark">GH</span>
+
+            <span class="app-brand-text">
+                <strong>GarageHub</strong>
+                <small>Service management</small>
+            </span>
+        </a>
 
         <div class="header-right">
             <div class="language-switcher">
-                <button type="button">RU</button>
-                <button type="button">EN</button>
-                <button type="button">LT</button>
+                <a href="/language?lang=en&redirect={{ .CurrentURL }}">EN</a>
+                <a href="/language?lang=lt&redirect={{ .CurrentURL }}">LT</a>
+                <a href="/language?lang=uk&redirect={{ .CurrentURL }}">UK</a>
+                <a href="/language?lang=ru&redirect={{ .CurrentURL }}">RU</a>
             </div>
 
             <div class="user">
-                <span>Roman</span>
-                <button type="button" data-i18n="button.logout">Выход</button>
+                <span class="user-avatar">R</span>
+                <span class="user-name">Roman</span>
+
+                <button type="button">
+                    {{ t "button.logout" }}
+                </button>
             </div>
         </div>
     </header>
 
-    <main>
-        <nav>
+    <main class="app-layout">
+        <nav class="sidebar" aria-label="Основная навигация">
             <ul>
-                <li><a href="/dashboard" data-i18n="nav.dashboard">📊 Dashboard</a></li>
-                <li><a href="/clients" data-i18n="nav.clients">👤 Клиенты</a></li>
-                <li><a href="/cars" data-i18n="nav.cars">🚘 Автомобили</a></li>
-                <li><a href="/orders" data-i18n="nav.orders">📋 Заказы</a></li>
-                <li><a href="/parts" data-i18n="nav.parts">🔧 Запчасти</a></li>
-                <li><a href="/warehouse" data-i18n="nav.warehouse">📦 Склад</a></li>
-                <li><a href="/employees" data-i18n="nav.employees">👨‍🔧 Сотрудники</a></li>
-                <li><a href="/reports" data-i18n="nav.reports">📈 Отчеты</a></li>
-                <li><a href="/settings" data-i18n="nav.settings">⚙ Настройки</a></li>
-            </ul>
+                <li>
+                    <a href="/dashboard">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6v-9h-6v9Zm0-16v5h6V4h-6Z"></path>
+                        </svg>
 
+                        <span>{{ t "nav.dashboard" }}</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/clients">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0H5Z"></path>
+                        </svg>
+
+                        <span>{{ t "nav.clients" }}</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/cars">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="m5.5 6.5-2 5V18h2v2h2v-2h9v2h2v-2h2v-6.5l-2-5A2 2 0 0 0 16.6 5H7.4a2 2 0 0 0-1.9 1.5ZM7.4 7h9.2l1.2 3H6.2l1.2-3ZM6 13h3v2H6v-2Zm9 0h3v2h-3v-2Z">
+                            </path>
+                        </svg>
+
+                        <span>{{ t "nav.cars" }}</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/orders">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M7 3h10v2h3v16H4V5h3V3Zm2 4H6v12h12V7h-3v2H9V7Zm0-2v2h6V5H9Zm1 7h6v2h-6v-2Zm0 4h5v2h-5v-2Z">
+                            </path>
+                        </svg>
+
+                        <span>{{ t "nav.orders" }}</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/parts">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M14.8 4.2a5 5 0 0 0-6.3 6.3L3 16l5 5 5.5-5.5a5 5 0 0 0 6.3-6.3l-3 3-3-3 3-3-2-2Zm-6 11.4L7.4 17 8 17.6l1.4-1.4-.6-.6Z">
+                            </path>
+                        </svg>
+
+                        <span>{{ t "nav.parts" }}</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/warehouse">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 9 12 3l9 6v12h-4v-8H7v8H3V9Zm6 6h6v2H9v-2Zm0 4h6v2H9v-2Z"></path>
+                        </svg>
+
+                        <span>{{ t "nav.warehouse" }}</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/employees">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm6 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM2 21a7 7 0 0 1 14 0H2Zm14.5-6a5.5 5.5 0 0 1 5.5 5.5V21h-4a8.9 8.9 0 0 0-2-5.6c.2-.2.3-.3.5-.4Z">
+                            </path>
+                        </svg>
+
+                        <span>{{ t "nav.employees" }}</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/reports">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 20h16v2H2V4h2v16Zm3-2H5v-6h2v6Zm4 0H9V8h2v10Zm4 0h-2v-4h2v4Zm4 0h-2V5h2v13Z">
+                            </path>
+                        </svg>
+
+                        <span>{{ t "nav.reports" }}</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/settings">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="m19.4 13 .1-1-.1-1 2-1.5-2-3.4-2.4 1A8 8 0 0 0 15.3 6L15 3.5h-4L10.7 6A8 8 0 0 0 9 7.1l-2.4-1-2 3.4 2 1.5-.1 1 .1 1-2 1.5 2 3.4 2.4-1a8 8 0 0 0 1.7 1.1l.3 2.5h4l.3-2.5a8 8 0 0 0 1.7-1.1l2.4 1 2-3.4-2-1.5ZM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z">
+                            </path>
+                        </svg>
+
+                        <span>{{ t "nav.settings" }}</span>
+                    </a>
+                </li>
+            </ul>
         </nav>
 
         <section class="content">
-            <section class="content">
-                {{ template "content" . }}
-            </section>
-            </div>
-
+            {{ template "content" .PageData }}
         </section>
     </main>
+
+    <dialog id="confirm-delete-dialog" class="confirm-dialog" aria-labelledby="confirm-delete-title">
+        <div class="confirm-dialog-content">
+            <div class="confirm-dialog-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M12 2 1 21h22L12 2Zm0 6c.6 0 1 .4 1 1v5a1 1 0 0 1-2 0V9c0-.6.4-1 1-1Zm0 10.5a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Z">
+                    </path>
+                </svg>
+            </div>
+
+            <h2 id="confirm-delete-title">
+                Подтвердите удаление
+            </h2>
+
+            <p id="confirm-delete-message">
+                Запись будет удалена. Это действие нельзя отменить.
+            </p>
+
+            <div class="confirm-dialog-actions">
+                <button id="confirm-delete-cancel" class="btn-secondary" type="button">
+                    Отмена
+                </button>
+
+                <button id="confirm-delete-submit" class="btn-danger" type="button">
+                    Удалить
+                </button>
+            </div>
+        </div>
+    </dialog>
+
+    <script src="/static/js/menu.js"></script>
+    <script src="/static/js/forms.js"></script>
+    <script src="/static/js/modal.js"></script>
+    <script src="/static/js/app.js"></script>
 </body>
 
 </html>

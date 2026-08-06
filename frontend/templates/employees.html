@@ -1,4 +1,153 @@
 {{ define "content" }}
-<h1>Сотрудники</h1>
-<p>Страница находится в разработке.</p>
+<div class="employees-page">
+    <div class="page-header">
+        <div>
+            <h1>Сотрудники</h1>
+            <p>Активные сотрудники автосервиса.</p>
+        </div>
+
+        <div class="page-header-actions">
+            <a href="/employees/archive" class="btn-secondary">
+                Архив сотрудников
+            </a>
+
+            <a href="/employees/create" class="btn-primary">
+                Добавить сотрудника
+            </a>
+        </div>
+    </div>
+
+    {{ if .Error }}
+    <div class="form-error" role="alert">
+        {{ .Error }}
+    </div>
+    {{ end }}
+
+    {{ if .Success }}
+    <div class="form-success" role="status">
+        {{ .Success }}
+    </div>
+    {{ end }}
+
+    <div class="employees-toolbar">
+        <form action="/employees" method="GET" class="employees-search-form">
+            <input type="search" name="search" value="{{ .Search }}" class="search-input"
+                placeholder="Поиск по имени, фамилии, телефону или должности">
+
+            <button type="submit" class="btn-secondary">
+                Найти
+            </button>
+
+            {{ if .Search }}
+            <a href="/employees" class="btn-secondary">
+                Сбросить
+            </a>
+            {{ end }}
+        </form>
+    </div>
+
+    {{ if .Employees }}
+
+    <div class="employees-table-wrapper">
+        <table class="employees-table">
+            <thead>
+                <tr>
+                    <th>Сотрудник</th>
+                    <th>Телефон</th>
+                    <th>Email</th>
+                    <th>Должность</th>
+                    <th>Статус</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {{ range .Employees }}
+                <tr class="employee-row" data-href="/employees/view?id={{ .ID }}" tabindex="0">
+                    <td>
+                        <div class="employee-identity">
+                            <span class="employee-avatar">
+                                {{ printf "%.1s" .FirstName }}
+                            </span>
+
+                            <div class="employee-identity-text">
+                                <a class="employee-name-link" href="/employees/view?id={{ .ID }}">
+                                    {{ .FirstName }} {{ .LastName }}
+                                </a>
+
+                                <span class="employee-code">
+                                    ID: {{ .ID }}
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="employee-phone">
+                        {{ .Phone }}
+                    </td>
+
+                    <td class="employee-email">
+                        {{ if .Email }}
+                        {{ .Email }}
+                        {{ else }}
+                        <span class="employee-empty-value">
+                            Не указан
+                        </span>
+                        {{ end }}
+                    </td>
+
+                    <td>
+                        <span class="employee-position">
+                            {{ .PositionName }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="employee-status employee-status-active">
+                            Активен
+                        </span>
+                    </td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+
+    {{ else }}
+
+    <div class="employees-empty">
+        {{ if .Search }}
+
+        <h2>Сотрудники не найдены</h2>
+
+        <p>
+            Попробуйте изменить поисковый запрос.
+        </p>
+
+        <a href="/employees" class="btn-secondary">
+            Сбросить поиск
+        </a>
+
+        {{ else }}
+
+        <h2>Активных сотрудников пока нет</h2>
+
+        <p>
+            Добавьте сотрудника или восстановите его из архива.
+        </p>
+
+        <div class="employee-empty-actions">
+            <a href="/employees/archive" class="btn-secondary">
+                Открыть архив
+            </a>
+
+            <a href="/employees/create" class="btn-primary">
+                Добавить сотрудника
+            </a>
+        </div>
+
+        {{ end }}
+    </div>
+
+    {{ end }}
+</div>
 {{ end }}

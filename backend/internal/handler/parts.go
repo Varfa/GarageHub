@@ -3,5 +3,5 @@ package handler
 import "net/http"
 
 func PartsHandler(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "parts", nil)
+	RenderTemplate(w, r, "parts", nil)
 }

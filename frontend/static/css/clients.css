@@ -1,0 +1,443 @@
+/* ===========================
+   CLIENTS
+=========================== */
+
+.clients-page {
+    width: 100%;
+}
+
+.clients-page .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.page-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.clients-toolbar {
+    margin-bottom: 20px;
+}
+
+.clients-toolbar .search-form {
+    width: 100%;
+}
+
+.clients-toolbar .search-input {
+    flex: 0 1 420px;
+}
+
+
+/* ===========================
+   CLIENTS TABLE
+=========================== */
+
+.clients-table-wrapper {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: visible;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-small);
+}
+
+.clients-table {
+    width: 100%;
+    min-width: 820px;
+    border-collapse: collapse;
+}
+
+.clients-table th,
+.clients-table td {
+    padding: 13px 15px;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.clients-table th {
+    color: #526078;
+    background: var(--color-surface-muted);
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+}
+
+.clients-table td {
+    color: var(--color-text);
+    font-size: 14px;
+}
+
+.clients-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.client-row {
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.client-row:hover {
+    background: #f6f9fd;
+}
+
+.client-row:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+}
+
+.client-identity {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 12px;
+}
+
+.client-avatar {
+    display: inline-flex;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    color: #1f65bc;
+    background: #e4effd;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.client-identity-text {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.client-name {
+    overflow: hidden;
+    color: var(--color-text);
+    font-weight: 750;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.client-name:hover {
+    color: var(--color-primary);
+}
+
+.client-code {
+    color: var(--color-text-muted);
+    font-size: 11px;
+}
+
+.client-phone {
+    white-space: nowrap;
+}
+
+.client-empty-value {
+    color: var(--color-text-muted);
+}
+
+.client-date {
+    white-space: nowrap;
+}
+
+.client-cars-count {
+    display: inline-flex;
+    min-width: 34px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.client-cars-count-active {
+    color: #1d5fae;
+    background: #deebfc;
+}
+
+.client-cars-count-empty {
+    color: #7c899b;
+    background: #eef2f6;
+}
+
+.client-visit {
+    display: inline-flex;
+    min-height: 28px;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    color: #40506a;
+    background: #eef3f9;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.client-visit-empty {
+    color: var(--color-text-muted);
+    background: transparent;
+}
+
+
+/* ===========================
+   EMPTY STATE
+=========================== */
+
+.clients-empty {
+    padding: 52px 24px;
+    text-align: center;
+}
+
+.clients-empty h2 {
+    margin-bottom: 8px;
+    color: var(--color-text);
+    font-size: 21px;
+}
+
+.clients-empty p {
+    margin-bottom: 20px;
+    color: var(--color-text-secondary);
+}
+
+
+/* ===========================
+   CLIENT DETAILS
+=========================== */
+
+.form-card {
+    max-width: 920px;
+}
+
+.details-note {
+    margin-top: 16px;
+    padding: 15px;
+    border: 1px solid #edf1f6;
+    border-radius: 10px;
+    background: var(--color-surface-muted);
+}
+
+.details-note span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.details-note p {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.empty-value {
+    color: var(--color-text-muted) !important;
+    font-weight: 500 !important;
+}
+
+.section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.section-header h3 {
+    margin: 0 0 4px;
+    color: var(--color-text);
+    font-size: 18px;
+}
+
+.section-header p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+}
+
+.compact-empty-state {
+    padding: 24px 16px;
+    border: 1px dashed var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface-muted);
+}
+
+.compact-empty-state p {
+    margin: 0;
+}
+
+
+/* ===========================
+   CLIENT CARS
+=========================== */
+
+.car-create-form {
+    display: none;
+    margin-bottom: 18px;
+    padding: 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface-muted);
+}
+
+.car-create-form.is-open {
+    display: block;
+}
+
+.cars-list {
+    display: grid;
+    gap: 12px;
+}
+
+.car-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface-muted);
+    transition:
+        border-color var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.car-item:hover {
+    border-color: var(--color-border-strong);
+    background: #f3f6fa;
+}
+
+.car-item-link {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.car-main-info,
+.car-secondary-info {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.car-main-info strong {
+    overflow: hidden;
+    color: var(--color-text);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.car-main-info span,
+.car-secondary-info span {
+    color: var(--color-text-secondary);
+    font-size: 13px;
+}
+
+.car-secondary-info {
+    flex: 0 0 auto;
+    text-align: right;
+}
+
+.change-owner-form {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+}
+
+.change-owner-form select {
+    min-height: 40px;
+    padding: 8px 11px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+    outline: none;
+    color: var(--color-text);
+    background: var(--color-surface);
+}
+
+.change-owner-form select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width: 900px) {
+    .car-item {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .change-owner-form {
+        width: 100%;
+    }
+
+    .change-owner-form select {
+        flex: 1;
+    }
+}
+
+@media (max-width: 760px) {
+    .clients-page .page-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .page-header-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .page-header-actions .btn-primary,
+    .page-header-actions .btn-secondary {
+        width: 100%;
+    }
+
+    .clients-toolbar .search-input {
+        flex-basis: auto;
+    }
+
+    .car-item-link {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .car-secondary-info {
+        text-align: left;
+    }
+
+    .change-owner-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .change-owner-form .btn-secondary {
+        width: 100%;
+    }
+}

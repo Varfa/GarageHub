@@ -1,5 +1,85 @@
 {{ define "content" }}
+<div class="module-page">
+    <div class="page-header">
+        <div>
+            <h1>Склад</h1>
+            <p>Контроль остатков, поступлений и списаний.</p>
+        </div>
 
-<h1>Склад</h1>
-<p>Страница находится в разработке.</p>
+        <div class="page-header-actions">
+            <button class="btn-primary" type="button" disabled>
+                Новое поступление
+            </button>
+        </div>
+    </div>
+
+    <div class="module-layout">
+        <section class="module-card">
+            <div class="module-card-header">
+                <div>
+                    <h2>Складские остатки</h2>
+                    <p>Текущее количество запчастей и материалов.</p>
+                </div>
+            </div>
+
+            <div class="module-empty">
+                <span class="module-empty-icon">W</span>
+
+                <h2>Склад ещё не настроен</h2>
+
+                <p>
+                    После подключения модуля здесь появятся остатки,
+                    движения товаров и предупреждения о минимальном количестве.
+                </p>
+            </div>
+        </section>
+
+        <aside class="module-card">
+            <div class="module-card-header">
+                <div>
+                    <h2>Возможности</h2>
+                    <p>Будущий складской учёт.</p>
+                </div>
+            </div>
+
+            <div class="module-features">
+                <div class="module-feature">
+                    <span class="module-feature-marker">1</span>
+
+                    <div>
+                        <strong>Приход товара</strong>
+                        <p>Регистрация поступивших запчастей.</p>
+                    </div>
+                </div>
+
+                <div class="module-feature">
+                    <span class="module-feature-marker">2</span>
+
+                    <div>
+                        <strong>Списание в заказ</strong>
+                        <p>Автоматическое уменьшение остатков.</p>
+                    </div>
+                </div>
+
+                <div class="module-feature">
+                    <span class="module-feature-marker">3</span>
+
+                    <div>
+                        <strong>Минимальный остаток</strong>
+                        <p>Предупреждение о необходимости закупки.</p>
+                    </div>
+                </div>
+
+                <div class="module-feature">
+                    <span class="module-feature-marker">4</span>
+
+                    <div>
+                        <strong>История движений</strong>
+                        <p>Контроль прихода, списания и корректировок.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
 {{ end }}

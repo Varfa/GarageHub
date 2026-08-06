@@ -8,22 +8,24 @@ import (
 	"github.com/Varfa/GarageHub/internal/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var ErrClientNotFound = errors.New("клиент не найден")
 
 type ClientRepository struct {
-	db *pgxpool.Pool
+	db DBTX
 }
 
-func NewClientRepository(db *pgxpool.Pool) *ClientRepository {
+func NewClientRepository(db DBTX) *ClientRepository {
 	return &ClientRepository{
 		db: db,
 	}
 }
 
-func (r *ClientRepository) Create(ctx context.Context, client models.Client) error {
+func (r *ClientRepository) Create(
+	ctx context.Context,
+	client models.Client,
+) error {
 	query := `
 		INSERT INTO clients (
 			number,
@@ -59,7 +61,10 @@ func (r *ClientRepository) Create(ctx context.Context, client models.Client) err
 	return nil
 }
 
-func (r *ClientRepository) List(ctx context.Context, search string) ([]models.Client, error) {
+func (r *ClientRepository) List(
+	ctx context.Context,
+	search string,
+) ([]models.Client, error) {
 	query := `
 		SELECT
 			id,
@@ -117,7 +122,76 @@ func (r *ClientRepository) List(ctx context.Context, search string) ([]models.Cl
 	return clients, nil
 }
 
-func (r *ClientRepository) GetByID(ctx context.Context, id int) (*models.Client, error) {
+func (r *ClientRepository) ListWithCarsCount(
+	ctx context.Context,
+	search string,
+) ([]models.ClientListItem, error) {
+	query := `
+		SELECT
+			c.id,
+			c.name,
+			c.phone,
+			COUNT(car.id) AS cars_count,
+			c.last_visit_at
+		FROM clients c
+		LEFT JOIN cars car ON car.client_id = c.id
+		WHERE $1 = ''
+			OR c.name ILIKE '%' || $1 || '%'
+			OR c.phone ILIKE '%' || $1 || '%'
+			OR c.email ILIKE '%' || $1 || '%'
+		GROUP BY
+			c.id,
+			c.name,
+			c.phone,
+			c.last_visit_at
+		ORDER BY c.id DESC
+	`
+
+	rows, err := r.db.Query(ctx, query, search)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"получение списка клиентов с автомобилями: %w",
+			err,
+		)
+	}
+	defer rows.Close()
+
+	var clients []models.ClientListItem
+
+	for rows.Next() {
+		var client models.ClientListItem
+
+		err := rows.Scan(
+			&client.ID,
+			&client.Name,
+			&client.Phone,
+			&client.CarsCount,
+			&client.LastVisitAt,
+		)
+		if err != nil {
+			return nil, fmt.Errorf(
+				"сканирование клиента с количеством автомобилей: %w",
+				err,
+			)
+		}
+
+		clients = append(clients, client)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf(
+			"итерация по клиентам с количеством автомобилей: %w",
+			err,
+		)
+	}
+
+	return clients, nil
+}
+
+func (r *ClientRepository) GetByID(
+	ctx context.Context,
+	id int,
+) (*models.Client, error) {
 	query := `
 		SELECT
 			id,
@@ -159,7 +233,10 @@ func (r *ClientRepository) GetByID(ctx context.Context, id int) (*models.Client,
 	return &client, nil
 }
 
-func (r *ClientRepository) Update(ctx context.Context, client models.Client) error {
+func (r *ClientRepository) Update(
+	ctx context.Context,
+	client models.Client,
+) error {
 	query := `
 		UPDATE clients
 		SET
@@ -189,7 +266,10 @@ func (r *ClientRepository) Update(ctx context.Context, client models.Client) err
 	return nil
 }
 
-func (r *ClientRepository) Delete(ctx context.Context, id int) error {
+func (r *ClientRepository) Delete(
+	ctx context.Context,
+	id int,
+) error {
 	_, err := r.db.Exec(
 		ctx,
 		"DELETE FROM clients WHERE id = $1",
@@ -209,6 +289,7 @@ func (r *ClientRepository) Delete(ctx context.Context, id int) error {
 
 	return nil
 }
+
 func (r *ClientRepository) ExistsByNameAndPhone(
 	ctx context.Context,
 	name string,
@@ -232,7 +313,10 @@ func (r *ClientRepository) ExistsByNameAndPhone(
 		phone,
 	).Scan(&exists)
 	if err != nil {
-		return false, fmt.Errorf("проверка клиента на дубликат: %w", err)
+		return false, fmt.Errorf(
+			"проверка клиента на дубликат: %w",
+			err,
+		)
 	}
 
 	return exists, nil

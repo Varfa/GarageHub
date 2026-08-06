@@ -1,0 +1,382 @@
+{{ define "content" }}
+<div class="employee-details-page">
+    <div class="page-header">
+        <div>
+            <h1>Карточка сотрудника</h1>
+            <p>Личные данные, должность, контакты и статус.</p>
+        </div>
+
+        <div class="page-header-actions">
+            {{ if .Employee.IsActive }}
+            <a class="btn-secondary" href="/employees">
+                Назад к сотрудникам
+            </a>
+            {{ else }}
+            <a class="btn-secondary" href="/employees/archive">
+                Назад в архив
+            </a>
+            {{ end }}
+        </div>
+    </div>
+
+    {{ if .Error }}
+    <div class="form-error" role="alert">
+        {{ .Error }}
+    </div>
+    {{ end }}
+
+    {{ if .Success }}
+    <div class="form-success" role="status">
+        {{ .Success }}
+    </div>
+    {{ end }}
+
+    {{ if not .Employee.IsActive }}
+    <div class="employee-archive-notice" role="status">
+        <div>
+            <strong>Сотрудник находится в архиве</strong>
+
+            <p>
+                Данные и телефоны доступны только для просмотра.
+                Для внесения изменений сначала восстановите сотрудника.
+            </p>
+        </div>
+
+        <form method="POST" action="/employees/restore" class="inline-form">
+            <input type="hidden" name="id" value="{{ .Employee.ID }}">
+
+            <button class="btn-primary" type="submit">
+                Восстановить сотрудника
+            </button>
+        </form>
+    </div>
+    {{ end }}
+
+    {{ if .Edit }}
+
+    <section class="employee-profile-card">
+        <div class="employee-section-header">
+            <div>
+                <h2>Редактирование сотрудника</h2>
+
+                <p>
+                    Измените личные данные и должность сотрудника.
+                </p>
+            </div>
+        </div>
+
+        <form method="POST" action="/employees/update" class="employee-edit-form">
+            <input type="hidden" name="id" value="{{ .Employee.ID }}">
+
+            <label>
+                Имя
+
+                <input type="text" name="first_name" value="{{ .Employee.FirstName }}" required>
+            </label>
+
+            <label>
+                Фамилия
+
+                <input type="text" name="last_name" value="{{ .Employee.LastName }}" required>
+            </label>
+
+            <label>
+                Email
+
+                <input type="email" name="email" value="{{ if .Employee.Email }}{{ .Employee.Email }}{{ end }}"
+                    placeholder="employee@example.com">
+            </label>
+
+            <label>
+                Должность
+
+                <select name="position_id" required>
+                    <option value="">
+                        Выберите должность
+                    </option>
+
+                    {{ range .Positions }}
+                    <option value="{{ .ID }}" {{ if eq .ID $.Employee.PositionID }} selected {{ end }}>
+                        {{ .Name }}
+                    </option>
+                    {{ end }}
+                </select>
+            </label>
+
+            <div class="employee-edit-phone-note">
+                <span>Основной телефон</span>
+
+                <strong>{{ .Employee.Phone }}</strong>
+
+                <p>
+                    Телефоны изменяются отдельно в блоке контактов.
+                </p>
+            </div>
+
+            <div class="employee-edit-actions">
+                <button class="btn-primary" type="submit">
+                    Сохранить изменения
+                </button>
+
+                <a class="btn-secondary" href="/employees/view?id={{ .Employee.ID }}">
+                    Отмена
+                </a>
+            </div>
+        </form>
+    </section>
+
+    {{ else }}
+
+    <section class="employee-profile-card">
+        <div class="employee-profile-header">
+            <div class="employee-profile-main">
+                <span class="employee-profile-avatar">
+                    {{ printf "%.1s" .Employee.FirstName }}
+                </span>
+
+                <div>
+                    <h2>
+                        {{ .Employee.FirstName }}
+                        {{ .Employee.LastName }}
+                    </h2>
+
+                    <p>
+                        Сотрудник №{{ .Employee.ID }}
+                    </p>
+                </div>
+            </div>
+
+            <div>
+                {{ if .Employee.IsActive }}
+                <span class="employee-status employee-status-active">
+                    Активен
+                </span>
+                {{ else }}
+                <span class="employee-status employee-status-inactive">
+                    В архиве
+                </span>
+                {{ end }}
+            </div>
+        </div>
+
+        <div class="employee-info-grid">
+            <div class="employee-info-item">
+                <span>Должность</span>
+
+                <strong>
+                    {{ range .Positions }}
+                    {{ if eq .ID $.Employee.PositionID }}
+                    {{ .Name }}
+                    {{ end }}
+                    {{ end }}
+                </strong>
+            </div>
+
+            <div class="employee-info-item">
+                <span>Email</span>
+
+                {{ if .Employee.Email }}
+                <strong>{{ .Employee.Email }}</strong>
+                {{ else }}
+                <strong class="employee-empty-value">
+                    Не указан
+                </strong>
+                {{ end }}
+            </div>
+
+            <div class="employee-info-item">
+                <span>Основной телефон</span>
+
+                <strong>
+                    {{ .Employee.Phone }}
+                </strong>
+            </div>
+
+            <div class="employee-info-item">
+                <span>Дата добавления</span>
+
+                <strong>
+                    {{ .Employee.CreatedAt.Format "02.01.2006" }}
+                </strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="employee-section-card">
+        <div class="employee-section-header">
+            <div>
+                <h2>Телефоны</h2>
+                <p>Все контактные номера сотрудника.</p>
+            </div>
+        </div>
+
+        {{ if .Employee.IsActive }}
+
+        <details class="employee-phone-create">
+            <summary class="btn-primary">
+                Добавить телефон
+            </summary>
+
+            <form method="POST" action="/employees/phones/create" class="employee-phone-form">
+                <input type="hidden" name="employee_id" value="{{ .Employee.ID }}">
+
+                <label>
+                    Номер телефона
+
+                    <input type="tel" name="phone" placeholder="+370..." autocomplete="tel" required>
+                </label>
+
+                <label>
+                    Тип номера
+
+                    <select name="label">
+                        <option value="Дополнительный">
+                            Дополнительный
+                        </option>
+
+                        <option value="Рабочий">
+                            Рабочий
+                        </option>
+
+                        <option value="Личный">
+                            Личный
+                        </option>
+
+                        <option value="Основной">
+                            Основной
+                        </option>
+
+                        <option value="WhatsApp">
+                            WhatsApp
+                        </option>
+
+                        <option value="Viber">
+                            Viber
+                        </option>
+
+                        <option value="Telegram">
+                            Telegram
+                        </option>
+                    </select>
+                </label>
+
+                <label class="employee-primary-checkbox">
+                    <input type="checkbox" name="is_primary">
+
+                    <span>
+                        Сделать основным номером
+                    </span>
+                </label>
+
+                <div class="employee-phone-form-actions">
+                    <button class="btn-primary" type="submit">
+                        Сохранить телефон
+                    </button>
+                </div>
+            </form>
+        </details>
+
+        {{ end }}
+
+        {{ if .Phones }}
+
+        <div class="employee-phones-list">
+            {{ range .Phones }}
+
+            <div class="employee-phone-item">
+                <div class="employee-phone-content">
+                    <strong>{{ .Phone }}</strong>
+                    <span>{{ .Label }}</span>
+                </div>
+
+                <div class="employee-phone-actions">
+                    {{ if .IsPrimary }}
+
+                    <span class="employee-primary-phone">
+                        Основной
+                    </span>
+
+                    {{ else if $.Employee.IsActive }}
+
+                    <form method="POST" action="/employees/phones/primary" class="inline-form">
+                        <input type="hidden" name="employee_id" value="{{ .EmployeeID }}">
+
+                        <input type="hidden" name="phone_id" value="{{ .ID }}">
+
+                        <button class="btn-secondary btn-small" type="submit">
+                            Сделать основным
+                        </button>
+                    </form>
+
+                    <form method="POST" action="/employees/phones/delete" class="inline-form"
+                        onsubmit="return confirm('Удалить этот телефон?')">
+                        <input type="hidden" name="employee_id" value="{{ .EmployeeID }}">
+
+                        <input type="hidden" name="phone_id" value="{{ .ID }}">
+
+                        <button class="btn-danger btn-small" type="submit">
+                            Удалить
+                        </button>
+                    </form>
+
+                    {{ end }}
+                </div>
+            </div>
+
+            {{ end }}
+        </div>
+
+        {{ else }}
+
+        <div class="employee-section-empty">
+            Телефоны пока не добавлены.
+        </div>
+
+        {{ end }}
+    </section>
+
+    <section class="employee-section-card">
+        <div class="employee-section-header">
+            <div>
+                <h2>Действия</h2>
+                <p>Управление данными и статусом сотрудника.</p>
+            </div>
+        </div>
+
+        <div class="employee-actions-panel">
+            {{ if .Employee.IsActive }}
+
+            <a class="btn-primary" href="/employees/view?id={{ .Employee.ID }}&edit=1">
+                Редактировать сотрудника
+            </a>
+
+            <form method="POST" action="/employees/archive-action" class="inline-form"
+                onsubmit="return confirm('Перенести сотрудника в архив?')">
+                <input type="hidden" name="id" value="{{ .Employee.ID }}">
+
+                <button class="btn-danger" type="submit">
+                    Перенести в архив
+                </button>
+            </form>
+
+            {{ else }}
+
+            <form method="POST" action="/employees/restore" class="inline-form">
+                <input type="hidden" name="id" value="{{ .Employee.ID }}">
+
+                <button class="btn-primary" type="submit">
+                    Восстановить сотрудника
+                </button>
+            </form>
+
+            <a class="btn-secondary" href="/employees/archive">
+                Вернуться в архив
+            </a>
+
+            {{ end }}
+        </div>
+    </section>
+
+    {{ end }}
+</div>
+{{ end }}

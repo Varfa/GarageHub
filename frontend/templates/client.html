@@ -1,261 +1,305 @@
 {{ define "content" }}
-
-<div class="page-header">
-    <h1>Карточка клиента</h1>
-    <p>Полная информация о выбранном клиенте.</p>
-</div>
-
-<div class="client-card">
-
-    {{ if .Edit }}
-
-    <form method="POST" action="/clients/update" class="client-edit-form">
-
-        <input type="hidden" name="id" value="{{ .Client.ID }}">
-
-        <label>
-            Имя
-            <input type="text" name="name" value="{{ .Client.Name }}">
-        </label>
-
-        <label>
-            Телефон
-            <input type="text" name="phone" value="{{ .Client.Phone }}">
-        </label>
-
-        <label>
-            Email
-            <input type="email" name="email" value="{{ .Client.Email }}">
-        </label>
-
-        <label>
-            Адрес
-            <input type="text" name="address" value="{{ .Client.Address }}">
-        </label>
-
-        <label class="full-width">
-            Примечание
-            <textarea name="note">{{ .Client.Note }}</textarea>
-        </label>
-
-        <div class="edit-actions">
-            <button class="btn-primary" type="submit">
-                💾 Сохранить
-            </button>
-
-            <a class="btn-secondary" href="/clients/view?id={{ .Client.ID }}">
-                ❌ Отмена
-            </a>
-        </div>
-
-    </form>
-
-    {{ else }}
-
-    <div class="client-card-header">
-
+<div class="clients-page">
+    <div class="page-header">
         <div>
-            <h2>{{ .Client.Name }}</h2>
-            <p>Клиент #{{ .Client.ID }}</p>
+            <h1>Карточка клиента</h1>
+            <p>Контактные данные, автомобили и история клиента.</p>
         </div>
 
-        <div class="client-card-actions">
-
-            <a class="btn-primary" href="/clients/view?id={{ .Client.ID }}&edit=1">
-                ✏️ Редактировать
-            </a>
-
-            <form method="POST" action="/clients/delete" class="inline-form">
-
-                <input type="hidden" name="id" value="{{ .Client.ID }}">
-
-                <button class="btn-danger" type="submit"
-                    onclick="return confirm('Вы действительно хотите удалить клиента?')">
-
-                    🗑️ Удалить
-
-                </button>
-
-            </form>
-
+        <div class="page-header-actions">
             <a class="btn-secondary" href="/clients">
-                ← Назад
+                Назад к клиентам
             </a>
-
         </div>
-
     </div>
 
-    <div class="client-info-grid">
+    <div class="details-card">
+        {{ if .Edit }}
 
-        <div class="client-info-item">
-            <span>Телефон</span>
-            <strong>{{ .Client.Phone }}</strong>
-        </div>
+        <form method="POST" action="/clients/update" class="edit-form">
+            <input type="hidden" name="id" value="{{ .Client.ID }}">
 
-        <div class="client-info-item">
-            <span>Email</span>
-            <strong>{{ .Client.Email }}</strong>
-        </div>
+            <label>
+                Имя
 
-        <div class="client-info-item">
-            <span>Адрес</span>
-            <strong>{{ .Client.Address }}</strong>
-        </div>
+                <input type="text" name="name" value="{{ .Client.Name }}" required>
+            </label>
 
-        <div class="client-info-item">
-            <span>Последний визит</span>
-            <strong>{{ .Client.FormattedDate }}</strong>
-        </div>
+            <label>
+                Телефон
 
-    </div>
+                <input type="tel" name="phone" value="{{ .Client.Phone }}" required>
+            </label>
 
-    <div class="client-note">
-        <span>Примечание</span>
-        <p>{{ .Client.Note }}</p>
-    </div>
+            <label>
+                Email
 
-    {{ end }}
+                <input type="email" name="email" value="{{ .Client.Email }}">
+            </label>
 
-</div>
+            <label>
+                Адрес
 
-<div class="client-section">
-    <div class="client-section">
-        <div class="client-section">
-            <div class="client-section-header">
-                <h3>🚗 Автомобили клиента ({{ len .Cars }})</h3>
+                <input type="text" name="address" value="{{ .Client.Address }}">
+            </label>
 
-                <button class="btn-primary" type="button" onclick="toggleCarForm()">
-                    ➕ Добавить автомобиль
+            <label class="full-width">
+                Примечание
+
+                <textarea name="note">{{ .Client.Note }}</textarea>
+            </label>
+
+            <div class="form-actions">
+                <a class="btn-secondary" href="/clients/view?id={{ .Client.ID }}">
+                    Отмена
+                </a>
+
+                <button class="btn-primary" type="submit">
+                    Сохранить изменения
                 </button>
             </div>
+        </form>
 
-            <div id="car-create-form" class="car-create-form">
-                <form method="POST" action="/cars/create" class="client-edit-form">
-                    <input type="hidden" name="client_id" value="{{ .Client.ID }}">
+        {{ else }}
 
-                    <label>
-                        Марка
-                        <input type="text" name="brand">
-                    </label>
+        <div class="details-header">
+            <div>
+                <h2>{{ .Client.Name }}</h2>
+                <p>{{ .Client.Code }}</p>
+            </div>
 
-                    <label>
-                        Модель
-                        <input type="text" name="model">
-                    </label>
+            <div class="details-actions">
+                <a class="btn-primary" href="/clients/view?id={{ .Client.ID }}&edit=1">
+                    Редактировать
+                </a>
 
-                    <label>
-                        Год
-                        <input type="number" name="year">
-                    </label>
+                <form method="POST" action="/clients/delete" class="inline-form">
+                    <input type="hidden" name="id" value="{{ .Client.ID }}">
 
-                    <label>
-                        Госномер
-                        <input type="text" name="plate_number">
-                    </label>
-
-                    <label>
-                        VIN
-                        <input type="text" name="vin">
-                    </label>
-
-                    <label>
-                        Двигатель
-                        <input type="text" name="engine">
-                    </label>
-
-                    <label>
-                        Мощность, кВт
-                        <input type="number" name="power_kw">
-                    </label>
-
-                    <label>
-                        Цвет
-                        <input type="text" name="color">
-                    </label>
-
-                    <label>
-                        Пробег
-                        <input type="number" name="mileage">
-                    </label>
-
-                    <label class="full-width">
-                        Примечание
-                        <textarea name="note"></textarea>
-                    </label>
-
-                    <div class="edit-actions">
-                        <button class="btn-primary" type="submit">
-                            💾 Сохранить автомобиль
-                        </button>
-
-                        <button class="btn-secondary" type="button" onclick="toggleCarForm()">
-                            ❌ Отмена
-                        </button>
-                    </div>
+                    <button class="btn-danger" type="submit"
+                        onclick="return confirm('Вы действительно хотите удалить клиента?')">
+                        Удалить
+                    </button>
                 </form>
             </div>
+        </div>
 
-            {{ if .Cars }}
+        <div class="info-grid">
+            <div class="info-item">
+                <span>Телефон</span>
+                <strong>{{ .Client.Phone }}</strong>
+            </div>
 
-            {{ $page := . }}
+            <div class="info-item">
+                <span>Email</span>
 
-            <div class="cars-list">
-                {{ range .Cars }}
-
-                <div class="car-item">
-                    <a class="car-item-link" href="/cars/view?id={{ .ID }}">
-                        <div>
-                            <strong>{{ .Brand }} {{ .Model }}</strong>
-                            <span>{{ .PlateNumber }}</span>
-                        </div>
-
-                        <div>
-                            <span>{{ .Year }} год</span>
-                            <span>{{ .Mileage }} км</span>
-                        </div>
-                    </a>
-
-                    <form method="POST" action="/cars/change-owner" class="change-owner-form">
-                        <input type="hidden" name="car_id" value="{{ .ID }}">
-                        <input type="hidden" name="old_client_id" value="{{ $page.Client.ID }}">
-                        <input type="hidden" name="return_to" value="client">
-
-                        <select name="client_id" required>
-                            <option value="">Новый владелец</option>
-
-                            {{ range $page.AllClients }}
-                            {{ if ne .ID $page.Client.ID }}
-                            <option value="{{ .ID }}">
-                                {{ .Name }} — {{ .Phone }}
-                            </option>
-                            {{ end }}
-                            {{ end }}
-                        </select>
-
-                        <button class="btn-secondary" type="submit">
-                            Сменить владельца
-                        </button>
-                    </form>
-                </div>
-
+                {{ if .Client.Email }}
+                <strong>{{ .Client.Email }}</strong>
+                {{ else }}
+                <strong class="empty-value">Не указан</strong>
                 {{ end }}
             </div>
 
+            <div class="info-item">
+                <span>Адрес</span>
+
+                {{ if .Client.Address }}
+                <strong>{{ .Client.Address }}</strong>
+                {{ else }}
+                <strong class="empty-value">Не указан</strong>
+                {{ end }}
+            </div>
+
+            <div class="info-item">
+                <span>Последний визит</span>
+                <strong>{{ .Client.FormattedDate }}</strong>
+            </div>
+        </div>
+
+        <div class="details-note">
+            <span>Примечание</span>
+
+            {{ if .Client.Note }}
+            <p>{{ .Client.Note }}</p>
             {{ else }}
-
-            <p class="empty-table">
-                Автомобили пока не добавлены.
-            </p>
-
+            <p class="empty-value">Примечание отсутствует.</p>
             {{ end }}
         </div>
 
-        <div class="client-section">
-            <h3>🛠 История ремонтов</h3>
-            <p class="empty-table">
-                История ремонтов пока пуста.
-            </p>
+        {{ end }}
+    </div>
+
+    <div class="section-card">
+        <div class="section-header">
+            <div>
+                <h3>Автомобили клиента</h3>
+                <p>Всего автомобилей: {{ len .Cars }}</p>
+            </div>
+
+            <button class="btn-primary" type="button" onclick="toggleCarForm()">
+                Добавить автомобиль
+            </button>
+        </div>
+
+        <div id="car-create-form" class="car-create-form">
+            <form method="POST" action="/cars/create" class="edit-form">
+                <input type="hidden" name="client_id" value="{{ .Client.ID }}">
+
+                <label>
+                    Марка
+                    <input type="text" name="brand">
+                </label>
+
+                <label>
+                    Модель
+                    <input type="text" name="model">
+                </label>
+
+                <label>
+                    Год выпуска
+                    <input type="number" name="year">
+                </label>
+
+                <label>
+                    Госномер
+                    <input type="text" name="plate_number">
+                </label>
+
+                <label>
+                    VIN
+                    <input type="text" name="vin">
+                </label>
+
+                <label>
+                    Двигатель
+                    <input type="text" name="engine">
+                </label>
+
+                <label>
+                    Мощность, кВт
+                    <input type="number" name="power_kw">
+                </label>
+
+                <label>
+                    Цвет
+                    <input type="text" name="color">
+                </label>
+
+                <label>
+                    Пробег, км
+                    <input type="number" name="mileage">
+                </label>
+
+                <label class="full-width">
+                    Примечание
+                    <textarea name="note"></textarea>
+                </label>
+
+                <div class="form-actions">
+                    <button class="btn-secondary" type="button" onclick="toggleCarForm()">
+                        Отмена
+                    </button>
+
+                    <button class="btn-primary" type="submit">
+                        Сохранить автомобиль
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {{ if .Cars }}
+
+        {{ $page := . }}
+
+        <div class="cars-list">
+            {{ range .Cars }}
+            <div class="car-item">
+                <a class="car-item-link" href="/cars/view?id={{ .ID }}">
+                    <div class="car-main-info">
+                        <strong>{{ .Brand }} {{ .Model }}</strong>
+                        <span>{{ .PlateNumber }}</span>
+                    </div>
+
+                    <div class="car-secondary-info">
+                        <span>{{ .Year }} год</span>
+                        <span>{{ .Mileage }} км</span>
+                    </div>
+                </a>
+
+                <form method="POST" action="/cars/change-owner" class="change-owner-form">
+                    <input type="hidden" name="car_id" value="{{ .ID }}">
+
+                    <input type="hidden" name="old_client_id" value="{{ $page.Client.ID }}">
+
+                    <input type="hidden" name="return_to" value="client">
+
+                    <select name="client_id" required>
+                        <option value="">Новый владелец</option>
+
+                        {{ range $page.AllClients }}
+                        {{ if ne .ID $page.Client.ID }}
+                        <option value="{{ .ID }}">
+                            {{ .Name }} — {{ .Phone }}
+                        </option>
+                        {{ end }}
+                        {{ end }}
+                    </select>
+
+                    <button class="btn-secondary" type="submit">
+                        Сменить владельца
+                    </button>
+                </form>
+            </div>
+            {{ end }}
+        </div>
+
+        {{ else }}
+
+        <div class="empty-state">
+            <h2>Автомобилей пока нет</h2>
+            <p>Добавьте первый автомобиль этого клиента.</p>
         </div>
 
         {{ end }}
+    </div>
+
+    <div class="section-card">
+        <div class="section-header">
+            <div>
+                <h3>История ремонтов</h3>
+                <p>Заказы и выполненные работы клиента.</p>
+            </div>
+        </div>
+
+        <div class="empty-state compact-empty-state">
+            <p>История ремонтов пока пуста.</p>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-header">
+            <div>
+                <h3>Использованные запчасти</h3>
+                <p>Запчасти, установленные на автомобили клиента.</p>
+            </div>
+        </div>
+
+        <div class="empty-state compact-empty-state">
+            <p>Запчасти пока отсутствуют.</p>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-header">
+            <div>
+                <h3>Файлы и документы</h3>
+                <p>Фотографии, документы и другие вложения.</p>
+            </div>
+        </div>
+
+        <div class="empty-state compact-empty-state">
+            <p>Файлы пока отсутствуют.</p>
+        </div>
+    </div>
+</div>
+{{ end }}

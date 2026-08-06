@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ t "login.page_title" }}</title>
+
+    <link rel="stylesheet" href="/static/css/login.css">
+</head>
+
+<body>
+    <main class="login-page">
+        <section class="login-info">
+            <div class="brand">
+                <div class="brand-icon">GH</div>
+
+                <div>
+                    <div class="brand-name">GarageHub</div>
+                    <div class="brand-caption">
+                        {{ t "login.brand_caption" }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-info-content">
+                <p class="eyebrow">
+                    {{ t "login.eyebrow" }}
+                </p>
+
+                <h1>
+                    {{ t "login.hero_title" }}
+                </h1>
+
+                <p class="description">
+                    {{ t "login.description" }}
+                </p>
+
+                <div class="features">
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        {{ t "login.feature_customers" }}
+                    </div>
+
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        {{ t "login.feature_workflow" }}
+                    </div>
+
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        {{ t "login.feature_history" }}
+                    </div>
+                </div>
+            </div>
+
+            <p class="copyright">
+                © 2026 GarageHub
+            </p>
+        </section>
+
+        <section class="login-form-section">
+            <form class="language-switcher" action="/language" method="get">
+                <input type="hidden" name="redirect" value="/login">
+
+                <label for="language" class="visually-hidden">
+                    Language
+                </label>
+
+                <select id="language" name="lang" onchange="this.form.submit()">
+                    <option value="en" {{if eq .Language "en" }}selected{{end}}>
+                        English
+                    </option>
+
+                    <option value="lt" {{if eq .Language "lt" }}selected{{end}}>
+                        Lietuvių
+                    </option>
+
+                    <option value="uk" {{if eq .Language "uk" }}selected{{end}}>
+                        Українська
+                    </option>
+
+                    <option value="ru" {{if eq .Language "ru" }}selected{{end}}>
+                        Русский
+                    </option>
+                </select>
+            </form>
+            <div class="login-card">
+                <div class="mobile-brand">
+                    <div class="brand-icon">GH</div>
+                    <span>GarageHub</span>
+                </div>
+
+                <div class="login-heading">
+                    <p class="welcome">
+                        {{ t "login.welcome" }}
+                    </p>
+
+                    <h2>
+                        {{ t "login.title" }}
+                    </h2>
+
+                    <p>
+                        {{ t "login.subtitle" }}
+                    </p>
+                </div>
+
+                <form action="/dashboard" method="get">
+                    <div class="form-group">
+                        <label for="email">
+                            {{ t "login.email" }}
+                        </label>
+
+                        <input id="email" name="email" type="email" placeholder='{{ t "login.email_placeholder" }}'
+                            autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="password-label">
+                            <label for="password">
+                                {{ t "login.password" }}
+                            </label>
+
+                            <span>
+                                {{ t "login.forgot_password" }}
+                            </span>
+                        </div>
+
+                        <input id="password" name="password" type="password"
+                            placeholder='{{ t "login.password_placeholder" }}' autocomplete="current-password">
+                    </div>
+
+                    <label class="remember">
+                        <input type="checkbox" name="remember">
+
+                        <span>
+                            {{ t "login.remember_me" }}
+                        </span>
+                    </label>
+
+                    <button type="submit">
+                        {{ t "login.sign_in" }}
+                        <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+
+                <p class="demo-note">
+                    {{ t "login.demo_note" }}
+                </p>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

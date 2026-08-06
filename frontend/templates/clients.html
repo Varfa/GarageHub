@@ -1,73 +1,173 @@
 {{ define "content" }}
+<div class="clients-page">
+    <div class="page-header">
+        <div>
+            <h1 data-i18n="title.clients">
+                Клиенты
+            </h1>
 
-<div class="page-header">
-    <h1 data-i18n="title.clients">Клиенты</h1>
-    <p data-i18n="message.clients_description">Управление клиентской базой.</p>
-</div>
+            <p data-i18n="message.clients_description">
+                Управление клиентской базой.
+            </p>
+        </div>
 
-<div class="clients-toolbar">
-    <form method="GET" action="/clients" class="search-form">
-        <input class="search-input" type="search" name="search" value="{{ .Search }}" placeholder="Поиск клиента..."
-            data-i18n-placeholder="placeholder.search_client">
+        <div class="page-header-actions">
+            <a class="btn-primary" href="/clients/create">
+                Создать клиента
+            </a>
+        </div>
+    </div>
 
-        <button class="btn-secondary" type="submit">
-            🔍 Найти
-        </button>
-    </form>
-</div>
+    {{ if .Error }}
+    <div class="form-error" role="alert">
+        {{ .Error }}
+    </div>
+    {{ end }}
 
-<div class="clients-actions">
-    <a class="btn-primary" href="/clients/create">
-        ➕ Создать клиента
-    </a>
-</div>
+    <div class="clients-toolbar">
+        <form method="GET" action="/clients" class="search-form">
+            <input class="search-input" type="search" name="search" value="{{ .Search }}"
+                placeholder="Поиск по имени или телефону" data-i18n-placeholder="placeholder.search_client">
 
-<table class="clients-table">
-    <thead>
-        <tr>
-            <th data-i18n="table.name">Имя</th>
-            <th data-i18n="table.phone">Телефон</th>
-            <th data-i18n="table.cars_count">Автомобилей</th>
-            <th data-i18n="table.last_visit">Последний визит</th>
-            <th data-i18n="table.actions">Действия</th>
-        </tr>
-    </thead>
+            <button class="btn-secondary" type="submit">
+                Найти
+            </button>
 
-    <tbody>
-        {{ if .Clients }}
-        {{ range .Clients }}
-        <tr>
-            <td>{{ .Name }}</td>
-            <td>{{ .Phone }}</td>
-            <td>0</td>
-            <td>{{ .FormattedDate }}</td>
+            {{ if .Search }}
+            <a class="btn-secondary" href="/clients">
+                Сбросить
+            </a>
+            {{ end }}
+        </form>
+    </div>
 
-            <td class="actions-cell">
-                <button class="actions-btn" type="button" onclick="toggleMenu(this)">
-                    ⋯
-                </button>
+    {{ if .Clients }}
 
-                <div class="actions-menu">
-                    <a href="/clients/view?id={{ .ID }}">👁 Открыть</a>
+    <div class="clients-table-wrapper">
+        <table class="clients-table">
+            <thead>
+                <tr>
+                    <th>Клиент</th>
+                    <th>Телефон</th>
+                    <th>Автомобилей</th>
+                    <th>Последний визит</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
 
-                    <form method="POST" action="/clients/delete">
-                        <input type="hidden" name="id" value="{{ .ID }}">
-                        <button type="submit" onclick="return confirm('Вы действительно хотите удалить клиента?')">
-                            🗑️ Удалить
+            <tbody>
+                {{ range .Clients }}
+                <tr class="client-row" data-href="/clients/view?id={{ .ID }}" tabindex="0">
+                    <td>
+                        <div class="client-identity">
+                            <span class="client-avatar">
+                                {{ printf "%.1s" .Name }}
+                            </span>
+
+                            <div class="client-identity-text">
+                                <a class="client-name" href="/clients/view?id={{ .ID }}">
+                                    {{ .Name }}
+                                </a>
+
+                                <span class="client-code">
+                                    ID: {{ .ID }}
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="client-phone">
+                        {{ if .Phone }}
+                        {{ .Phone }}
+                        {{ else }}
+                        <span class="client-empty-value">
+                            Не указан
+                        </span>
+                        {{ end }}
+                    </td>
+
+                    <td>
+                        {{ if gt .CarsCount 0 }}
+                        <span class="client-cars-count client-cars-count-active">
+                            {{ .CarsCount }}
+                        </span>
+                        {{ else }}
+                        <span class="client-cars-count client-cars-count-empty">
+                            0
+                        </span>
+                        {{ end }}
+                    </td>
+
+                    <td class="client-date">
+                        {{ if .LastVisitAt.IsZero }}
+                        <span class="client-visit client-visit-empty">
+                            Нет визитов
+                        </span>
+                        {{ else }}
+                        <span class="client-visit">
+                            {{ .FormattedDate }}
+                        </span>
+                        {{ end }}
+                    </td>
+
+                    <td class="actions-cell">
+                        <button class="actions-btn" type="button" aria-label="Действия с клиентом"
+                            onclick="toggleMenu(this)">
+                            ⋯
                         </button>
-                    </form>
-                </div>
-            </td>
-        </tr>
-        {{ end }}
-        {{ else }}
-        <tr>
-            <td colspan="5" class="empty-table">
-                Клиентов еще нет
-            </td>
-        </tr>
-        {{ end }}
-    </tbody>
-</table>
 
+                        <div class="actions-menu">
+                            <a href="/clients/view?id={{ .ID }}&edit=1">
+                                Редактировать
+                            </a>
+
+                            <form method="POST" action="/clients/delete">
+                                <input type="hidden" name="id" value="{{ .ID }}">
+
+                                <button type="submit">
+                                    Удалить
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+
+    {{ else }}
+
+    <div class="clients-table-wrapper">
+        <div class="clients-empty">
+            {{ if .Search }}
+
+            <h2>Клиенты не найдены</h2>
+
+            <p>
+                Попробуйте изменить поисковый запрос.
+            </p>
+
+            <a class="btn-secondary" href="/clients">
+                Сбросить поиск
+            </a>
+
+            {{ else }}
+
+            <h2>Клиентов пока нет</h2>
+
+            <p>
+                Создайте первого клиента, чтобы он появился в системе.
+            </p>
+
+            <a class="btn-primary" href="/clients/create">
+                Создать клиента
+            </a>
+
+            {{ end }}
+        </div>
+    </div>
+
+    {{ end }}
+</div>
 {{ end }}

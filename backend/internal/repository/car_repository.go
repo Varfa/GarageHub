@@ -6,16 +6,15 @@ import (
 	"fmt"
 
 	"github.com/Varfa/GarageHub/internal/models"
-	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/jackc/pgx/v5"
 )
 
 type CarRepository struct {
-	db *pgxpool.Pool
+	db DBTX
 }
 
-func NewCarRepository(db *pgxpool.Pool) *CarRepository {
+func NewCarRepository(db DBTX) *CarRepository {
 	return &CarRepository{
 		db: db,
 	}

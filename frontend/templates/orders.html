@@ -1,5 +1,85 @@
 {{ define "content" }}
+<div class="module-page">
+    <div class="page-header">
+        <div>
+            <h1>Заказы</h1>
+            <p>Управление ремонтом автомобилей и выполнением работ.</p>
+        </div>
 
-<h1>Заказы</h1>
-<p>Страница находится в разработке.</p>
+        <div class="page-header-actions">
+            <button class="btn-primary" type="button" disabled>
+                Создать заказ
+            </button>
+        </div>
+    </div>
+
+    <div class="module-layout">
+        <section class="module-card">
+            <div class="module-card-header">
+                <div>
+                    <h2>Список заказов</h2>
+                    <p>Активные и завершённые заказы автосервиса.</p>
+                </div>
+            </div>
+
+            <div class="module-empty">
+                <span class="module-empty-icon">O</span>
+
+                <h2>Модуль заказов готовится</h2>
+
+                <p>
+                    Здесь появятся заказ-наряды, статусы ремонта,
+                    назначенные сотрудники, работы, запчасти и стоимость.
+                </p>
+            </div>
+        </section>
+
+        <aside class="module-card">
+            <div class="module-card-header">
+                <div>
+                    <h2>Возможности</h2>
+                    <p>Что будет доступно в этом разделе.</p>
+                </div>
+            </div>
+
+            <div class="module-features">
+                <div class="module-feature">
+                    <span class="module-feature-marker">1</span>
+
+                    <div>
+                        <strong>Заказ-наряды</strong>
+                        <p>Создание и ведение ремонта автомобиля.</p>
+                    </div>
+                </div>
+
+                <div class="module-feature">
+                    <span class="module-feature-marker">2</span>
+
+                    <div>
+                        <strong>Работы и запчасти</strong>
+                        <p>Добавление услуг, деталей и итоговой стоимости.</p>
+                    </div>
+                </div>
+
+                <div class="module-feature">
+                    <span class="module-feature-marker">3</span>
+
+                    <div>
+                        <strong>Статусы ремонта</strong>
+                        <p>Контроль текущего состояния каждого заказа.</p>
+                    </div>
+                </div>
+
+                <div class="module-feature">
+                    <span class="module-feature-marker">4</span>
+
+                    <div>
+                        <strong>Ответственные сотрудники</strong>
+                        <p>Назначение механиков и мастера-приёмщика.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
 {{ end }}

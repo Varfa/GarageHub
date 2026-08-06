@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/Varfa/GarageHub/internal/models"
@@ -14,8 +15,9 @@ type ClientHandler struct {
 }
 
 type ClientsPageData struct {
-	Clients []models.Client
+	Clients []models.ClientListItem
 	Search  string
+	Error   string
 }
 
 type ClientCreatePageData struct {
@@ -29,43 +31,76 @@ type ClientPageData struct {
 	Edit       bool
 }
 
-func NewClientHandler(service *service.ClientService, carService *service.CarService) *ClientHandler {
+func NewClientHandler(
+	service *service.ClientService,
+	carService *service.CarService,
+) *ClientHandler {
 	return &ClientHandler{
 		service:    service,
 		carService: carService,
 	}
-
 }
 
-func (h *ClientHandler) Clients(w http.ResponseWriter, r *http.Request) {
+func (h *ClientHandler) Clients(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	search := r.URL.Query().Get("search")
+	errorMessage := r.URL.Query().Get("error")
 
-	clients, err := h.service.List(r.Context(), search)
+	clients, err := h.service.ListWithCarsCount(
+		r.Context(),
+		search,
+	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
 	data := ClientsPageData{
 		Clients: clients,
 		Search:  search,
+		Error:   errorMessage,
 	}
 
-	RenderTemplate(w, "clients", data)
+	RenderTemplate(w, r, "clients", data)
 }
 
-func (h *ClientHandler) CreatePage(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "client_create", ClientCreatePageData{})
+func (h *ClientHandler) CreatePage(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	RenderTemplate(
+		w,
+		r,
+		"client_create",
+		ClientCreatePageData{},
+	)
 }
 
-func (h *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
+func (h *ClientHandler) Create(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "метод не разрешён", http.StatusMethodNotAllowed)
+		http.Error(
+			w,
+			"метод не разрешён",
+			http.StatusMethodNotAllowed,
+		)
 		return
 	}
 
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "некорректный запрос", http.StatusBadRequest)
+		http.Error(
+			w,
+			"некорректный запрос",
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -82,36 +117,73 @@ func (h *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
 			Error: err.Error(),
 		}
 
-		RenderTemplate(w, "client_create", data)
+		RenderTemplate(
+			w,
+			r,
+			"client_create",
+			data,
+		)
 		return
 	}
 
-	http.Redirect(w, r, "/clients", http.StatusSeeOther)
+	http.Redirect(
+		w,
+		r,
+		"/clients",
+		http.StatusSeeOther,
+	)
 }
 
-func (h *ClientHandler) View(w http.ResponseWriter, r *http.Request) {
+func (h *ClientHandler) View(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
-		http.Error(w, "некорректный id клиента", http.StatusBadRequest)
+		http.Error(
+			w,
+			"некорректный id клиента",
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	client, err := h.service.GetByID(r.Context(), id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusNotFound,
+		)
 		return
 	}
 
-	cars, err := h.carService.ListByClientID(r.Context(), id)
+	cars, err := h.carService.ListByClientID(
+		r.Context(),
+		id,
+	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
 		return
 	}
-	allClients, err := h.service.List(r.Context(), "")
+
+	allClients, err := h.service.List(
+		r.Context(),
+		"",
+	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
 		return
 	}
+
 	data := ClientPageData{
 		Client:     *client,
 		Cars:       cars,
@@ -119,23 +191,43 @@ func (h *ClientHandler) View(w http.ResponseWriter, r *http.Request) {
 		Edit:       r.URL.Query().Get("edit") == "1",
 	}
 
-	RenderTemplate(w, "client", data)
+	RenderTemplate(
+		w,
+		r,
+		"client",
+		data,
+	)
 }
 
-func (h *ClientHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (h *ClientHandler) Update(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "метод не разрешён", http.StatusMethodNotAllowed)
+		http.Error(
+			w,
+			"метод не разрешён",
+			http.StatusMethodNotAllowed,
+		)
 		return
 	}
 
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "некорректный запрос", http.StatusBadRequest)
+		http.Error(
+			w,
+			"некорректный запрос",
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	id, err := strconv.Atoi(r.FormValue("id"))
 	if err != nil {
-		http.Error(w, "некорректный id клиента", http.StatusBadRequest)
+		http.Error(
+			w,
+			"некорректный id клиента",
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -149,34 +241,70 @@ func (h *ClientHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.service.Update(r.Context(), client); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
-	http.Redirect(w, r, "/clients/view?id="+strconv.Itoa(id), http.StatusSeeOther)
+	http.Redirect(
+		w,
+		r,
+		"/clients/view?id="+strconv.Itoa(id),
+		http.StatusSeeOther,
+	)
 }
 
-func (h *ClientHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (h *ClientHandler) Delete(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "метод не разрешён", http.StatusMethodNotAllowed)
+		http.Error(
+			w,
+			"метод не разрешён",
+			http.StatusMethodNotAllowed,
+		)
 		return
 	}
 
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "некорректный запрос", http.StatusBadRequest)
+		http.Error(
+			w,
+			"некорректный запрос",
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	id, err := strconv.Atoi(r.FormValue("id"))
 	if err != nil {
-		http.Error(w, "некорректный id клиента", http.StatusBadRequest)
+		http.Error(
+			w,
+			"некорректный id клиента",
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	if err := h.service.Delete(r.Context(), id); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		errorMessage := url.QueryEscape(err.Error())
+
+		http.Redirect(
+			w,
+			r,
+			"/clients?error="+errorMessage,
+			http.StatusSeeOther,
+		)
 		return
 	}
 
-	http.Redirect(w, r, "/clients", http.StatusSeeOther)
+	http.Redirect(
+		w,
+		r,
+		"/clients",
+		http.StatusSeeOther,
+	)
 }

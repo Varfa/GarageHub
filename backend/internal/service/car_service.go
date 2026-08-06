@@ -58,10 +58,7 @@ func (s *CarService) ListByClientID(
 
 	return s.repo.ListByClientID(ctx, clientID)
 }
-func (s *CarService) List(
-	ctx context.Context,
-	search string,
-) ([]models.Car, error) {
+func (s *CarService) List(ctx context.Context, search string) ([]models.Car, error) {
 	return s.repo.List(ctx, search)
 }
 
@@ -98,11 +95,7 @@ func (s *CarService) Delete(ctx context.Context, id int) error {
 	return s.repo.Delete(ctx, id)
 }
 
-func (s *CarService) ChangeOwner(
-	ctx context.Context,
-	carID int,
-	clientID int,
-) error {
+func (s *CarService) ChangeOwner(ctx context.Context, carID int, clientID int) error {
 	if carID <= 0 {
 		return errors.New("некорректный id автомобиля")
 	}
