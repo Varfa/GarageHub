@@ -154,3 +154,12 @@
         padding: 28px 18px;
     }
 }
+
+.warehouse-search-form {
+    margin-bottom: 20px;
+}
+
+.warehouse-low-stock {
+    font-weight: 700;
+    color: #dc2626;
+}

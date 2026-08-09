@@ -36,21 +36,42 @@ func main() {
 
 	handler.SetTranslator(translator)
 
-	loginHandler := handler.NewLoginHandler(translator)
+	loginHandler := handler.NewLoginHandler(
+		translator,
+	)
 
-	clientRepository := repository.NewClientRepository(dbPool)
-	clientService := service.NewClientService(clientRepository)
+	// Clients
+	clientRepository := repository.NewClientRepository(
+		dbPool,
+	)
 
-	carRepository := repository.NewCarRepository(dbPool)
-	carService := service.NewCarService(carRepository)
+	clientService := service.NewClientService(
+		clientRepository,
+	)
 
-	employeeRepository := repository.NewEmployeeRepository(dbPool)
+	// Cars
+	carRepository := repository.NewCarRepository(
+		dbPool,
+	)
+
+	carService := service.NewCarService(
+		carRepository,
+	)
+
+	// Employees
+	employeeRepository := repository.NewEmployeeRepository(
+		dbPool,
+	)
 
 	employeePositionRepository :=
-		repository.NewEmployeePositionRepository(dbPool)
+		repository.NewEmployeePositionRepository(
+			dbPool,
+		)
 
 	employeePhoneRepository :=
-		repository.NewEmployeePhoneRepository(dbPool)
+		repository.NewEmployeePhoneRepository(
+			dbPool,
+		)
 
 	employeeService := service.NewEmployeeService(
 		employeeRepository,
@@ -58,6 +79,16 @@ func main() {
 		employeePhoneRepository,
 	)
 
+	// Warehouse
+	warehouseRepository := repository.NewWarehouseRepository(
+		dbPool,
+	)
+
+	warehouseService := service.NewWarehouseService(
+		warehouseRepository,
+	)
+
+	// Handlers
 	clientHandler := handler.NewClientHandler(
 		clientService,
 		carService,
@@ -72,18 +103,30 @@ func main() {
 		employeeService,
 	)
 
+	warehouseHandler := handler.NewWarehouseHandler(
+		warehouseService,
+	)
+
+	// Router
 	mux := router.SetupRoutes(
 		clientHandler,
 		carHandler,
 		employeeHandler,
+		warehouseHandler,
 		loginHandler,
 	)
 
 	addr := ":" + cfg.Server.Port
 
-	fmt.Println("Server started on", addr)
+	fmt.Println(
+		"Server started on",
+		addr,
+	)
 
-	err = http.ListenAndServe(addr, mux)
+	err = http.ListenAndServe(
+		addr,
+		mux,
+	)
 	if err != nil {
 		log.Fatal(err)
 	}

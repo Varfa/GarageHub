@@ -10,6 +10,7 @@ func SetupRoutes(
 	clientHandler *handler.ClientHandler,
 	carHandler *handler.CarHandler,
 	employeeHandler *handler.EmployeeHandler,
+	warehouseHandler *handler.WarehouseHandler,
 	loginHandler *handler.LoginHandler,
 ) *http.ServeMux {
 	mux := http.NewServeMux()
@@ -174,27 +175,71 @@ func SetupRoutes(
 		employeeHandler.DeletePhone,
 	)
 
-	// Modules
+	// Orders
 	mux.HandleFunc(
 		"/orders",
 		handler.OrdersHandler,
 	)
 
+	// Parts
 	mux.HandleFunc(
 		"/parts",
 		handler.PartsHandler,
 	)
 
+	// Warehouse
 	mux.HandleFunc(
 		"/warehouse",
-		handler.WarehouseHandler,
+		warehouseHandler.Warehouse,
 	)
 
+	mux.HandleFunc(
+		"/warehouse/create",
+		func(w http.ResponseWriter, r *http.Request) {
+			if r.Method == http.MethodGet {
+				warehouseHandler.CreatePage(w, r)
+				return
+			}
+
+			warehouseHandler.Create(w, r)
+		},
+	)
+
+	mux.HandleFunc(
+		"/warehouse/view",
+		warehouseHandler.View,
+	)
+
+	mux.HandleFunc(
+		"/warehouse/update",
+		warehouseHandler.Update,
+	)
+
+	// GET: страница архива
+	mux.HandleFunc(
+		"/warehouse/archive",
+		warehouseHandler.ArchivePage,
+	)
+
+	// POST: отправить позицию в архив
+	mux.HandleFunc(
+		"/warehouse/archive-item",
+		warehouseHandler.Archive,
+	)
+
+	// POST: восстановить позицию
+	mux.HandleFunc(
+		"/warehouse/restore",
+		warehouseHandler.Restore,
+	)
+
+	// Reports
 	mux.HandleFunc(
 		"/reports",
 		handler.ReportsHandler,
 	)
 
+	// Settings
 	mux.HandleFunc(
 		"/settings",
 		handler.SettingsHandler,

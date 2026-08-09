@@ -2,16 +2,13 @@
 
 <div class="page-header">
     <div>
-        <h1>Склад</h1>
-        <p>Складские позиции, остатки, цены и места хранения.</p>
+        <h1>Архив склада</h1>
+        <p>Неактивные складские позиции.</p>
     </div>
 
     <div class="page-header-actions">
-        <a href="/warehouse/create" class="btn-primary">
-            Новая позиция
-        </a>
-        <a href="/warehouse/archive" class="btn-secondary">
-            Архив
+        <a href="/warehouse" class="btn-secondary">
+            Назад к складу
         </a>
     </div>
 </div>
@@ -31,12 +28,12 @@
 <section class="module-card">
     <div class="module-card-header">
         <div>
-            <h2>Складские остатки</h2>
-            <p>Текущее количество запчастей и материалов.</p>
+            <h2>Архивные позиции</h2>
+            <p>Позиции, которые больше не используются в основном складе.</p>
         </div>
     </div>
 
-    <form method="GET" action="/warehouse" class="employees-search-form warehouse-search-form">
+    <form method="GET" action="/warehouse/archive" class="employees-search-form warehouse-search-form">
         <input type="search" name="search" value="{{ .Search }}" class="search-input"
             placeholder="Поиск по названию, артикулу или производителю">
 
@@ -45,7 +42,7 @@
         </button>
 
         {{ if .Search }}
-        <a href="/warehouse" class="btn-secondary">
+        <a href="/warehouse/archive" class="btn-secondary">
             Сбросить
         </a>
         {{ end }}
@@ -61,17 +58,15 @@
                     <th>Артикул</th>
                     <th>Производитель</th>
                     <th>Количество</th>
-                    <th>Мин. остаток</th>
-                    <th>Закупка</th>
-                    <th>Продажа</th>
                     <th>Место</th>
+                    <th>Действие</th>
                 </tr>
             </thead>
 
             <tbody>
                 {{ range .Items }}
 
-                <tr class="employee-row" data-href="/warehouse/view?id={{ .ID }}" tabindex="0">
+                <tr>
                     <td>
                         <a href="/warehouse/view?id={{ .ID }}" class="employee-name-link">
                             {{ .Name }}
@@ -90,23 +85,7 @@
                         {{ end }}
                     </td>
 
-                    <td>
-                        {{ if lte .Quantity .MinQuantity }}
-                        <strong class="warehouse-low-stock">
-                            ⚠ {{ .Quantity }}
-                        </strong>
-                        {{ else }}
-                        <strong>{{ .Quantity }}</strong>
-                        {{ end }}
-                    </td>
-
-                    <td>{{ .MinQuantity }}</td>
-
-                    <td>
-                        {{ formatMoney .PurchasePriceCents }} € </td>
-
-                    <td>
-                        {{ formatMoney .SalePriceCents }} € </td>
+                    <td>{{ .Quantity }}</td>
 
                     <td>
                         {{ if .Location }}
@@ -116,6 +95,16 @@
                             Не указано
                         </span>
                         {{ end }}
+                    </td>
+
+                    <td>
+                        <form method="POST" action="/warehouse/restore" class="inline-form">
+                            <input type="hidden" name="id" value="{{ .ID }}">
+
+                            <button type="submit" class="btn-primary btn-small">
+                                Восстановить
+                            </button>
+                        </form>
                     </td>
                 </tr>
 
@@ -127,33 +116,14 @@
     {{ else }}
 
     <div class="module-empty">
-        <span class="module-empty-icon">W</span>
+        <span class="module-empty-icon">A</span>
 
-        {{ if .Search }}
-
-        <h2>Ничего не найдено</h2>
+        <h2>Архив пуст</h2>
 
         <p>
-            Попробуйте изменить поисковый запрос.
+            Здесь появятся складские позиции,
+            перенесённые в архив.
         </p>
-
-        <a href="/warehouse" class="btn-secondary">
-            Сбросить поиск
-        </a>
-
-        {{ else }}
-
-        <h2>Склад пока пуст</h2>
-
-        <p>
-            Добавьте первую складскую позицию.
-        </p>
-
-        <a href="/warehouse/create" class="btn-primary">
-            Добавить позицию
-        </a>
-
-        {{ end }}
     </div>
 
     {{ end }}

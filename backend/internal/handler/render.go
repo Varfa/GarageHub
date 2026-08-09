@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -34,6 +35,20 @@ func RenderTemplate(
 	funcMap := template.FuncMap{
 		"t": func(key string) string {
 			return translator.Translate(language, key)
+		},
+
+		"formatMoney": func(cents int64) string {
+			euros := cents / 100
+			remainder := cents % 100
+
+			return fmt.Sprintf(
+				"%d.%02d",
+				euros,
+				remainder,
+			)
+		},
+		"lte": func(a, b int) bool {
+			return a <= b
 		},
 	}
 

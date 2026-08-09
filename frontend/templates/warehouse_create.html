@@ -1,0 +1,97 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <div>
+        <h1>Новая складская позиция</h1>
+        <p>Добавление запчасти или материала на склад.</p>
+    </div>
+
+    <div class="page-header-actions">
+        <a href="/warehouse" class="btn-secondary">
+            Назад к складу
+        </a>
+    </div>
+</div>
+
+{{ if .Error }}
+<div class="form-error" role="alert">
+    {{ .Error }}
+</div>
+{{ end }}
+
+<section class="module-card">
+    <div class="module-card-header">
+        <div>
+            <h2>Данные позиции</h2>
+            <p>Укажите основную информацию о товаре.</p>
+        </div>
+    </div>
+
+    <form method="POST" action="/warehouse/create" class="employee-edit-form">
+        <label>
+            Название
+
+            <input type="text" name="name" placeholder="Например: Масляный фильтр" required>
+        </label>
+
+        <label>
+            Артикул / SKU
+
+            <input type="text" name="sku" placeholder="Например: OF-12345" required>
+        </label>
+
+        <label>
+            Производитель
+
+            <input type="text" name="manufacturer" placeholder="Например: Bosch">
+        </label>
+
+        <label>
+            Цена закупки, €
+
+            <input type="number" name="purchase_price" min="0" step="0.01" value="0.00" required>
+        </label>
+
+        <label>
+            Цена продажи, €
+
+            <input type="number" name="sale_price" min="0" step="0.01" value="0.00" required>
+        </label>
+
+        <label>
+            Количество
+
+            <input type="number" name="quantity" min="0" step="1" value="0" required>
+        </label>
+
+        <label>
+            Минимальный остаток
+
+            <input type="number" name="min_quantity" min="0" step="1" value="0" required>
+        </label>
+
+        <label>
+            Место хранения
+
+            <input type="text" name="location" placeholder="Например: Стеллаж A3">
+        </label>
+
+        <label class="employee-form-full">
+            Примечание
+
+            <textarea name="note" rows="4" placeholder="Дополнительная информация"></textarea>
+        </label>
+
+        <div class="employee-edit-actions">
+            <button class="btn-primary" type="submit">
+                Добавить на склад
+            </button>
+
+            <a href="/warehouse" class="btn-secondary">
+                Отмена
+            </a>
+        </div>
+    </form>
+</section>
+
+{{ end }}
