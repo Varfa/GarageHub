@@ -1,154 +1,155 @@
 {{ define "content" }}
-<div class="employees-page employee-archive-page">
-    <div class="page-header">
-        <div>
-            <h1>Архив сотрудников</h1>
-            <p>Неактивные сотрудники и бывшие работники автосервиса.</p>
-        </div>
 
-        <div class="page-header-actions">
-            <a href="/employees" class="btn-secondary">
-                Активные сотрудники
-            </a>
-        </div>
-    </div>
+<div class="page-header-actions">
+    <a href="/employees" class="btn-secondary">
+        {{ t "employees.archive_page.active_employees" }}
+    </a>
+</div>
 
-    {{ if .Error }}
-    <div class="form-error" role="alert">
-        {{ .Error }}
-    </div>
-    {{ end }}
+{{ if .Error }}
+<div class="form-error" role="alert">
+    {{ .Error }}
+</div>
+{{ end }}
 
-    {{ if .Success }}
-    <div class="form-success" role="status">
-        {{ .Success }}
-    </div>
-    {{ end }}
+{{ if .Success }}
+<div class="form-success" role="status">
+    {{ .Success }}
+</div>
+{{ end }}
 
-    <div class="employees-toolbar">
-        <form action="/employees/archive" method="GET" class="employees-search-form">
-            <input type="search" name="search" value="{{ .Search }}" class="search-input"
-                placeholder="Поиск по архиву сотрудников">
+<div class="employees-toolbar">
+    <form action="/employees/archive" method="GET" class="employees-search-form">
+        <input type="search" name="search" value="{{ .Search }}" class="search-input"
+            placeholder='{{ t "employees.archive_page.search_placeholder" }}'>
 
-            <button type="submit" class="btn-secondary">
-                Найти
-            </button>
+        <button type="submit" class="btn-secondary">
+            {{ t "employees.archive_page.search" }}
+        </button>
 
-            {{ if .Search }}
-            <a href="/employees/archive" class="btn-secondary">
-                Сбросить
-            </a>
-            {{ end }}
-        </form>
-    </div>
+        {{ if .Search }}
+        <a href="/employees/archive" class="btn-secondary">
+            {{ t "employees.archive_page.reset" }}
+        </a>
+        {{ end }}
+    </form>
+</div>
 
-    {{ if .Employees }}
+{{ if .Employees }}
 
-    <div class="employees-table-wrapper">
-        <table class="employees-table">
-            <thead>
-                <tr>
-                    <th>Сотрудник</th>
-                    <th>Телефон</th>
-                    <th>Email</th>
-                    <th>Должность</th>
-                    <th>Статус</th>
-                    <th>Действия</th>
-                </tr>
-            </thead>
+<div class="employees-table-wrapper">
+    <table class="employees-table">
+        <thead>
+            <tr>
+                <th>{{ t "employees.archive_page.table.employee" }}</th>
+                <th>{{ t "employees.archive_page.table.phone" }}</th>
+                <th>Email</th>
+                <th>{{ t "employees.archive_page.table.position" }}</th>
+                <th>{{ t "employees.archive_page.table.status" }}</th>
+                <th>{{ t "employees.archive_page.table.actions" }}</th>
+            </tr>
+        </thead>
 
-            <tbody>
-                {{ range .Employees }}
-                <tr class="employee-row employee-row-archived" data-href="/employees/view?id={{ .ID }}" tabindex="0">
-                    <td>
-                        <div class="employee-identity">
-                            <span class="employee-avatar employee-avatar-archived">
-                                {{ printf "%.1s" .FirstName }}
+        <tbody>
+            {{ range .Employees }}
+
+            <tr class="employee-row employee-row-archived" data-href="/employees/view?id={{ .ID }}" tabindex="0">
+                <td>
+                    <div class="employee-identity">
+                        <span class="employee-avatar employee-avatar-archived">
+                            {{ printf "%.1s" .FirstName }}
+                        </span>
+
+                        <div class="employee-identity-text">
+                            <a class="employee-name-link" href="/employees/view?id={{ .ID }}">
+                                {{ .FirstName }} {{ .LastName }}
+                            </a>
+
+                            <span class="employee-code">
+                                ID: {{ .ID }}
                             </span>
-
-                            <div class="employee-identity-text">
-                                <a class="employee-name-link" href="/employees/view?id={{ .ID }}">
-                                    {{ .FirstName }} {{ .LastName }}
-                                </a>
-
-                                <span class="employee-code">
-                                    ID: {{ .ID }}
-                                </span>
-                            </div>
                         </div>
-                    </td>
+                    </div>
+                </td>
 
-                    <td class="employee-phone">
-                        {{ .Phone }}
-                    </td>
+                <td class="employee-phone">
+                    {{ .Phone }}
+                </td>
 
-                    <td class="employee-email">
-                        {{ if .Email }}
-                        {{ .Email }}
-                        {{ else }}
-                        <span class="employee-empty-value">
-                            Не указан
-                        </span>
-                        {{ end }}
-                    </td>
+                <td class="employee-email">
+                    {{ if .Email }}
+                    {{ .Email }}
+                    {{ else }}
+                    <span class="employee-empty-value">
+                        {{ t "employees.not_specified" }}
+                    </span>
+                    {{ end }}
+                </td>
 
-                    <td>
-                        <span class="employee-position">
-                            {{ .PositionName }}
-                        </span>
-                    </td>
+                <td>
+                    <span class="employee-position">
+                        {{ positionName .PositionCode .PositionName }}
+                    </span>
+                </td>
 
-                    <td>
-                        <span class="employee-status employee-status-inactive">
-                            В архиве
-                        </span>
-                    </td>
+                <td>
+                    <span class="employee-status employee-status-inactive">
+                        {{ t "employee.status.archived" }}
+                    </span>
+                </td>
 
-                    <td>
-                        <form method="POST" action="/employees/restore" class="inline-form">
-                            <input type="hidden" name="id" value="{{ .ID }}">
+                <td>
+                    <form method="POST" action="/employees/restore" class="inline-form">
+                        <input type="hidden" name="id" value="{{ .ID }}">
 
-                            <button class="btn-secondary btn-small" type="submit">
-                                Восстановить
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {{ end }}
-            </tbody>
-        </table>
-    </div>
+                        <button class="btn-secondary btn-small" type="submit">
+                            {{ t "employees.archive_page.restore" }}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+
+            {{ end }}
+        </tbody>
+    </table>
+</div>
+
+{{ else }}
+
+<div class="employees-empty">
+
+    {{ if .Search }}
+
+    <h2>
+        {{ t "employees.archive_page.empty_search_title" }}
+    </h2>
+
+    <p>
+        {{ t "employees.archive_page.empty_search_text" }}
+    </p>
+
+    <a href="/employees/archive" class="btn-secondary">
+        {{ t "employees.archive_page.reset_search" }}
+    </a>
 
     {{ else }}
 
-    <div class="employees-empty">
-        {{ if .Search }}
+    <h2>
+        {{ t "employees.archive_page.empty_title" }}
+    </h2>
 
-        <h2>В архиве ничего не найдено</h2>
+    <p>
+        {{ t "employees.archive_page.empty_text" }}
+    </p>
 
-        <p>
-            Попробуйте изменить поисковый запрос.
-        </p>
-
-        <a href="/employees/archive" class="btn-secondary">
-            Сбросить поиск
-        </a>
-
-        {{ else }}
-
-        <h2>Архив сотрудников пуст</h2>
-
-        <p>
-            Здесь появятся сотрудники, переведённые в неактивный статус.
-        </p>
-
-        <a href="/employees" class="btn-secondary">
-            Вернуться к сотрудникам
-        </a>
-
-        {{ end }}
-    </div>
+    <a href="/employees" class="btn-secondary">
+        {{ t "employees.archive_page.back_to_employees" }}
+    </a>
 
     {{ end }}
+
 </div>
+
+{{ end }}
+
 {{ end }}

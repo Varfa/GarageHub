@@ -9,6 +9,51 @@ import (
 	"github.com/Varfa/GarageHub/internal/repository"
 )
 
+var (
+	ErrEmployeeInvalidID = errors.New(
+		"employee.invalid_id",
+	)
+
+	ErrEmployeePhoneInvalidID = errors.New(
+		"employee.phone.invalid_id",
+	)
+
+	ErrEmployeeFirstNameRequired = errors.New(
+		"employee.validation.first_name_required",
+	)
+
+	ErrEmployeeLastNameRequired = errors.New(
+		"employee.validation.last_name_required",
+	)
+
+	ErrEmployeePhoneRequired = errors.New(
+		"employee.validation.phone_required",
+	)
+
+	ErrEmployeePositionRequired = errors.New(
+		"employee.validation.position_required",
+	)
+
+	ErrEmployeeAlreadyArchived = errors.New(
+		"employee.already_archived",
+	)
+
+	ErrEmployeeAlreadyActive = errors.New(
+		"employee.already_active",
+	)
+
+	ErrEmployeeArchived = errors.New(
+		"employee.archived",
+	)
+	ErrEmployeePhoneAlreadyExists = repository.ErrEmployeePhoneAlreadyExists
+
+	ErrEmployeePhoneNotFound = repository.ErrEmployeePhoneNotFound
+
+	ErrEmployeeLastPhone = repository.ErrEmployeeLastPhone
+
+	ErrEmployeePrimaryPhoneDelete = repository.ErrEmployeePrimaryPhoneDelete
+)
+
 type EmployeeService struct {
 	employeeRepository         *repository.EmployeeRepository
 	employeePositionRepository *repository.EmployeePositionRepository
@@ -78,9 +123,7 @@ func (s *EmployeeService) GetByID(
 	id int64,
 ) (*models.Employee, error) {
 	if id <= 0 {
-		return nil, errors.New(
-			"некорректный id сотрудника",
-		)
+		return nil, ErrEmployeeInvalidID
 	}
 
 	return s.employeeRepository.GetByID(
@@ -94,9 +137,7 @@ func (s *EmployeeService) ListPhones(
 	employeeID int64,
 ) ([]models.EmployeePhone, error) {
 	if employeeID <= 0 {
-		return nil, errors.New(
-			"некорректный id сотрудника",
-		)
+		return nil, ErrEmployeeInvalidID
 	}
 
 	return s.employeePhoneRepository.ListByEmployeeID(
@@ -113,9 +154,7 @@ func (s *EmployeeService) AddPhone(
 	phone.Label = strings.TrimSpace(phone.Label)
 
 	if phone.EmployeeID <= 0 {
-		return errors.New(
-			"некорректный id сотрудника",
-		)
+		return ErrEmployeeInvalidID
 	}
 
 	if err := s.ensureEmployeeActive(
@@ -126,13 +165,11 @@ func (s *EmployeeService) AddPhone(
 	}
 
 	if phone.Phone == "" {
-		return errors.New(
-			"необходимо указать номер телефона",
-		)
+		return ErrEmployeePhoneRequired
 	}
 
 	if phone.Label == "" {
-		phone.Label = "Дополнительный"
+		phone.Label = "additional"
 	}
 
 	phones, err := s.employeePhoneRepository.ListByEmployeeID(
@@ -164,15 +201,11 @@ func (s *EmployeeService) SetPrimaryPhone(
 	phoneID int64,
 ) error {
 	if employeeID <= 0 {
-		return errors.New(
-			"некорректный id сотрудника",
-		)
+		return ErrEmployeeInvalidID
 	}
 
 	if phoneID <= 0 {
-		return errors.New(
-			"некорректный id телефона",
-		)
+		return ErrEmployeePhoneInvalidID
 	}
 
 	if err := s.ensureEmployeeActive(
@@ -195,15 +228,11 @@ func (s *EmployeeService) DeletePhone(
 	phoneID int64,
 ) error {
 	if employeeID <= 0 {
-		return errors.New(
-			"некорректный id сотрудника",
-		)
+		return ErrEmployeeInvalidID
 	}
 
 	if phoneID <= 0 {
-		return errors.New(
-			"некорректный id телефона",
-		)
+		return ErrEmployeePhoneInvalidID
 	}
 
 	if err := s.ensureEmployeeActive(
@@ -227,9 +256,7 @@ func (s *EmployeeService) Update(
 	employee = normalizeEmployee(employee)
 
 	if employee.ID <= 0 {
-		return errors.New(
-			"некорректный id сотрудника",
-		)
+		return ErrEmployeeInvalidID
 	}
 
 	if err := s.ensureEmployeeActive(
@@ -254,9 +281,7 @@ func (s *EmployeeService) Archive(
 	id int64,
 ) error {
 	if id <= 0 {
-		return errors.New(
-			"некорректный id сотрудника",
-		)
+		return ErrEmployeeInvalidID
 	}
 
 	employee, err := s.employeeRepository.GetByID(
@@ -268,9 +293,7 @@ func (s *EmployeeService) Archive(
 	}
 
 	if !employee.IsActive {
-		return errors.New(
-			"сотрудник уже находится в архиве",
-		)
+		return ErrEmployeeAlreadyArchived
 	}
 
 	return s.employeeRepository.SetActive(
@@ -285,9 +308,7 @@ func (s *EmployeeService) Restore(
 	id int64,
 ) error {
 	if id <= 0 {
-		return errors.New(
-			"некорректный id сотрудника",
-		)
+		return ErrEmployeeInvalidID
 	}
 
 	employee, err := s.employeeRepository.GetByID(
@@ -299,9 +320,7 @@ func (s *EmployeeService) Restore(
 	}
 
 	if employee.IsActive {
-		return errors.New(
-			"сотрудник уже активен",
-		)
+		return ErrEmployeeAlreadyActive
 	}
 
 	return s.employeeRepository.SetActive(
@@ -324,9 +343,7 @@ func (s *EmployeeService) ensureEmployeeActive(
 	}
 
 	if !employee.IsActive {
-		return errors.New(
-			"сотрудник находится в архиве: сначала восстановите его",
-		)
+		return ErrEmployeeArchived
 	}
 
 	return nil
@@ -366,27 +383,19 @@ func validateEmployee(
 	employee models.Employee,
 ) error {
 	if employee.FirstName == "" {
-		return errors.New(
-			"необходимо указать имя",
-		)
+		return ErrEmployeeFirstNameRequired
 	}
 
 	if employee.LastName == "" {
-		return errors.New(
-			"необходимо указать фамилию",
-		)
+		return ErrEmployeeLastNameRequired
 	}
 
 	if employee.Phone == "" {
-		return errors.New(
-			"необходимо указать основной номер телефона",
-		)
+		return ErrEmployeePhoneRequired
 	}
 
 	if employee.PositionID <= 0 {
-		return errors.New(
-			"необходимо выбрать должность",
-		)
+		return ErrEmployeePositionRequired
 	}
 
 	return nil

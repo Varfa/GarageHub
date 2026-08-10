@@ -29,3 +29,7 @@ Thumbs.db
 # Build
 backend/bin/
 backend/build/
+
+# CSS
+
+*.backup.css

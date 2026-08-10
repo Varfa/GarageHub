@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -63,7 +64,7 @@ func (h *EmployeeHandler) Employees(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "employees.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
@@ -97,7 +98,7 @@ func (h *EmployeeHandler) ArchivePage(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "employees.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
@@ -130,7 +131,7 @@ func (h *EmployeeHandler) View(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id сотрудника",
+			translate(r, "employee.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -143,7 +144,7 @@ func (h *EmployeeHandler) View(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			employeeErrorMessage(r, err),
 			http.StatusNotFound,
 		)
 		return
@@ -156,7 +157,7 @@ func (h *EmployeeHandler) View(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "employees.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
@@ -168,7 +169,7 @@ func (h *EmployeeHandler) View(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "employees.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
@@ -191,7 +192,6 @@ func (h *EmployeeHandler) View(
 		data,
 	)
 }
-
 func (h *EmployeeHandler) CreatePage(
 	w http.ResponseWriter,
 	r *http.Request,
@@ -202,7 +202,7 @@ func (h *EmployeeHandler) CreatePage(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "employees.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
@@ -227,7 +227,7 @@ func (h *EmployeeHandler) Create(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не поддерживается",
+			translate(r, "employees.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -236,7 +236,7 @@ func (h *EmployeeHandler) Create(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "employees.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -250,7 +250,7 @@ func (h *EmployeeHandler) Create(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id должности",
+			translate(r, "employee.position_invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -273,7 +273,7 @@ func (h *EmployeeHandler) Create(
 		if listErr != nil {
 			http.Error(
 				w,
-				listErr.Error(),
+				translate(r, "employees.error.internal"),
 				http.StatusInternalServerError,
 			)
 			return
@@ -281,7 +281,7 @@ func (h *EmployeeHandler) Create(
 
 		data := EmployeeCreatePageData{
 			Positions: positions,
-			Error:     err.Error(),
+			Error:     employeeErrorMessage(r, err),
 		}
 
 		RenderTemplate(
@@ -308,7 +308,7 @@ func (h *EmployeeHandler) Update(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не поддерживается",
+			translate(r, "employees.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -317,7 +317,7 @@ func (h *EmployeeHandler) Update(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "employees.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -331,7 +331,7 @@ func (h *EmployeeHandler) Update(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id сотрудника",
+			translate(r, "employee.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -345,7 +345,7 @@ func (h *EmployeeHandler) Update(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id должности",
+			translate(r, "employee.position_invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -358,7 +358,7 @@ func (h *EmployeeHandler) Update(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			employeeErrorMessage(r, err),
 			http.StatusNotFound,
 		)
 		return
@@ -391,7 +391,7 @@ func (h *EmployeeHandler) Update(
 		employee,
 	); err != nil {
 		errorMessage := url.QueryEscape(
-			err.Error(),
+			employeeErrorMessage(r, err),
 		)
 
 		http.Redirect(
@@ -406,7 +406,7 @@ func (h *EmployeeHandler) Update(
 	}
 
 	successMessage := url.QueryEscape(
-		"данные сотрудника успешно обновлены",
+		translate(r, "employee.success.updated"),
 	)
 
 	http.Redirect(
@@ -426,7 +426,7 @@ func (h *EmployeeHandler) AddPhone(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не поддерживается",
+			translate(r, "employees.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -435,7 +435,7 @@ func (h *EmployeeHandler) AddPhone(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "employees.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -449,7 +449,7 @@ func (h *EmployeeHandler) AddPhone(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id сотрудника",
+			translate(r, "employee.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -467,7 +467,7 @@ func (h *EmployeeHandler) AddPhone(
 		phone,
 	); err != nil {
 		errorMessage := url.QueryEscape(
-			err.Error(),
+			employeeErrorMessage(r, err),
 		)
 
 		http.Redirect(
@@ -482,7 +482,7 @@ func (h *EmployeeHandler) AddPhone(
 	}
 
 	successMessage := url.QueryEscape(
-		"телефон успешно добавлен",
+		translate(r, "employee.success.phone_added"),
 	)
 
 	http.Redirect(
@@ -502,7 +502,7 @@ func (h *EmployeeHandler) Archive(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не поддерживается",
+			translate(r, "employees.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -511,7 +511,7 @@ func (h *EmployeeHandler) Archive(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "employees.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -525,7 +525,7 @@ func (h *EmployeeHandler) Archive(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id сотрудника",
+			translate(r, "employee.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -536,7 +536,7 @@ func (h *EmployeeHandler) Archive(
 		employeeID,
 	); err != nil {
 		errorMessage := url.QueryEscape(
-			err.Error(),
+			employeeErrorMessage(r, err),
 		)
 
 		http.Redirect(
@@ -551,7 +551,7 @@ func (h *EmployeeHandler) Archive(
 	}
 
 	successMessage := url.QueryEscape(
-		"сотрудник перенесён в архив",
+		translate(r, "employee.success.archived"),
 	)
 
 	http.Redirect(
@@ -569,7 +569,7 @@ func (h *EmployeeHandler) Restore(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не поддерживается",
+			translate(r, "employees.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -578,7 +578,7 @@ func (h *EmployeeHandler) Restore(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "employees.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -592,7 +592,7 @@ func (h *EmployeeHandler) Restore(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id сотрудника",
+			translate(r, "employee.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -603,7 +603,7 @@ func (h *EmployeeHandler) Restore(
 		employeeID,
 	); err != nil {
 		errorMessage := url.QueryEscape(
-			err.Error(),
+			employeeErrorMessage(r, err),
 		)
 
 		http.Redirect(
@@ -618,7 +618,7 @@ func (h *EmployeeHandler) Restore(
 	}
 
 	successMessage := url.QueryEscape(
-		"сотрудник восстановлен",
+		translate(r, "employee.success.restored"),
 	)
 
 	http.Redirect(
@@ -627,4 +627,132 @@ func (h *EmployeeHandler) Restore(
 		"/employees?success="+successMessage,
 		http.StatusSeeOther,
 	)
+}
+
+func employeeErrorMessage(
+	r *http.Request,
+	err error,
+) string {
+	switch {
+	case errors.Is(
+		err,
+		service.ErrEmployeeInvalidID,
+	):
+		return translate(
+			r,
+			"employee.invalid_id",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrEmployeePhoneInvalidID,
+	):
+		return translate(
+			r,
+			"employee.phone.invalid_id",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrEmployeeFirstNameRequired,
+	):
+		return translate(
+			r,
+			"employee.validation.first_name_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrEmployeeLastNameRequired,
+	):
+		return translate(
+			r,
+			"employee.validation.last_name_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrEmployeePhoneRequired,
+	):
+		return translate(
+			r,
+			"employee.validation.phone_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrEmployeePositionRequired,
+	):
+		return translate(
+			r,
+			"employee.validation.position_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrEmployeeAlreadyArchived,
+	):
+		return translate(
+			r,
+			"employee.already_archived",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrEmployeeAlreadyActive,
+	):
+		return translate(
+			r,
+			"employee.already_active",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrEmployeeArchived,
+	):
+		return translate(
+			r,
+			"employee.archived",
+		)
+	case errors.Is(
+		err,
+		service.ErrEmployeePhoneAlreadyExists,
+	):
+		return translate(
+			r,
+			"employee.phone.already_exists",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrEmployeePhoneNotFound,
+	):
+		return translate(
+			r,
+			"employee.phone.not_found",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrEmployeeLastPhone,
+	):
+		return translate(
+			r,
+			"employee.phone.last_phone",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrEmployeePrimaryPhoneDelete,
+	):
+		return translate(
+			r,
+			"employee.phone.primary_delete",
+		)
+	default:
+		return translate(
+			r,
+			"employees.error.internal",
+		)
+	}
 }

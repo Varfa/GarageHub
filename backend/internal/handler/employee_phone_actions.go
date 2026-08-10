@@ -13,7 +13,7 @@ func (h *EmployeeHandler) SetPrimaryPhone(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не поддерживается",
+			translate(r, "employees.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -22,7 +22,7 @@ func (h *EmployeeHandler) SetPrimaryPhone(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "employees.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -36,7 +36,7 @@ func (h *EmployeeHandler) SetPrimaryPhone(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id сотрудника",
+			translate(r, "employee.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -50,7 +50,7 @@ func (h *EmployeeHandler) SetPrimaryPhone(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id телефона",
+			translate(r, "employee.phone.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -65,7 +65,7 @@ func (h *EmployeeHandler) SetPrimaryPhone(
 			w,
 			r,
 			employeeID,
-			err,
+			employeeErrorMessage(r, err),
 		)
 		return
 	}
@@ -74,7 +74,7 @@ func (h *EmployeeHandler) SetPrimaryPhone(
 		w,
 		r,
 		employeeID,
-		"основной телефон изменён",
+		translate(r, "employee.success.primary_phone_changed"),
 	)
 }
 
@@ -85,7 +85,7 @@ func (h *EmployeeHandler) DeletePhone(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не поддерживается",
+			translate(r, "employees.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -94,7 +94,7 @@ func (h *EmployeeHandler) DeletePhone(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "employees.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -108,7 +108,7 @@ func (h *EmployeeHandler) DeletePhone(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id сотрудника",
+			translate(r, "employee.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -122,7 +122,7 @@ func (h *EmployeeHandler) DeletePhone(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id телефона",
+			translate(r, "employee.phone.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -137,7 +137,7 @@ func (h *EmployeeHandler) DeletePhone(
 			w,
 			r,
 			employeeID,
-			err,
+			employeeErrorMessage(r, err),
 		)
 		return
 	}
@@ -146,7 +146,7 @@ func (h *EmployeeHandler) DeletePhone(
 		w,
 		r,
 		employeeID,
-		"телефон успешно удалён",
+		translate(r, "employee.success.phone_deleted"),
 	)
 }
 
@@ -154,10 +154,10 @@ func redirectEmployeePhoneError(
 	w http.ResponseWriter,
 	r *http.Request,
 	employeeID int64,
-	err error,
+	message string,
 ) {
 	errorMessage := url.QueryEscape(
-		err.Error(),
+		message,
 	)
 
 	http.Redirect(
@@ -176,7 +176,9 @@ func redirectEmployeePhoneSuccess(
 	employeeID int64,
 	message string,
 ) {
-	successMessage := url.QueryEscape(message)
+	successMessage := url.QueryEscape(
+		message,
+	)
 
 	http.Redirect(
 		w,

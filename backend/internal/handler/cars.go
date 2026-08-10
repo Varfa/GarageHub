@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -49,11 +50,14 @@ func (h *CarHandler) Cars(
 	search := r.URL.Query().Get("search")
 	errorMessage := r.URL.Query().Get("error")
 
-	cars, err := h.service.List(r.Context(), search)
+	cars, err := h.service.List(
+		r.Context(),
+		search,
+	)
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "cars.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
@@ -65,18 +69,26 @@ func (h *CarHandler) Cars(
 		Error:  errorMessage,
 	}
 
-	RenderTemplate(w, r, "cars", data)
+	RenderTemplate(
+		w,
+		r,
+		"cars",
+		data,
+	)
 }
 
 func (h *CarHandler) CreatePage(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
-	clients, err := h.clientService.List(r.Context(), "")
+	clients, err := h.clientService.List(
+		r.Context(),
+		"",
+	)
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "cars.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
@@ -86,7 +98,12 @@ func (h *CarHandler) CreatePage(
 		Clients: clients,
 	}
 
-	RenderTemplate(w, r, "car_create", data)
+	RenderTemplate(
+		w,
+		r,
+		"car_create",
+		data,
+	)
 }
 
 func (h *CarHandler) Create(
@@ -96,7 +113,7 @@ func (h *CarHandler) Create(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не разрешён",
+			translate(r, "cars.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -105,47 +122,55 @@ func (h *CarHandler) Create(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "cars.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	clientID, err := strconv.Atoi(r.FormValue("client_id"))
+	clientID, err := strconv.Atoi(
+		r.FormValue("client_id"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id клиента",
+			translate(r, "car.client_invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	year, err := strconv.Atoi(r.FormValue("year"))
+	year, err := strconv.Atoi(
+		r.FormValue("year"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный год автомобиля",
+			translate(r, "car.validation.year_invalid"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	powerKW, err := strconv.Atoi(r.FormValue("power_kw"))
+	powerKW, err := strconv.Atoi(
+		r.FormValue("power_kw"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректная мощность автомобиля",
+			translate(r, "car.validation.power_invalid"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	mileage, err := strconv.Atoi(r.FormValue("mileage"))
+	mileage, err := strconv.Atoi(
+		r.FormValue("mileage"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный пробег автомобиля",
+			translate(r, "car.validation.mileage_invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -165,12 +190,18 @@ func (h *CarHandler) Create(
 		Note:        r.FormValue("note"),
 	}
 
-	if err := h.service.Create(r.Context(), car); err != nil {
-		clients, listErr := h.clientService.List(r.Context(), "")
+	if err := h.service.Create(
+		r.Context(),
+		car,
+	); err != nil {
+		clients, listErr := h.clientService.List(
+			r.Context(),
+			"",
+		)
 		if listErr != nil {
 			http.Error(
 				w,
-				listErr.Error(),
+				translate(r, "cars.error.internal"),
 				http.StatusInternalServerError,
 			)
 			return
@@ -178,10 +209,15 @@ func (h *CarHandler) Create(
 
 		data := CarCreatePageData{
 			Clients: clients,
-			Error:   err.Error(),
+			Error:   carErrorMessage(r, err),
 		}
 
-		RenderTemplate(w, r, "car_create", data)
+		RenderTemplate(
+			w,
+			r,
+			"car_create",
+			data,
+		)
 		return
 	}
 
@@ -197,21 +233,26 @@ func (h *CarHandler) View(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	id, err := strconv.Atoi(
+		r.URL.Query().Get("id"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id автомобиля",
+			translate(r, "car.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	car, err := h.service.GetByID(r.Context(), id)
+	car, err := h.service.GetByID(
+		r.Context(),
+		id,
+	)
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			carErrorMessage(r, err),
 			http.StatusNotFound,
 		)
 		return
@@ -224,17 +265,20 @@ func (h *CarHandler) View(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "cars.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
 	}
 
-	allClients, err := h.clientService.List(r.Context(), "")
+	allClients, err := h.clientService.List(
+		r.Context(),
+		"",
+	)
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "cars.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
@@ -247,7 +291,12 @@ func (h *CarHandler) View(
 		Edit:       r.URL.Query().Get("edit") == "1",
 	}
 
-	RenderTemplate(w, r, "car", data)
+	RenderTemplate(
+		w,
+		r,
+		"car",
+		data,
+	)
 }
 
 func (h *CarHandler) Update(
@@ -257,7 +306,7 @@ func (h *CarHandler) Update(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не разрешён",
+			translate(r, "cars.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -266,57 +315,67 @@ func (h *CarHandler) Update(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "cars.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	id, err := strconv.Atoi(r.FormValue("id"))
+	id, err := strconv.Atoi(
+		r.FormValue("id"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id автомобиля",
+			translate(r, "car.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	clientID, err := strconv.Atoi(r.FormValue("client_id"))
+	clientID, err := strconv.Atoi(
+		r.FormValue("client_id"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id клиента",
+			translate(r, "car.client_invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	year, err := strconv.Atoi(r.FormValue("year"))
+	year, err := strconv.Atoi(
+		r.FormValue("year"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный год выпуска автомобиля",
+			translate(r, "car.validation.year_invalid"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	powerKW, err := strconv.Atoi(r.FormValue("power_kw"))
+	powerKW, err := strconv.Atoi(
+		r.FormValue("power_kw"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректная мощность автомобиля",
+			translate(r, "car.validation.power_invalid"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	mileage, err := strconv.Atoi(r.FormValue("mileage"))
+	mileage, err := strconv.Atoi(
+		r.FormValue("mileage"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный пробег автомобиля",
+			translate(r, "car.validation.mileage_invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -337,10 +396,13 @@ func (h *CarHandler) Update(
 		Note:        r.FormValue("note"),
 	}
 
-	if err := h.service.Update(r.Context(), car); err != nil {
+	if err := h.service.Update(
+		r.Context(),
+		car,
+	); err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			carErrorMessage(r, err),
 			http.StatusBadRequest,
 		)
 		return
@@ -361,7 +423,7 @@ func (h *CarHandler) Delete(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не разрешён",
+			translate(r, "cars.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -370,24 +432,31 @@ func (h *CarHandler) Delete(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "cars.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	id, err := strconv.Atoi(r.FormValue("id"))
+	id, err := strconv.Atoi(
+		r.FormValue("id"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id автомобиля",
+			translate(r, "car.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	if err := h.service.Delete(r.Context(), id); err != nil {
-		errorMessage := url.QueryEscape(err.Error())
+	if err := h.service.Delete(
+		r.Context(),
+		id,
+	); err != nil {
+		errorMessage := url.QueryEscape(
+			carErrorMessage(r, err),
+		)
 
 		http.Redirect(
 			w,
@@ -413,7 +482,7 @@ func (h *CarHandler) ChangeOwner(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не разрешён",
+			translate(r, "cars.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -422,37 +491,43 @@ func (h *CarHandler) ChangeOwner(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "cars.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	carID, err := strconv.Atoi(r.FormValue("car_id"))
+	carID, err := strconv.Atoi(
+		r.FormValue("car_id"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id автомобиля",
+			translate(r, "car.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	newClientID, err := strconv.Atoi(r.FormValue("client_id"))
+	newClientID, err := strconv.Atoi(
+		r.FormValue("client_id"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id нового владельца",
+			translate(r, "car.owner_invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	oldClientID, err := strconv.Atoi(r.FormValue("old_client_id"))
+	oldClientID, err := strconv.Atoi(
+		r.FormValue("old_client_id"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id текущего владельца",
+			translate(r, "car.current_owner_invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -467,7 +542,7 @@ func (h *CarHandler) ChangeOwner(
 	); err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			carErrorMessage(r, err),
 			http.StatusBadRequest,
 		)
 		return
@@ -489,4 +564,89 @@ func (h *CarHandler) ChangeOwner(
 		"/clients/view?id="+strconv.Itoa(oldClientID),
 		http.StatusSeeOther,
 	)
+}
+
+func carErrorMessage(
+	r *http.Request,
+	err error,
+) string {
+	switch {
+	case errors.Is(
+		err,
+		service.ErrCarInvalidID,
+	):
+		return translate(
+			r,
+			"car.invalid_id",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrCarClientInvalidID,
+	):
+		return translate(
+			r,
+			"car.client_invalid_id",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrCarOwnerInvalidID,
+	):
+		return translate(
+			r,
+			"car.owner_invalid_id",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrCarBrandRequired,
+	):
+		return translate(
+			r,
+			"car.validation.brand_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrCarModelRequired,
+	):
+		return translate(
+			r,
+			"car.validation.model_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrCarPlateRequired,
+	):
+		return translate(
+			r,
+			"car.validation.plate_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrCarClientRequired,
+	):
+		return translate(
+			r,
+			"car.validation.client_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrCarAlreadyExists,
+	):
+		return translate(
+			r,
+			"car.already_exists",
+		)
+
+	default:
+		return translate(
+			r,
+			"cars.error.internal",
+		)
+	}
 }

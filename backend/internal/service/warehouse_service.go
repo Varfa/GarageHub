@@ -9,6 +9,44 @@ import (
 	"github.com/Varfa/GarageHub/internal/repository"
 )
 
+var (
+	ErrWarehouseInvalidID = errors.New(
+		"warehouse.invalid_id",
+	)
+
+	ErrWarehouseNameRequired = errors.New(
+		"warehouse.validation.name_required",
+	)
+
+	ErrWarehouseSKURequired = errors.New(
+		"warehouse.validation.sku_required",
+	)
+
+	ErrWarehousePurchasePriceNegative = errors.New(
+		"warehouse.validation.purchase_price_negative",
+	)
+
+	ErrWarehouseSalePriceNegative = errors.New(
+		"warehouse.validation.sale_price_negative",
+	)
+
+	ErrWarehouseQuantityNegative = errors.New(
+		"warehouse.validation.quantity_negative",
+	)
+
+	ErrWarehouseMinQuantityNegative = errors.New(
+		"warehouse.validation.min_quantity_negative",
+	)
+
+	ErrWarehouseAlreadyArchived = errors.New(
+		"warehouse.already_archived",
+	)
+
+	ErrWarehouseAlreadyActive = errors.New(
+		"warehouse.already_active",
+	)
+)
+
 type WarehouseService struct {
 	repo *repository.WarehouseRepository
 }
@@ -31,7 +69,10 @@ func (s *WarehouseService) Create(
 		return err
 	}
 
-	return s.repo.Create(ctx, item)
+	return s.repo.Create(
+		ctx,
+		item,
+	)
 }
 
 func (s *WarehouseService) List(
@@ -40,7 +81,10 @@ func (s *WarehouseService) List(
 ) ([]models.WarehouseItem, error) {
 	search = strings.TrimSpace(search)
 
-	return s.repo.List(ctx, search)
+	return s.repo.List(
+		ctx,
+		search,
+	)
 }
 
 func (s *WarehouseService) GetByID(
@@ -48,12 +92,13 @@ func (s *WarehouseService) GetByID(
 	id int64,
 ) (*models.WarehouseItem, error) {
 	if id <= 0 {
-		return nil, errors.New(
-			"некорректный id складской позиции",
-		)
+		return nil, ErrWarehouseInvalidID
 	}
 
-	return s.repo.GetByID(ctx, id)
+	return s.repo.GetByID(
+		ctx,
+		id,
+	)
 }
 
 func (s *WarehouseService) Update(
@@ -61,9 +106,7 @@ func (s *WarehouseService) Update(
 	item models.WarehouseItem,
 ) error {
 	if item.ID <= 0 {
-		return errors.New(
-			"некорректный id складской позиции",
-		)
+		return ErrWarehouseInvalidID
 	}
 
 	item = normalizeWarehouseItem(item)
@@ -72,97 +115,45 @@ func (s *WarehouseService) Update(
 		return err
 	}
 
-	return s.repo.Update(ctx, item)
+	return s.repo.Update(
+		ctx,
+		item,
+	)
 }
 
-func normalizeWarehouseItem(
-	item models.WarehouseItem,
-) models.WarehouseItem {
-	item.Name = strings.TrimSpace(item.Name)
-	item.SKU = strings.TrimSpace(item.SKU)
-	item.Manufacturer = strings.TrimSpace(item.Manufacturer)
-	item.Location = strings.TrimSpace(item.Location)
-	item.Note = strings.TrimSpace(item.Note)
-
-	return item
-}
-
-func validateWarehouseItem(
-	item models.WarehouseItem,
-) error {
-	if item.Name == "" {
-		return errors.New(
-			"необходимо указать название складской позиции",
-		)
-	}
-
-	if item.SKU == "" {
-		return errors.New(
-			"необходимо указать артикул",
-		)
-	}
-
-	if item.PurchasePriceCents < 0 {
-		return errors.New(
-			"цена закупки не может быть отрицательной",
-		)
-	}
-
-	if item.SalePriceCents < 0 {
-		return errors.New(
-			"цена продажи не может быть отрицательной",
-		)
-	}
-
-	if item.Quantity < 0 {
-		return errors.New(
-			"количество не может быть отрицательным",
-		)
-	}
-
-	if item.MinQuantity < 0 {
-		return errors.New(
-			"минимальное количество не может быть отрицательным",
-		)
-	}
-
-	return nil
-}
 func (s *WarehouseService) Archive(
 	ctx context.Context,
 	id int64,
 ) error {
-
 	if id <= 0 {
-		return errors.New(
-			"некорректный id складской позиции",
-		)
+		return ErrWarehouseInvalidID
 	}
 
-	item, err := s.repo.GetByID(ctx, id)
+	item, err := s.repo.GetByID(
+		ctx,
+		id,
+	)
 	if err != nil {
 		return err
 	}
 
 	if !item.IsActive {
-		return errors.New(
-			"позиция уже находится в архиве",
-		)
+		return ErrWarehouseAlreadyArchived
 	}
+
 	return s.repo.SetActive(
 		ctx,
 		id,
 		false,
 	)
 }
+
 func (s *WarehouseService) Restore(
 	ctx context.Context,
 	id int64,
 ) error {
 	if id <= 0 {
-		return errors.New(
-			"некорректный id складской позиции",
-		)
+		return ErrWarehouseInvalidID
 	}
 
 	item, err := s.repo.GetByID(
@@ -174,9 +165,7 @@ func (s *WarehouseService) Restore(
 	}
 
 	if item.IsActive {
-		return errors.New(
-			"позиция уже активна",
-		)
+		return ErrWarehouseAlreadyActive
 	}
 
 	return s.repo.SetActive(
@@ -185,6 +174,7 @@ func (s *WarehouseService) Restore(
 		true,
 	)
 }
+
 func (s *WarehouseService) ListArchived(
 	ctx context.Context,
 	search string,
@@ -195,4 +185,60 @@ func (s *WarehouseService) ListArchived(
 		ctx,
 		search,
 	)
+}
+
+func normalizeWarehouseItem(
+	item models.WarehouseItem,
+) models.WarehouseItem {
+	item.Name = strings.TrimSpace(
+		item.Name,
+	)
+
+	item.SKU = strings.TrimSpace(
+		item.SKU,
+	)
+
+	item.Manufacturer = strings.TrimSpace(
+		item.Manufacturer,
+	)
+
+	item.Location = strings.TrimSpace(
+		item.Location,
+	)
+
+	item.Note = strings.TrimSpace(
+		item.Note,
+	)
+
+	return item
+}
+
+func validateWarehouseItem(
+	item models.WarehouseItem,
+) error {
+	if item.Name == "" {
+		return ErrWarehouseNameRequired
+	}
+
+	if item.SKU == "" {
+		return ErrWarehouseSKURequired
+	}
+
+	if item.PurchasePriceCents < 0 {
+		return ErrWarehousePurchasePriceNegative
+	}
+
+	if item.SalePriceCents < 0 {
+		return ErrWarehouseSalePriceNegative
+	}
+
+	if item.Quantity < 0 {
+		return ErrWarehouseQuantityNegative
+	}
+
+	if item.MinQuantity < 0 {
+		return ErrWarehouseMinQuantityNegative
+	}
+
+	return nil
 }

@@ -43,7 +43,11 @@ function initializeDeleteConfirmation() {
         event.preventDefault();
 
         pendingForm = form;
-        message.textContent = getDeleteMessage(actionURL.pathname);
+
+        message.textContent = getDeleteMessage(
+            dialog,
+            actionURL.pathname
+        );
 
         dialog.showModal();
     });
@@ -60,9 +64,11 @@ function initializeDeleteConfirmation() {
         }
 
         const form = pendingForm;
+
         pendingForm = null;
 
         form.dataset.confirmed = "true";
+
         dialog.close();
 
         form.requestSubmit();
@@ -80,17 +86,25 @@ function initializeDeleteConfirmation() {
     });
 }
 
-function getDeleteMessage(pathname) {
-    const messages = {
-        "/clients/delete":
-            "Клиент будет удалён из системы. Это действие нельзя отменить.",
+function getDeleteMessage(
+    dialog,
+    pathname
+) {
+    if (pathname === "/clients/delete") {
+        return (
+            dialog.dataset.clientDeleteMessage ||
+            dialog.dataset.defaultDeleteMessage ||
+            ""
+        );
+    }
 
-        "/cars/delete":
-            "Автомобиль будет удалён из системы. Это действие нельзя отменить.",
-    };
+    if (pathname === "/cars/delete") {
+        return (
+            dialog.dataset.carDeleteMessage ||
+            dialog.dataset.defaultDeleteMessage ||
+            ""
+        );
+    }
 
-    return (
-        messages[pathname] ||
-        "Запись будет удалена. Это действие нельзя отменить."
-    );
+    return dialog.dataset.defaultDeleteMessage || "";
 }

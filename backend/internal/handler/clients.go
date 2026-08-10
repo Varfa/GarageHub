@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -55,7 +56,7 @@ func (h *ClientHandler) Clients(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "clients.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
@@ -67,7 +68,12 @@ func (h *ClientHandler) Clients(
 		Error:   errorMessage,
 	}
 
-	RenderTemplate(w, r, "clients", data)
+	RenderTemplate(
+		w,
+		r,
+		"clients",
+		data,
+	)
 }
 
 func (h *ClientHandler) CreatePage(
@@ -89,7 +95,10 @@ func (h *ClientHandler) Create(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не разрешён",
+			translate(
+				r,
+				"clients.request.method_not_allowed",
+			),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -98,7 +107,10 @@ func (h *ClientHandler) Create(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(
+				r,
+				"clients.request.invalid",
+			),
 			http.StatusBadRequest,
 		)
 		return
@@ -112,9 +124,15 @@ func (h *ClientHandler) Create(
 		Note:    r.FormValue("note"),
 	}
 
-	if err := h.service.Create(r.Context(), client); err != nil {
+	if err := h.service.Create(
+		r.Context(),
+		client,
+	); err != nil {
 		data := ClientCreatePageData{
-			Error: err.Error(),
+			Error: clientErrorMessage(
+				r,
+				err,
+			),
 		}
 
 		RenderTemplate(
@@ -138,22 +156,49 @@ func (h *ClientHandler) View(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	id, err := strconv.Atoi(
+		r.URL.Query().Get("id"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id клиента",
+			translate(
+				r,
+				"client.invalid_id",
+			),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	client, err := h.service.GetByID(r.Context(), id)
+	client, err := h.service.GetByID(
+		r.Context(),
+		id,
+	)
 	if err != nil {
+		status := http.StatusInternalServerError
+
+		switch {
+		case errors.Is(
+			err,
+			service.ErrClientInvalidID,
+		):
+			status = http.StatusBadRequest
+
+		case errors.Is(
+			err,
+			service.ErrClientNotFound,
+		):
+			status = http.StatusNotFound
+		}
+
 		http.Error(
 			w,
-			err.Error(),
-			http.StatusNotFound,
+			clientErrorMessage(
+				r,
+				err,
+			),
+			status,
 		)
 		return
 	}
@@ -165,7 +210,10 @@ func (h *ClientHandler) View(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(
+				r,
+				"clients.error.internal",
+			),
 			http.StatusInternalServerError,
 		)
 		return
@@ -178,7 +226,10 @@ func (h *ClientHandler) View(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(
+				r,
+				"clients.error.internal",
+			),
 			http.StatusInternalServerError,
 		)
 		return
@@ -206,7 +257,10 @@ func (h *ClientHandler) Update(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не разрешён",
+			translate(
+				r,
+				"clients.request.method_not_allowed",
+			),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -215,17 +269,25 @@ func (h *ClientHandler) Update(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(
+				r,
+				"clients.request.invalid",
+			),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	id, err := strconv.Atoi(r.FormValue("id"))
+	id, err := strconv.Atoi(
+		r.FormValue("id"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id клиента",
+			translate(
+				r,
+				"client.invalid_id",
+			),
 			http.StatusBadRequest,
 		)
 		return
@@ -240,10 +302,16 @@ func (h *ClientHandler) Update(
 		Note:    r.FormValue("note"),
 	}
 
-	if err := h.service.Update(r.Context(), client); err != nil {
+	if err := h.service.Update(
+		r.Context(),
+		client,
+	); err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			clientErrorMessage(
+				r,
+				err,
+			),
 			http.StatusBadRequest,
 		)
 		return
@@ -264,7 +332,10 @@ func (h *ClientHandler) Delete(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"метод не разрешён",
+			translate(
+				r,
+				"clients.request.method_not_allowed",
+			),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -273,24 +344,40 @@ func (h *ClientHandler) Delete(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(
+				r,
+				"clients.request.invalid",
+			),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	id, err := strconv.Atoi(r.FormValue("id"))
+	id, err := strconv.Atoi(
+		r.FormValue("id"),
+	)
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id клиента",
+			translate(
+				r,
+				"client.invalid_id",
+			),
 			http.StatusBadRequest,
 		)
 		return
 	}
 
-	if err := h.service.Delete(r.Context(), id); err != nil {
-		errorMessage := url.QueryEscape(err.Error())
+	if err := h.service.Delete(
+		r.Context(),
+		id,
+	); err != nil {
+		errorMessage := url.QueryEscape(
+			clientErrorMessage(
+				r,
+				err,
+			),
+		)
 
 		http.Redirect(
 			w,
@@ -307,4 +394,71 @@ func (h *ClientHandler) Delete(
 		"/clients",
 		http.StatusSeeOther,
 	)
+}
+
+func clientErrorMessage(
+	r *http.Request,
+	err error,
+) string {
+	switch {
+	case errors.Is(
+		err,
+		service.ErrClientInvalidID,
+	):
+		return translate(
+			r,
+			"client.invalid_id",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrClientNotFound,
+	):
+		return translate(
+			r,
+			"client.error.not_found",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrClientHasCars,
+	):
+		return translate(
+			r,
+			"client.error.has_cars",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrClientNameRequired,
+	):
+		return translate(
+			r,
+			"client.validation.name_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrClientPhoneRequired,
+	):
+		return translate(
+			r,
+			"client.validation.phone_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrClientAlreadyExists,
+	):
+		return translate(
+			r,
+			"client.already_exists",
+		)
+
+	default:
+		return translate(
+			r,
+			"clients.error.internal",
+		)
+	}
 }

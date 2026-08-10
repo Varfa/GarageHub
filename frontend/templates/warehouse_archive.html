@@ -1,16 +1,9 @@
 {{ define "content" }}
 
-<div class="page-header">
-    <div>
-        <h1>Архив склада</h1>
-        <p>Неактивные складские позиции.</p>
-    </div>
-
-    <div class="page-header-actions">
-        <a href="/warehouse" class="btn-secondary">
-            Назад к складу
-        </a>
-    </div>
+<div class="page-header-actions">
+    <a href="/warehouse" class="btn-secondary">
+        {{ t "warehouse.archive_page.back" }}
+    </a>
 </div>
 
 {{ if .Error }}
@@ -25,108 +18,100 @@
 </div>
 {{ end }}
 
-<section class="module-card">
-    <div class="module-card-header">
-        <div>
-            <h2>Архивные позиции</h2>
-            <p>Позиции, которые больше не используются в основном складе.</p>
-        </div>
-    </div>
+<form method="GET" action="/warehouse/archive" class="employees-search-form warehouse-search-form">
+    <input type="search" name="search" value="{{ .Search }}" class="search-input"
+        placeholder='{{ t "warehouse.archive_page.search_placeholder" }}'>
 
-    <form method="GET" action="/warehouse/archive" class="employees-search-form warehouse-search-form">
-        <input type="search" name="search" value="{{ .Search }}" class="search-input"
-            placeholder="Поиск по названию, артикулу или производителю">
+    <button type="submit" class="btn-secondary">
+        {{ t "warehouse.archive_page.search" }}
+    </button>
 
-        <button type="submit" class="btn-secondary">
-            Найти
-        </button>
-
-        {{ if .Search }}
-        <a href="/warehouse/archive" class="btn-secondary">
-            Сбросить
-        </a>
-        {{ end }}
-    </form>
-
-    {{ if .Items }}
-
-    <div class="employees-table-wrapper">
-        <table class="employees-table">
-            <thead>
-                <tr>
-                    <th>Название</th>
-                    <th>Артикул</th>
-                    <th>Производитель</th>
-                    <th>Количество</th>
-                    <th>Место</th>
-                    <th>Действие</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {{ range .Items }}
-
-                <tr>
-                    <td>
-                        <a href="/warehouse/view?id={{ .ID }}" class="employee-name-link">
-                            {{ .Name }}
-                        </a>
-                    </td>
-
-                    <td>{{ .SKU }}</td>
-
-                    <td>
-                        {{ if .Manufacturer }}
-                        {{ .Manufacturer }}
-                        {{ else }}
-                        <span class="employee-empty-value">
-                            Не указан
-                        </span>
-                        {{ end }}
-                    </td>
-
-                    <td>{{ .Quantity }}</td>
-
-                    <td>
-                        {{ if .Location }}
-                        {{ .Location }}
-                        {{ else }}
-                        <span class="employee-empty-value">
-                            Не указано
-                        </span>
-                        {{ end }}
-                    </td>
-
-                    <td>
-                        <form method="POST" action="/warehouse/restore" class="inline-form">
-                            <input type="hidden" name="id" value="{{ .ID }}">
-
-                            <button type="submit" class="btn-primary btn-small">
-                                Восстановить
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-
-                {{ end }}
-            </tbody>
-        </table>
-    </div>
-
-    {{ else }}
-
-    <div class="module-empty">
-        <span class="module-empty-icon">A</span>
-
-        <h2>Архив пуст</h2>
-
-        <p>
-            Здесь появятся складские позиции,
-            перенесённые в архив.
-        </p>
-    </div>
-
+    {{ if .Search }}
+    <a href="/warehouse/archive" class="btn-secondary">
+        {{ t "warehouse.archive_page.reset" }}
+    </a>
     {{ end }}
-</section>
+</form>
+
+{{ if .Items }}
+
+<div class="employees-table-wrapper">
+    <table class="employees-table">
+        <thead>
+            <tr>
+                <th>{{ t "warehouse.archive_page.table.name" }}</th>
+                <th>{{ t "warehouse.archive_page.table.sku" }}</th>
+                <th>{{ t "warehouse.archive_page.table.manufacturer" }}</th>
+                <th>{{ t "warehouse.archive_page.table.quantity" }}</th>
+                <th>{{ t "warehouse.archive_page.table.location" }}</th>
+                <th>{{ t "warehouse.archive_page.table.action" }}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{ range .Items }}
+
+            <tr>
+                <td>
+                    <a href="/warehouse/view?id={{ .ID }}" class="employee-name-link">
+                        {{ .Name }}
+                    </a>
+                </td>
+
+                <td>{{ .SKU }}</td>
+
+                <td>
+                    {{ if .Manufacturer }}
+                    {{ .Manufacturer }}
+                    {{ else }}
+                    <span class="employee-empty-value">
+                        {{ t "warehouse.not_specified" }}
+                    </span>
+                    {{ end }}
+                </td>
+
+                <td>{{ .Quantity }}</td>
+
+                <td>
+                    {{ if .Location }}
+                    {{ .Location }}
+                    {{ else }}
+                    <span class="employee-empty-value">
+                        {{ t "warehouse.not_specified" }}
+                    </span>
+                    {{ end }}
+                </td>
+
+                <td>
+                    <form method="POST" action="/warehouse/restore" class="inline-form">
+                        <input type="hidden" name="id" value="{{ .ID }}">
+
+                        <button type="submit" class="btn-primary btn-small">
+                            {{ t "warehouse.archive_page.restore" }}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+
+            {{ end }}
+        </tbody>
+    </table>
+</div>
+
+{{ else }}
+
+<div class="module-empty">
+    <span class="module-empty-icon">A</span>
+
+    <h2>
+        {{ t "warehouse.archive_page.empty_title" }}
+    </h2>
+
+    <p>
+        {{ t "warehouse.archive_page.empty_text" }}
+    </p>
+</div>
+
+{{ end }}
 
 {{ end }}

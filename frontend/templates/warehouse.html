@@ -1,19 +1,13 @@
 {{ define "content" }}
 
-<div class="page-header">
-    <div>
-        <h1>Склад</h1>
-        <p>Складские позиции, остатки, цены и места хранения.</p>
-    </div>
+<div class="page-header-actions">
+    <a href="/warehouse/create" class="btn-primary">
+        {{ t "warehouse.new_item" }}
+    </a>
 
-    <div class="page-header-actions">
-        <a href="/warehouse/create" class="btn-primary">
-            Новая позиция
-        </a>
-        <a href="/warehouse/archive" class="btn-secondary">
-            Архив
-        </a>
-    </div>
+    <a href="/warehouse/archive" class="btn-secondary">
+        {{ t "warehouse.archive" }}
+    </a>
 </div>
 
 {{ if .Error }}
@@ -28,135 +22,134 @@
 </div>
 {{ end }}
 
-<section class="module-card">
-    <div class="module-card-header">
-        <div>
-            <h2>Складские остатки</h2>
-            <p>Текущее количество запчастей и материалов.</p>
-        </div>
-    </div>
+<form method="GET" action="/warehouse" class="employees-search-form warehouse-search-form">
+    <input type="search" name="search" value="{{ .Search }}" class="search-input"
+        placeholder='{{ t "warehouse.search_placeholder" }}'>
 
-    <form method="GET" action="/warehouse" class="employees-search-form warehouse-search-form">
-        <input type="search" name="search" value="{{ .Search }}" class="search-input"
-            placeholder="Поиск по названию, артикулу или производителю">
+    <button type="submit" class="btn-secondary">
+        {{ t "warehouse.search" }}
+    </button>
 
-        <button type="submit" class="btn-secondary">
-            Найти
-        </button>
+    {{ if .Search }}
+    <a href="/warehouse" class="btn-secondary">
+        {{ t "warehouse.reset" }}
+    </a>
+    {{ end }}
+</form>
 
-        {{ if .Search }}
-        <a href="/warehouse" class="btn-secondary">
-            Сбросить
-        </a>
-        {{ end }}
-    </form>
+{{ if .Items }}
 
-    {{ if .Items }}
+<div class="employees-table-wrapper">
+    <table class="employees-table">
+        <thead>
+            <tr>
+                <th>{{ t "warehouse.table.name" }}</th>
+                <th>{{ t "warehouse.table.sku" }}</th>
+                <th>{{ t "warehouse.table.manufacturer" }}</th>
+                <th>{{ t "warehouse.table.quantity" }}</th>
+                <th>{{ t "warehouse.table.min_quantity" }}</th>
+                <th>{{ t "warehouse.table.purchase_price" }}</th>
+                <th>{{ t "warehouse.table.sale_price" }}</th>
+                <th>{{ t "warehouse.table.location" }}</th>
+            </tr>
+        </thead>
 
-    <div class="employees-table-wrapper">
-        <table class="employees-table">
-            <thead>
-                <tr>
-                    <th>Название</th>
-                    <th>Артикул</th>
-                    <th>Производитель</th>
-                    <th>Количество</th>
-                    <th>Мин. остаток</th>
-                    <th>Закупка</th>
-                    <th>Продажа</th>
-                    <th>Место</th>
-                </tr>
-            </thead>
+        <tbody>
+            {{ range .Items }}
 
-            <tbody>
-                {{ range .Items }}
+            <tr class="employee-row" data-href="/warehouse/view?id={{ .ID }}" tabindex="0">
+                <td>
+                    <a href="/warehouse/view?id={{ .ID }}" class="employee-name-link">
+                        {{ .Name }}
+                    </a>
+                </td>
 
-                <tr class="employee-row" data-href="/warehouse/view?id={{ .ID }}" tabindex="0">
-                    <td>
-                        <a href="/warehouse/view?id={{ .ID }}" class="employee-name-link">
-                            {{ .Name }}
-                        </a>
-                    </td>
+                <td>{{ .SKU }}</td>
 
-                    <td>{{ .SKU }}</td>
+                <td>
+                    {{ if .Manufacturer }}
+                    {{ .Manufacturer }}
+                    {{ else }}
+                    <span class="employee-empty-value">
+                        {{ t "warehouse.not_specified" }}
+                    </span>
+                    {{ end }}
+                </td>
 
-                    <td>
-                        {{ if .Manufacturer }}
-                        {{ .Manufacturer }}
-                        {{ else }}
-                        <span class="employee-empty-value">
-                            Не указан
-                        </span>
-                        {{ end }}
-                    </td>
+                <td>
+                    {{ if lte .Quantity .MinQuantity }}
+                    <strong class="warehouse-low-stock">
+                        ⚠ {{ .Quantity }}
+                    </strong>
+                    {{ else }}
+                    <strong>{{ .Quantity }}</strong>
+                    {{ end }}
+                </td>
 
-                    <td>
-                        {{ if lte .Quantity .MinQuantity }}
-                        <strong class="warehouse-low-stock">
-                            ⚠ {{ .Quantity }}
-                        </strong>
-                        {{ else }}
-                        <strong>{{ .Quantity }}</strong>
-                        {{ end }}
-                    </td>
+                <td>
+                    {{ .MinQuantity }}
+                </td>
 
-                    <td>{{ .MinQuantity }}</td>
+                <td>
+                    {{ formatMoney .PurchasePriceCents }} €
+                </td>
 
-                    <td>
-                        {{ formatMoney .PurchasePriceCents }} € </td>
+                <td>
+                    {{ formatMoney .SalePriceCents }} €
+                </td>
 
-                    <td>
-                        {{ formatMoney .SalePriceCents }} € </td>
+                <td>
+                    {{ if .Location }}
+                    {{ .Location }}
+                    {{ else }}
+                    <span class="employee-empty-value">
+                        {{ t "warehouse.not_specified" }}
+                    </span>
+                    {{ end }}
+                </td>
+            </tr>
 
-                    <td>
-                        {{ if .Location }}
-                        {{ .Location }}
-                        {{ else }}
-                        <span class="employee-empty-value">
-                            Не указано
-                        </span>
-                        {{ end }}
-                    </td>
-                </tr>
+            {{ end }}
+        </tbody>
+    </table>
+</div>
 
-                {{ end }}
-            </tbody>
-        </table>
-    </div>
+{{ else }}
+
+<div class="module-empty">
+    <span class="module-empty-icon">W</span>
+
+    {{ if .Search }}
+
+    <h2>
+        {{ t "warehouse.empty_search_title" }}
+    </h2>
+
+    <p>
+        {{ t "warehouse.empty_search_text" }}
+    </p>
+
+    <a href="/warehouse" class="btn-secondary">
+        {{ t "warehouse.reset_search" }}
+    </a>
 
     {{ else }}
 
-    <div class="module-empty">
-        <span class="module-empty-icon">W</span>
+    <h2>
+        {{ t "warehouse.empty_title" }}
+    </h2>
 
-        {{ if .Search }}
+    <p>
+        {{ t "warehouse.empty_text" }}
+    </p>
 
-        <h2>Ничего не найдено</h2>
-
-        <p>
-            Попробуйте изменить поисковый запрос.
-        </p>
-
-        <a href="/warehouse" class="btn-secondary">
-            Сбросить поиск
-        </a>
-
-        {{ else }}
-
-        <h2>Склад пока пуст</h2>
-
-        <p>
-            Добавьте первую складскую позицию.
-        </p>
-
-        <a href="/warehouse/create" class="btn-primary">
-            Добавить позицию
-        </a>
-
-        {{ end }}
-    </div>
+    <a href="/warehouse/create" class="btn-primary">
+        {{ t "warehouse.add_item" }}
+    </a>
 
     {{ end }}
-</section>
+</div>
+
+{{ end }}
 
 {{ end }}

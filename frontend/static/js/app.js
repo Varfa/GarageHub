@@ -13,7 +13,11 @@ function initializeActiveNavigation() {
     const navigationLinks = document.querySelectorAll(".sidebar a");
 
     navigationLinks.forEach((link) => {
-        const linkURL = new URL(link.href, window.location.origin);
+        const linkURL = new URL(
+            link.href,
+            window.location.origin
+        );
+
         const linkPath = linkURL.pathname;
 
         const isDashboard =
@@ -48,11 +52,23 @@ function initializePageTitle() {
 }
 
 function initializeDashboardHeader() {
-    const greetingElement = document.getElementById("dashboard-greeting");
-    const weekdayElement = document.getElementById("dashboard-weekday");
-    const dateElement = document.getElementById("dashboard-date");
+    const greetingElement = document.getElementById(
+        "dashboard-greeting"
+    );
 
-    if (!greetingElement || !weekdayElement || !dateElement) {
+    const weekdayElement = document.getElementById(
+        "dashboard-weekday"
+    );
+
+    const dateElement = document.getElementById(
+        "dashboard-date"
+    );
+
+    if (
+        !greetingElement ||
+        !weekdayElement ||
+        !dateElement
+    ) {
         return;
     }
 
@@ -60,34 +76,68 @@ function initializeDashboardHeader() {
     const hour = now.getHours();
     const locale = getCurrentLocale();
 
-    greetingElement.textContent = `${getGreeting(hour, locale)}, Roman`;
-
-    weekdayElement.textContent = capitalizeFirstLetter(
-        new Intl.DateTimeFormat(locale, {
-            weekday: "long",
-        }).format(now)
+    const greeting = getGreetingFromDataset(
+        greetingElement,
+        hour
     );
 
-    dateElement.textContent = new Intl.DateTimeFormat(locale, {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    }).format(now);
+    const userName =
+        greetingElement.dataset.userName || "";
+
+    if (greeting) {
+        greetingElement.textContent =
+            userName !== ""
+                ? `${greeting}, ${userName}`
+                : greeting;
+    }
+
+    weekdayElement.textContent = capitalizeFirstLetter(
+        new Intl.DateTimeFormat(
+            locale,
+            {
+                weekday: "long",
+            }
+        ).format(now)
+    );
+
+    dateElement.textContent = new Intl.DateTimeFormat(
+        locale,
+        {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        }
+    ).format(now);
 }
 
 function initializeMobileNavigation() {
-    const header = document.querySelector(".app-header");
+    const header = document.querySelector(".topbar");
     const sidebar = document.querySelector(".sidebar");
 
     if (!header || !sidebar) {
         return;
     }
 
+    const openLabel =
+        header.dataset.menuOpenLabel || "Open menu";
+
+    const closeLabel =
+        header.dataset.menuCloseLabel || "Close menu";
+
     const menuButton = document.createElement("button");
+
     menuButton.className = "mobile-menu-button";
     menuButton.type = "button";
-    menuButton.setAttribute("aria-label", "Открыть меню");
-    menuButton.setAttribute("aria-expanded", "false");
+
+    menuButton.setAttribute(
+        "aria-label",
+        openLabel
+    );
+
+    menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+    );
 
     menuButton.innerHTML = `
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -95,62 +145,112 @@ function initializeMobileNavigation() {
         </svg>
     `;
 
-    header.insertBefore(menuButton, header.firstChild);
+    header.insertBefore(
+        menuButton,
+        header.firstChild
+    );
 
     const overlay = document.createElement("div");
+
     overlay.className = "mobile-menu-overlay";
-    overlay.setAttribute("aria-hidden", "true");
+    overlay.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
     document.body.appendChild(overlay);
 
     const openMenu = () => {
         sidebar.classList.add("is-open");
         overlay.classList.add("is-open");
-        document.body.classList.add("mobile-menu-open");
 
-        menuButton.setAttribute("aria-expanded", "true");
-        menuButton.setAttribute("aria-label", "Закрыть меню");
+        document.body.classList.add(
+            "mobile-menu-open"
+        );
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+        menuButton.setAttribute(
+            "aria-label",
+            closeLabel
+        );
     };
 
     const closeMenu = () => {
         sidebar.classList.remove("is-open");
         overlay.classList.remove("is-open");
-        document.body.classList.remove("mobile-menu-open");
 
-        menuButton.setAttribute("aria-expanded", "false");
-        menuButton.setAttribute("aria-label", "Открыть меню");
+        document.body.classList.remove(
+            "mobile-menu-open"
+        );
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+        menuButton.setAttribute(
+            "aria-label",
+            openLabel
+        );
     };
 
-    menuButton.addEventListener("click", () => {
-        if (sidebar.classList.contains("is-open")) {
-            closeMenu();
-            return;
+    menuButton.addEventListener(
+        "click",
+        () => {
+            if (
+                sidebar.classList.contains(
+                    "is-open"
+                )
+            ) {
+                closeMenu();
+                return;
+            }
+
+            openMenu();
         }
+    );
 
-        openMenu();
-    });
+    overlay.addEventListener(
+        "click",
+        closeMenu
+    );
 
-    overlay.addEventListener("click", closeMenu);
+    sidebar
+        .querySelectorAll("a")
+        .forEach((link) => {
+            link.addEventListener(
+                "click",
+                closeMenu
+            );
+        });
 
-    sidebar.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", closeMenu);
-    });
-
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-            closeMenu();
+    document.addEventListener(
+        "keydown",
+        (event) => {
+            if (event.key === "Escape") {
+                closeMenu();
+            }
         }
-    });
+    );
 
-    window.addEventListener("resize", () => {
-        if (window.innerWidth > 720) {
-            closeMenu();
+    window.addEventListener(
+        "resize",
+        () => {
+            if (window.innerWidth > 720) {
+                closeMenu();
+            }
         }
-    });
+    );
 }
 
 function initializeClickableRows() {
-    const rows = document.querySelectorAll("[data-href]");
+    const rows = document.querySelectorAll(
+        "[data-href]"
+    );
 
     rows.forEach((row) => {
         const navigate = () => {
@@ -161,35 +261,46 @@ function initializeClickableRows() {
             }
         };
 
-        row.addEventListener("click", (event) => {
-            const interactiveElement = event.target.closest(
-                "a, button, input, select, textarea, form"
-            );
+        row.addEventListener(
+            "click",
+            (event) => {
+                const interactiveElement =
+                    event.target.closest(
+                        "a, button, input, select, textarea, form"
+                    );
 
-            if (interactiveElement) {
-                return;
+                if (interactiveElement) {
+                    return;
+                }
+
+                navigate();
             }
+        );
 
-            navigate();
-        });
+        row.addEventListener(
+            "keydown",
+            (event) => {
+                if (
+                    event.key !== "Enter" &&
+                    event.key !== " "
+                ) {
+                    return;
+                }
 
-        row.addEventListener("keydown", (event) => {
-            if (event.key !== "Enter" && event.key !== " ") {
-                return;
+                if (event.target !== row) {
+                    return;
+                }
+
+                event.preventDefault();
+                navigate();
             }
-
-            if (event.target !== row) {
-                return;
-            }
-
-            event.preventDefault();
-            navigate();
-        });
+        );
     });
 }
 
 function getCurrentLocale() {
-    const languageCode = document.documentElement.lang || "en";
+    const languageCode =
+        document.documentElement.lang || "en";
 
     const locales = {
         en: "en-GB",
@@ -201,51 +312,23 @@ function getCurrentLocale() {
     return locales[languageCode] || "en-GB";
 }
 
-function getGreeting(hour, locale) {
-    const language = locale.split("-")[0];
-
-    const greetings = {
-        en: {
-            morning: "Good morning",
-            afternoon: "Good afternoon",
-            evening: "Good evening",
-            night: "Good night",
-        },
-        lt: {
-            morning: "Labas rytas",
-            afternoon: "Laba diena",
-            evening: "Labas vakaras",
-            night: "Labos nakties",
-        },
-        uk: {
-            morning: "Доброго ранку",
-            afternoon: "Добрий день",
-            evening: "Добрий вечір",
-            night: "Доброї ночі",
-        },
-        ru: {
-            morning: "Доброе утро",
-            afternoon: "Добрый день",
-            evening: "Добрый вечер",
-            night: "Доброй ночи",
-        },
-    };
-
-    const selectedGreetings = greetings[language] || greetings.en;
-
+function getGreetingFromDataset(
+    element,
+    hour
+) {
     if (hour >= 5 && hour < 12) {
-        return selectedGreetings.morning;
+        return element.dataset.greetingMorning || "";
     }
 
     if (hour >= 12 && hour < 18) {
-        return selectedGreetings.afternoon;
+        return element.dataset.greetingAfternoon || "";
     }
 
     if (hour >= 18 && hour < 23) {
-        return selectedGreetings.evening;
+        return element.dataset.greetingEvening || "";
     }
 
-    return selectedGreetings.night;
+    return element.dataset.greetingNight || "";
 }
 
 function capitalizeFirstLetter(value) {
@@ -253,5 +336,8 @@ function capitalizeFirstLetter(value) {
         return value;
     }
 
-    return value.charAt(0).toUpperCase() + value.slice(1);
+    return (
+        value.charAt(0).toUpperCase() +
+        value.slice(1)
+    );
 }

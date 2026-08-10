@@ -1,16 +1,9 @@
 {{ define "content" }}
 
-<div class="page-header">
-    <div>
-        <h1>Складская позиция</h1>
-        <p>Информация о запчасти, остатках и ценах.</p>
-    </div>
-
-    <div class="page-header-actions">
-        <a href="/warehouse" class="btn-secondary">
-            Назад к складу
-        </a>
-    </div>
+<div class="page-header-actions">
+    <a href="/warehouse" class="btn-secondary">
+        {{ t "warehouse.item.back" }}
+    </a>
 </div>
 
 {{ if .Error }}
@@ -25,196 +18,159 @@
 </div>
 {{ end }}
 
-<section class="module-card">
-    <div class="module-card-header">
-        <div>
-            <h2>{{ .Item.Name }}</h2>
-            <p>Артикул: {{ .Item.SKU }}</p>
-        </div>
-
-        <div>
-            {{ if .Item.IsActive }}
-            <span class="employee-status employee-status-active">
-                Активна
-            </span>
-            {{ else }}
-            <span class="employee-status employee-status-inactive">
-                В архиве
-            </span>
-            {{ end }}
-        </div>
-    </div>
-
-    <div class="employee-info-grid">
-        <div class="employee-info-item">
-            <span>Производитель</span>
-
-            {{ if .Item.Manufacturer }}
-            <strong>{{ .Item.Manufacturer }}</strong>
-            {{ else }}
-            <strong class="employee-empty-value">
-                Не указан
-            </strong>
-            {{ end }}
-        </div>
-
-        <div class="employee-info-item">
-            <span>Количество</span>
-            <strong>{{ .Item.Quantity }}</strong>
-        </div>
-
-        <div class="employee-info-item">
-            <span>Минимальный остаток</span>
-            <strong>{{ .Item.MinQuantity }}</strong>
-        </div>
-
-        <div class="employee-info-item">
-            <span>Цена закупки</span>
-            <strong>{{ formatMoney .Item.PurchasePriceCents }} €</strong>
-        </div>
-
-        <div class="employee-info-item">
-            <span>Цена продажи</span>
-            <strong>{{ formatMoney .Item.SalePriceCents }} €</strong>
-        </div>
-
-        <div class="employee-info-item">
-            <span>Место хранения</span>
-
-            {{ if .Item.Location }}
-            <strong>{{ .Item.Location }}</strong>
-            {{ else }}
-            <strong class="employee-empty-value">
-                Не указано
-            </strong>
-            {{ end }}
-        </div>
-    </div>
-
-    {{ if .Item.Note }}
-    <div class="employee-edit-phone-note">
-        <span>Примечание</span>
-        <p>{{ .Item.Note }}</p>
-    </div>
+<div>
+    {{ if .Item.IsActive }}
+    <span class="employee-status employee-status-active">
+        {{ t "warehouse.item.status_active" }}
+    </span>
+    {{ else }}
+    <span class="employee-status employee-status-inactive">
+        {{ t "warehouse.item.status_archived" }}
+    </span>
     {{ end }}
-</section>
+</div>
+
+<div class="employee-info-grid">
+
+    <div class="employee-info-item">
+        <span>{{ t "warehouse.item.manufacturer" }}</span>
+
+        {{ if .Item.Manufacturer }}
+        <strong>{{ .Item.Manufacturer }}</strong>
+        {{ else }}
+        <strong class="employee-empty-value">
+            {{ t "warehouse.not_specified" }}
+        </strong>
+        {{ end }}
+    </div>
+
+    <div class="employee-info-item">
+        <span>{{ t "warehouse.item.quantity" }}</span>
+        <strong>{{ .Item.Quantity }}</strong>
+    </div>
+
+    <div class="employee-info-item">
+        <span>{{ t "warehouse.item.min_quantity" }}</span>
+        <strong>{{ .Item.MinQuantity }}</strong>
+    </div>
+
+    <div class="employee-info-item">
+        <span>{{ t "warehouse.item.purchase_price" }}</span>
+        <strong>{{ formatMoney .Item.PurchasePriceCents }} €</strong>
+    </div>
+
+    <div class="employee-info-item">
+        <span>{{ t "warehouse.item.sale_price" }}</span>
+        <strong>{{ formatMoney .Item.SalePriceCents }} €</strong>
+    </div>
+
+    <div class="employee-info-item">
+        <span>{{ t "warehouse.item.location" }}</span>
+
+        {{ if .Item.Location }}
+        <strong>{{ .Item.Location }}</strong>
+        {{ else }}
+        <strong class="employee-empty-value">
+            {{ t "warehouse.not_specified" }}
+        </strong>
+        {{ end }}
+    </div>
+
+</div>
+
+{{ if .Item.Note }}
+<div class="employee-edit-phone-note">
+    <span>{{ t "warehouse.item.note" }}</span>
+    <p>{{ .Item.Note }}</p>
+</div>
+{{ end }}
 
 {{ if .Item.IsActive }}
 
-<section class="module-card">
-    <div class="module-card-header">
-        <div>
-            <h2>Редактирование</h2>
-            <p>Изменение данных складской позиции.</p>
-        </div>
-    </div>
+<form method="POST" action="/warehouse/update" class="employee-edit-form">
+    <input type="hidden" name="id" value="{{ .Item.ID }}">
 
-    <form method="POST" action="/warehouse/update" class="employee-edit-form">
-        <input type="hidden" name="id" value="{{ .Item.ID }}">
+    <label>
+        {{ t "warehouse.item.name" }}
 
-        <label>
-            Название
+        <input type="text" name="name" value="{{ .Item.Name }}" required>
+    </label>
 
-            <input type="text" name="name" value="{{ .Item.Name }}" required>
-        </label>
+    <label>
+        {{ t "warehouse.item.sku" }}
 
-        <label>
-            Артикул / SKU
+        <input type="text" name="sku" value="{{ .Item.SKU }}" required>
+    </label>
 
-            <input type="text" name="sku" value="{{ .Item.SKU }}" required>
-        </label>
+    <label>
+        {{ t "warehouse.item.manufacturer" }}
 
-        <label>
-            Производитель
+        <input type="text" name="manufacturer" value="{{ .Item.Manufacturer }}">
+    </label>
 
-            <input type="text" name="manufacturer" value="{{ .Item.Manufacturer }}">
-        </label>
+    <label>
+        {{ t "warehouse.item.purchase_price_euro" }}
 
-        <label>
-            Цена закупки, €
+        <input type="number" name="purchase_price" min="0" step="0.01"
+            value="{{ formatMoney .Item.PurchasePriceCents }}" required>
+    </label>
 
-            <input type="number" name="purchase_price" min="0" step="0.01"
-                value="{{ formatMoney .Item.PurchasePriceCents }}" required>
-        </label>
+    <label>
+        {{ t "warehouse.item.sale_price_euro" }}
 
-        <label>
-            Цена продажи, €
+        <input type="number" name="sale_price" min="0" step="0.01" value="{{ formatMoney .Item.SalePriceCents }}"
+            required>
+    </label>
 
-            <input type="number" name="sale_price" min="0" step="0.01" value="{{ formatMoney .Item.SalePriceCents }}"
-                required>
-        </label>
+    <label>
+        {{ t "warehouse.item.quantity" }}
 
-        <label>
-            Количество
+        <input type="number" name="quantity" min="0" step="1" value="{{ .Item.Quantity }}" required>
+    </label>
 
-            <input type="number" name="quantity" min="0" step="1" value="{{ .Item.Quantity }}" required>
-        </label>
+    <label>
+        {{ t "warehouse.item.min_quantity" }}
 
-        <label>
-            Минимальный остаток
+        <input type="number" name="min_quantity" min="0" step="1" value="{{ .Item.MinQuantity }}" required>
+    </label>
 
-            <input type="number" name="min_quantity" min="0" step="1" value="{{ .Item.MinQuantity }}" required>
-        </label>
+    <label>
+        {{ t "warehouse.item.location" }}
 
-        <label>
-            Место хранения
+        <input type="text" name="location" value="{{ .Item.Location }}">
+    </label>
 
-            <input type="text" name="location" value="{{ .Item.Location }}">
-        </label>
+    <label class="employee-form-full">
+        {{ t "warehouse.item.note" }}
 
-        <label class="employee-form-full">
-            Примечание
+        <textarea name="note" rows="4">{{ .Item.Note }}</textarea>
+    </label>
 
-            <textarea name="note" rows="4">{{ .Item.Note }}</textarea>
-        </label>
-
-        <div class="employee-edit-actions">
-            <button class="btn-primary" type="submit">
-                Сохранить изменения
-            </button>
-        </div>
-    </form>
-</section>
-
-<section class="module-card">
-    <div class="module-card-header">
-        <div>
-            <h2>Действия</h2>
-            <p>Управление статусом складской позиции.</p>
-        </div>
-    </div>
-
-    <form method="POST" action="/warehouse/archive-item" class="inline-form"
-        onsubmit="return confirm('Перенести складскую позицию в архив?')">
-        <input type="hidden" name="id" value="{{ .Item.ID }}">
-
-        <button class="btn-danger" type="submit">
-            Перенести в архив
+    <div class="employee-edit-actions">
+        <button class="btn-primary" type="submit">
+            {{ t "warehouse.item.save" }}
         </button>
-    </form>
-</section>
+    </div>
+</form>
+
+<form method="POST" action="/warehouse/archive-item" class="inline-form"
+    data-confirm='{{ t "warehouse.item.archive_confirm" }}' onsubmit="return confirm(this.dataset.confirm)">
+    <input type="hidden" name="id" value="{{ .Item.ID }}">
+
+    <button class="btn-danger" type="submit">
+        {{ t "warehouse.item.archive" }}
+    </button>
+</form>
 
 {{ else }}
 
-<section class="module-card">
-    <div class="module-card-header">
-        <div>
-            <h2>Архивная позиция</h2>
-            <p>
-                Позиция находится в архиве.
-                Для редактирования сначала восстановите её.
-            </p>
-        </div>
-    </div>
+<form method="POST" action="/warehouse/restore" class="inline-form">
+    <input type="hidden" name="id" value="{{ .Item.ID }}">
 
-    <form method="POST" action="/warehouse/restore" class="inline-form">
-        <input type="hidden" name="id" value="{{ .Item.ID }}">
-
-        <button class="btn-primary" type="submit">
-            Восстановить позицию
-        </button>
-    </form>
-</section>
+    <button class="btn-primary" type="submit">
+        {{ t "warehouse.item.restore" }}
+    </button>
+</form>
 
 {{ end }}
 

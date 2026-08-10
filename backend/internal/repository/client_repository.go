@@ -10,13 +10,23 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-var ErrClientNotFound = errors.New("клиент не найден")
+var (
+	ErrClientNotFound = errors.New(
+		"client.not_found",
+	)
+
+	ErrClientHasCars = errors.New(
+		"client.has_cars",
+	)
+)
 
 type ClientRepository struct {
 	db DBTX
 }
 
-func NewClientRepository(db DBTX) *ClientRepository {
+func NewClientRepository(
+	db DBTX,
+) *ClientRepository {
 	return &ClientRepository{
 		db: db,
 	}
@@ -55,7 +65,10 @@ func (r *ClientRepository) Create(
 		client.UpdatedAt,
 	)
 	if err != nil {
-		return fmt.Errorf("создание клиента: %w", err)
+		return fmt.Errorf(
+			"создание клиента: %w",
+			err,
+		)
 	}
 
 	return nil
@@ -85,10 +98,18 @@ func (r *ClientRepository) List(
 		ORDER BY id DESC
 	`
 
-	rows, err := r.db.Query(ctx, query, search)
+	rows, err := r.db.Query(
+		ctx,
+		query,
+		search,
+	)
 	if err != nil {
-		return nil, fmt.Errorf("получение списка клиентов: %w", err)
+		return nil, fmt.Errorf(
+			"получение списка клиентов: %w",
+			err,
+		)
 	}
+
 	defer rows.Close()
 
 	var clients []models.Client
@@ -109,14 +130,23 @@ func (r *ClientRepository) List(
 			&client.UpdatedAt,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("сканирование клиента: %w", err)
+			return nil, fmt.Errorf(
+				"сканирование клиента: %w",
+				err,
+			)
 		}
 
-		clients = append(clients, client)
+		clients = append(
+			clients,
+			client,
+		)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("итерация по клиентам: %w", err)
+		return nil, fmt.Errorf(
+			"итерация по клиентам: %w",
+			err,
+		)
 	}
 
 	return clients, nil
@@ -147,13 +177,18 @@ func (r *ClientRepository) ListWithCarsCount(
 		ORDER BY c.id DESC
 	`
 
-	rows, err := r.db.Query(ctx, query, search)
+	rows, err := r.db.Query(
+		ctx,
+		query,
+		search,
+	)
 	if err != nil {
 		return nil, fmt.Errorf(
 			"получение списка клиентов с автомобилями: %w",
 			err,
 		)
 	}
+
 	defer rows.Close()
 
 	var clients []models.ClientListItem
@@ -175,7 +210,10 @@ func (r *ClientRepository) ListWithCarsCount(
 			)
 		}
 
-		clients = append(clients, client)
+		clients = append(
+			clients,
+			client,
+		)
 	}
 
 	if err := rows.Err(); err != nil {
@@ -210,7 +248,11 @@ func (r *ClientRepository) GetByID(
 
 	var client models.Client
 
-	err := r.db.QueryRow(ctx, query, id).Scan(
+	err := r.db.QueryRow(
+		ctx,
+		query,
+		id,
+	).Scan(
 		&client.ID,
 		&client.Number,
 		&client.Name,
@@ -223,11 +265,17 @@ func (r *ClientRepository) GetByID(
 		&client.UpdatedAt,
 	)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
+		if errors.Is(
+			err,
+			pgx.ErrNoRows,
+		) {
 			return nil, ErrClientNotFound
 		}
 
-		return nil, fmt.Errorf("получение клиента по id: %w", err)
+		return nil, fmt.Errorf(
+			"получение клиента по id: %w",
+			err,
+		)
 	}
 
 	return &client, nil
@@ -260,7 +308,10 @@ func (r *ClientRepository) Update(
 		client.ID,
 	)
 	if err != nil {
-		return fmt.Errorf("обновление клиента: %w", err)
+		return fmt.Errorf(
+			"обновление клиента: %w",
+			err,
+		)
 	}
 
 	return nil
@@ -278,13 +329,17 @@ func (r *ClientRepository) Delete(
 	if err != nil {
 		var pgErr *pgconn.PgError
 
-		if errors.As(err, &pgErr) && pgErr.Code == "23503" {
-			return errors.New(
-				"невозможно удалить клиента: сначала переназначьте или удалите его автомобили",
-			)
+		if errors.As(
+			err,
+			&pgErr,
+		) && pgErr.Code == "23503" {
+			return ErrClientHasCars
 		}
 
-		return fmt.Errorf("удаление клиента: %w", err)
+		return fmt.Errorf(
+			"удаление клиента: %w",
+			err,
+		)
 	}
 
 	return nil
@@ -311,7 +366,9 @@ func (r *ClientRepository) ExistsByNameAndPhone(
 		query,
 		name,
 		phone,
-	).Scan(&exists)
+	).Scan(
+		&exists,
+	)
 	if err != nil {
 		return false, fmt.Errorf(
 			"проверка клиента на дубликат: %w",

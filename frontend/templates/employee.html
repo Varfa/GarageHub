@@ -1,19 +1,20 @@
 {{ define "content" }}
+
 <div class="employee-details-page">
     <div class="page-header">
         <div>
-            <h1>Карточка сотрудника</h1>
-            <p>Личные данные, должность, контакты и статус.</p>
+            <h1>{{ t "employee.title" }}</h1>
+            <p>{{ t "employee.subtitle" }}</p>
         </div>
 
         <div class="page-header-actions">
             {{ if .Employee.IsActive }}
             <a class="btn-secondary" href="/employees">
-                Назад к сотрудникам
+                {{ t "employee.back_to_employees" }}
             </a>
             {{ else }}
             <a class="btn-secondary" href="/employees/archive">
-                Назад в архив
+                {{ t "employee.back_to_archive" }}
             </a>
             {{ end }}
         </div>
@@ -34,11 +35,12 @@
     {{ if not .Employee.IsActive }}
     <div class="employee-archive-notice" role="status">
         <div>
-            <strong>Сотрудник находится в архиве</strong>
+            <strong>
+                {{ t "employee.archive_notice.title" }}
+            </strong>
 
             <p>
-                Данные и телефоны доступны только для просмотра.
-                Для внесения изменений сначала восстановите сотрудника.
+                {{ t "employee.archive_notice.text" }}
             </p>
         </div>
 
@@ -46,7 +48,7 @@
             <input type="hidden" name="id" value="{{ .Employee.ID }}">
 
             <button class="btn-primary" type="submit">
-                Восстановить сотрудника
+                {{ t "employee.restore" }}
             </button>
         </form>
     </div>
@@ -57,10 +59,12 @@
     <section class="employee-profile-card">
         <div class="employee-section-header">
             <div>
-                <h2>Редактирование сотрудника</h2>
+                <h2>
+                    {{ t "employee.edit.title" }}
+                </h2>
 
                 <p>
-                    Измените личные данные и должность сотрудника.
+                    {{ t "employee.edit.subtitle" }}
                 </p>
             </div>
         </div>
@@ -69,13 +73,13 @@
             <input type="hidden" name="id" value="{{ .Employee.ID }}">
 
             <label>
-                Имя
+                {{ t "employee.first_name" }}
 
                 <input type="text" name="first_name" value="{{ .Employee.FirstName }}" required>
             </label>
 
             <label>
-                Фамилия
+                {{ t "employee.last_name" }}
 
                 <input type="text" name="last_name" value="{{ .Employee.LastName }}" required>
             </label>
@@ -88,38 +92,42 @@
             </label>
 
             <label>
-                Должность
+                {{ t "employee.position" }}
 
                 <select name="position_id" required>
                     <option value="">
-                        Выберите должность
+                        {{ t "employee.select_position" }}
                     </option>
 
                     {{ range .Positions }}
-                    <option value="{{ .ID }}" {{ if eq .ID $.Employee.PositionID }} selected {{ end }}>
-                        {{ .Name }}
+                    <option value="{{ .ID }}" {{ if eq .ID $.Employee.PositionID }}selected{{ end }}>
+                        {{ positionName .Code .Name }}
                     </option>
                     {{ end }}
                 </select>
             </label>
 
             <div class="employee-edit-phone-note">
-                <span>Основной телефон</span>
+                <span>
+                    {{ t "employee.primary_phone" }}
+                </span>
 
-                <strong>{{ .Employee.Phone }}</strong>
+                <strong>
+                    {{ .Employee.Phone }}
+                </strong>
 
                 <p>
-                    Телефоны изменяются отдельно в блоке контактов.
+                    {{ t "employee.edit.phone_note" }}
                 </p>
             </div>
 
             <div class="employee-edit-actions">
                 <button class="btn-primary" type="submit">
-                    Сохранить изменения
+                    {{ t "employee.save_changes" }}
                 </button>
 
                 <a class="btn-secondary" href="/employees/view?id={{ .Employee.ID }}">
-                    Отмена
+                    {{ t "employee.cancel" }}
                 </a>
             </div>
         </form>
@@ -141,7 +149,7 @@
                     </h2>
 
                     <p>
-                        Сотрудник №{{ .Employee.ID }}
+                        {{ t "employee.employee_number" }}{{ .Employee.ID }}
                     </p>
                 </div>
             </div>
@@ -149,11 +157,11 @@
             <div>
                 {{ if .Employee.IsActive }}
                 <span class="employee-status employee-status-active">
-                    Активен
+                    {{ t "employee.status.active" }}
                 </span>
                 {{ else }}
                 <span class="employee-status employee-status-inactive">
-                    В архиве
+                    {{ t "employee.status.archived" }}
                 </span>
                 {{ end }}
             </div>
@@ -161,12 +169,14 @@
 
         <div class="employee-info-grid">
             <div class="employee-info-item">
-                <span>Должность</span>
+                <span>
+                    {{ t "employee.position" }}
+                </span>
 
                 <strong>
                     {{ range .Positions }}
                     {{ if eq .ID $.Employee.PositionID }}
-                    {{ .Name }}
+                    {{ positionName .Code .Name }}
                     {{ end }}
                     {{ end }}
                 </strong>
@@ -176,16 +186,20 @@
                 <span>Email</span>
 
                 {{ if .Employee.Email }}
-                <strong>{{ .Employee.Email }}</strong>
+                <strong>
+                    {{ .Employee.Email }}
+                </strong>
                 {{ else }}
                 <strong class="employee-empty-value">
-                    Не указан
+                    {{ t "employee.not_specified" }}
                 </strong>
                 {{ end }}
             </div>
 
             <div class="employee-info-item">
-                <span>Основной телефон</span>
+                <span>
+                    {{ t "employee.primary_phone" }}
+                </span>
 
                 <strong>
                     {{ .Employee.Phone }}
@@ -193,7 +207,9 @@
             </div>
 
             <div class="employee-info-item">
-                <span>Дата добавления</span>
+                <span>
+                    {{ t "employee.created_at" }}
+                </span>
 
                 <strong>
                     {{ .Employee.CreatedAt.Format "02.01.2006" }}
@@ -205,8 +221,13 @@
     <section class="employee-section-card">
         <div class="employee-section-header">
             <div>
-                <h2>Телефоны</h2>
-                <p>Все контактные номера сотрудника.</p>
+                <h2>
+                    {{ t "employee.phones.title" }}
+                </h2>
+
+                <p>
+                    {{ t "employee.phones.subtitle" }}
+                </p>
             </div>
         </div>
 
@@ -214,48 +235,48 @@
 
         <details class="employee-phone-create">
             <summary class="btn-primary">
-                Добавить телефон
+                {{ t "employee.phones.add" }}
             </summary>
 
             <form method="POST" action="/employees/phones/create" class="employee-phone-form">
                 <input type="hidden" name="employee_id" value="{{ .Employee.ID }}">
 
                 <label>
-                    Номер телефона
+                    {{ t "employee.phones.number" }}
 
                     <input type="tel" name="phone" placeholder="+370..." autocomplete="tel" required>
                 </label>
 
                 <label>
-                    Тип номера
+                    {{ t "employee.phones.type" }}
 
                     <select name="label">
-                        <option value="Дополнительный">
-                            Дополнительный
+                        <option value="additional">
+                            {{ t "employee.phones.type.additional" }}
                         </option>
 
-                        <option value="Рабочий">
-                            Рабочий
+                        <option value="work">
+                            {{ t "employee.phones.type.work" }}
                         </option>
 
-                        <option value="Личный">
-                            Личный
+                        <option value="personal">
+                            {{ t "employee.phones.type.personal" }}
                         </option>
 
-                        <option value="Основной">
-                            Основной
+                        <option value="primary">
+                            {{ t "employee.phones.type.primary" }}
                         </option>
 
-                        <option value="WhatsApp">
-                            WhatsApp
+                        <option value="whatsapp">
+                            {{ t "employee.phones.type.whatsapp" }}
                         </option>
 
-                        <option value="Viber">
-                            Viber
+                        <option value="viber">
+                            {{ t "employee.phones.type.viber" }}
                         </option>
 
-                        <option value="Telegram">
-                            Telegram
+                        <option value="telegram">
+                            {{ t "employee.phones.type.telegram" }}
                         </option>
                     </select>
                 </label>
@@ -264,13 +285,13 @@
                     <input type="checkbox" name="is_primary">
 
                     <span>
-                        Сделать основным номером
+                        {{ t "employee.phones.make_primary" }}
                     </span>
                 </label>
 
                 <div class="employee-phone-form-actions">
                     <button class="btn-primary" type="submit">
-                        Сохранить телефон
+                        {{ t "employee.phones.save" }}
                     </button>
                 </div>
             </form>
@@ -285,15 +306,20 @@
 
             <div class="employee-phone-item">
                 <div class="employee-phone-content">
-                    <strong>{{ .Phone }}</strong>
-                    <span>{{ .Label }}</span>
+                    <strong>
+                        {{ .Phone }}
+                    </strong>
+
+                    <span>
+                        {{ phoneLabel .Label }}
+                    </span>
                 </div>
 
                 <div class="employee-phone-actions">
                     {{ if .IsPrimary }}
 
                     <span class="employee-primary-phone">
-                        Основной
+                        {{ t "employee.phones.primary" }}
                     </span>
 
                     {{ else if $.Employee.IsActive }}
@@ -304,18 +330,18 @@
                         <input type="hidden" name="phone_id" value="{{ .ID }}">
 
                         <button class="btn-secondary btn-small" type="submit">
-                            Сделать основным
+                            {{ t "employee.phones.set_primary" }}
                         </button>
                     </form>
 
                     <form method="POST" action="/employees/phones/delete" class="inline-form"
-                        onsubmit="return confirm('Удалить этот телефон?')">
+                        onsubmit='return confirm("{{ t "employee.phones.delete_confirm" }}")'>
                         <input type="hidden" name="employee_id" value="{{ .EmployeeID }}">
 
                         <input type="hidden" name="phone_id" value="{{ .ID }}">
 
                         <button class="btn-danger btn-small" type="submit">
-                            Удалить
+                            {{ t "employee.phones.delete" }}
                         </button>
                     </form>
 
@@ -329,7 +355,7 @@
         {{ else }}
 
         <div class="employee-section-empty">
-            Телефоны пока не добавлены.
+            {{ t "employee.phones.empty" }}
         </div>
 
         {{ end }}
@@ -338,8 +364,13 @@
     <section class="employee-section-card">
         <div class="employee-section-header">
             <div>
-                <h2>Действия</h2>
-                <p>Управление данными и статусом сотрудника.</p>
+                <h2>
+                    {{ t "employee.actions.title" }}
+                </h2>
+
+                <p>
+                    {{ t "employee.actions.subtitle" }}
+                </p>
             </div>
         </div>
 
@@ -347,15 +378,15 @@
             {{ if .Employee.IsActive }}
 
             <a class="btn-primary" href="/employees/view?id={{ .Employee.ID }}&edit=1">
-                Редактировать сотрудника
+                {{ t "employee.edit_employee" }}
             </a>
 
             <form method="POST" action="/employees/archive-action" class="inline-form"
-                onsubmit="return confirm('Перенести сотрудника в архив?')">
+                onsubmit='return confirm("{{ t "employee.archive_confirm" }}")'>
                 <input type="hidden" name="id" value="{{ .Employee.ID }}">
 
                 <button class="btn-danger" type="submit">
-                    Перенести в архив
+                    {{ t "employee.archive" }}
                 </button>
             </form>
 
@@ -365,12 +396,12 @@
                 <input type="hidden" name="id" value="{{ .Employee.ID }}">
 
                 <button class="btn-primary" type="submit">
-                    Восстановить сотрудника
+                    {{ t "employee.restore" }}
                 </button>
             </form>
 
             <a class="btn-secondary" href="/employees/archive">
-                Вернуться в архив
+                {{ t "employee.return_to_archive" }}
             </a>
 
             {{ end }}
@@ -379,4 +410,5 @@
 
     {{ end }}
 </div>
+
 {{ end }}

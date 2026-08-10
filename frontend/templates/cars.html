@@ -1,174 +1,173 @@
 {{ define "content" }}
-<div class="cars-page">
-    <div class="page-header">
-        <div>
-            <h1>Автомобили</h1>
-            <p>Общий список автомобилей автосервиса.</p>
-        </div>
 
-        <div class="page-header-actions">
-            <a class="btn-primary" href="/cars/create">
-                Создать автомобиль
-            </a>
-        </div>
-    </div>
+<div class="page-header-actions">
+    <a class="btn-primary" href="/cars/create">
+        {{ t "cars.create" }}
+    </a>
+</div>
 
-    {{ if .Error }}
-    <div class="form-error" role="alert">
-        {{ .Error }}
-    </div>
-    {{ end }}
+{{ if .Error }}
+<div class="form-error" role="alert">
+    {{ .Error }}
+</div>
+{{ end }}
 
-    <div class="cars-toolbar">
-        <form method="GET" action="/cars" class="search-form">
-            <input class="search-input" type="search" name="search" value="{{ .Search }}"
-                placeholder="Поиск по марке, модели, VIN или номеру">
+<div class="cars-toolbar">
+    <form method="GET" action="/cars" class="search-form">
+        <input class="search-input" type="search" name="search" value="{{ .Search }}"
+            placeholder='{{ t "cars.search_placeholder" }}'>
 
-            <button class="btn-secondary" type="submit">
-                Найти
-            </button>
+        <button class="btn-secondary" type="submit">
+            {{ t "cars.search" }}
+        </button>
 
-            {{ if .Search }}
-            <a class="btn-secondary" href="/cars">
-                Сбросить
-            </a>
-            {{ end }}
-        </form>
-    </div>
+        {{ if .Search }}
+        <a class="btn-secondary" href="/cars">
+            {{ t "cars.reset" }}
+        </a>
+        {{ end }}
+    </form>
+</div>
 
-    {{ if .Cars }}
+{{ if .Cars }}
 
-    <div class="cars-table-wrapper">
-        <table class="cars-table">
-            <thead>
-                <tr>
-                    <th>Автомобиль</th>
-                    <th>Госномер</th>
-                    <th>VIN</th>
-                    <th>Владелец</th>
-                    <th>Год</th>
-                    <th>Пробег</th>
-                    <th>Действия</th>
-                </tr>
-            </thead>
+<div class="cars-table-wrapper">
+    <table class="cars-table">
+        <thead>
+            <tr>
+                <th>{{ t "cars.table.car" }}</th>
+                <th>{{ t "cars.table.plate" }}</th>
+                <th>VIN</th>
+                <th>{{ t "cars.table.owner" }}</th>
+                <th>{{ t "cars.table.year" }}</th>
+                <th>{{ t "cars.table.mileage" }}</th>
+                <th>{{ t "cars.table.actions" }}</th>
+            </tr>
+        </thead>
 
-            <tbody>
-                {{ range .Cars }}
-                <tr class="car-row" data-href="/cars/view?id={{ .ID }}" tabindex="0">
-                    <td>
-                        <div class="car-identity">
-                            <span class="car-avatar">
-                                {{ printf "%.1s" .Brand }}
-                            </span>
-
-                            <div class="car-identity-text">
-                                <a class="car-title-link" href="/cars/view?id={{ .ID }}">
-                                    {{ .Brand }} {{ .Model }}
-                                </a>
-
-                                <span class="car-code">
-                                    ID: {{ .ID }}
-                                </span>
-                            </div>
-                        </div>
-                    </td>
-
-                    <td class="car-plate">
-                        {{ if .PlateNumber }}
-                        <span class="car-plate-badge">
-                            {{ .PlateNumber }}
+        <tbody>
+            {{ range .Cars }}
+            <tr class="car-row" data-href="/cars/view?id={{ .ID }}" tabindex="0">
+                <td>
+                    <div class="car-identity">
+                        <span class="car-avatar">
+                            {{ printf "%.1s" .Brand }}
                         </span>
-                        {{ else }}
-                        <span class="car-empty-value">
-                            Не указан
-                        </span>
-                        {{ end }}
-                    </td>
 
-                    <td class="car-vin" title="{{ .VIN }}">
-                        {{ if .VIN }}
-                        {{ .VIN }}
-                        {{ else }}
-                        <span class="car-empty-value">
-                            Не указан
-                        </span>
-                        {{ end }}
-                    </td>
-
-                    <td>
-                        <a class="car-owner-link" href="/clients/view?id={{ .ClientID }}">
-                            {{ .OwnerName }}
-                        </a>
-                    </td>
-
-                    <td class="car-year">
-                        {{ .Year }}
-                    </td>
-
-                    <td class="car-mileage">
-                        <span class="car-mileage-value">
-                            {{ .Mileage }} км
-                        </span>
-                    </td>
-
-                    <td class="actions-cell">
-                        <button class="actions-btn" type="button" aria-label="Действия с автомобилем"
-                            onclick="toggleMenu(this)">
-                            ⋯
-                        </button>
-
-                        <div class="actions-menu">
-                            <a href="/cars/view?id={{ .ID }}&edit=1">
-                                Редактировать
+                        <div class="car-identity-text">
+                            <a class="car-title-link" href="/cars/view?id={{ .ID }}">
+                                {{ .Brand }} {{ .Model }}
                             </a>
 
-                            <form method="POST" action="/cars/delete">
-                                <input type="hidden" name="id" value="{{ .ID }}">
-
-                                <button type="submit">
-                                    Удалить
-                                </button>
-                            </form>
+                            <span class="car-code">
+                                ID: {{ .ID }}
+                            </span>
                         </div>
-                    </td>
-                </tr>
-                {{ end }}
-            </tbody>
-        </table>
-    </div>
+                    </div>
+                </td>
 
-    {{ else }}
+                <td class="car-plate">
+                    {{ if .PlateNumber }}
+                    <span class="car-plate-badge">
+                        {{ .PlateNumber }}
+                    </span>
+                    {{ else }}
+                    <span class="car-empty-value">
+                        {{ t "cars.not_specified" }}
+                    </span>
+                    {{ end }}
+                </td>
 
-    <div class="cars-table-wrapper">
-        <div class="cars-empty">
-            {{ if .Search }}
+                <td class="car-vin" title="{{ .VIN }}">
+                    {{ if .VIN }}
+                    {{ .VIN }}
+                    {{ else }}
+                    <span class="car-empty-value">
+                        {{ t "cars.not_specified" }}
+                    </span>
+                    {{ end }}
+                </td>
 
-            <h2>Автомобили не найдены</h2>
+                <td>
+                    <a class="car-owner-link" href="/clients/view?id={{ .ClientID }}">
+                        {{ .OwnerName }}
+                    </a>
+                </td>
 
-            <p>
-                Попробуйте изменить поисковый запрос.
-            </p>
+                <td class="car-year">
+                    {{ .Year }}
+                </td>
 
-            <a class="btn-secondary" href="/cars">
-                Сбросить поиск
-            </a>
+                <td class="car-mileage">
+                    <span class="car-mileage-value">
+                        {{ .Mileage }} {{ t "cars.km" }}
+                    </span>
+                </td>
 
-            {{ else }}
+                <td class="actions-cell">
+                    <button class="actions-btn" type="button" aria-label='{{ t "cars.actions_label" }}'
+                        onclick="toggleMenu(this)">
+                        ⋯
+                    </button>
 
-            <h2>Автомобилей пока нет</h2>
+                    <div class="actions-menu">
+                        <a href="/cars/view?id={{ .ID }}&edit=1">
+                            {{ t "cars.edit" }}
+                        </a>
 
-            <p>
-                Создайте первый автомобиль, чтобы он появился в системе.
-            </p>
+                        <form method="POST" action="/cars/delete">
+                            <input type="hidden" name="id" value="{{ .ID }}">
 
-            <a class="btn-primary" href="/cars/create">
-                Создать автомобиль
-            </a>
-
+                            <button type="submit">
+                                {{ t "cars.delete" }}
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
             {{ end }}
-        </div>
-    </div>
-
-    {{ end }}
+        </tbody>
+    </table>
 </div>
+
+{{ else }}
+
+<div class="cars-table-wrapper">
+    <div class="cars-empty">
+
+        {{ if .Search }}
+
+        <h2>
+            {{ t "cars.empty_search_title" }}
+        </h2>
+
+        <p>
+            {{ t "cars.empty_search_text" }}
+        </p>
+
+        <a class="btn-secondary" href="/cars">
+            {{ t "cars.reset_search" }}
+        </a>
+
+        {{ else }}
+
+        <h2>
+            {{ t "cars.empty_title" }}
+        </h2>
+
+        <p>
+            {{ t "cars.empty_text" }}
+        </p>
+
+        <a class="btn-primary" href="/cars/create">
+            {{ t "cars.create" }}
+        </a>
+
+        {{ end }}
+
+    </div>
+</div>
+
+{{ end }}
+
 {{ end }}

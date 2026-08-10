@@ -1,76 +1,93 @@
 {{ define "content" }}
-<div class="module-page">
-    <div class="page-header">
-        <div>
-            <h1>Отчёты</h1>
-            <p>Финансовая и операционная аналитика автосервиса.</p>
-        </div>
 
-        <div class="page-header-actions">
-            <button class="btn-secondary" type="button" disabled>
-                Экспортировать
-            </button>
-        </div>
-    </div>
+<div class="page-header-actions">
+    <button class="btn-secondary" type="button" disabled>
+        {{ t "reports.export" }}
+    </button>
+</div>
 
-    <div class="module-layout">
-        <section class="module-card">
-            <div class="module-card-header">
-                <div>
-                    <h2>Аналитика</h2>
-                    <p>Основные показатели работы автосервиса.</p>
-                </div>
-            </div>
-
-            <div class="module-empty">
-                <span class="module-empty-icon">R</span>
-
-                <h2>Данных для отчётов пока нет</h2>
+<div class="module-layout">
+    <section class="module-card">
+        <div class="module-card-header">
+            <div>
+                <h2>{{ t "reports.analytics.title" }}</h2>
 
                 <p>
-                    После появления заказов здесь будут отображаться
-                    доходы, расходы, загрузка сотрудников и популярные услуги.
+                    {{ t "reports.analytics.description" }}
                 </p>
             </div>
-        </section>
+        </div>
 
-        <aside class="module-card">
-            <div class="module-card-header">
+        <div class="module-empty">
+            <span class="module-empty-icon">R</span>
+
+            <h2>
+                {{ t "reports.empty.title" }}
+            </h2>
+
+            <p>
+                {{ t "reports.empty.description" }}
+            </p>
+        </div>
+    </section>
+
+    <aside class="module-card">
+        <div class="module-card-header">
+            <div>
+                <h2>
+                    {{ t "reports.future.title" }}
+                </h2>
+
+                <p>
+                    {{ t "reports.future.description" }}
+                </p>
+            </div>
+        </div>
+
+        <div class="module-features">
+            <div class="module-feature">
+                <span class="module-feature-marker">1</span>
+
                 <div>
-                    <h2>Будущие отчёты</h2>
-                    <p>Основные направления аналитики.</p>
+                    <strong>
+                        {{ t "reports.feature.profit.title" }}
+                    </strong>
+
+                    <p>
+                        {{ t "reports.feature.profit.description" }}
+                    </p>
                 </div>
             </div>
 
-            <div class="module-features">
-                <div class="module-feature">
-                    <span class="module-feature-marker">1</span>
+            <div class="module-feature">
+                <span class="module-feature-marker">2</span>
 
-                    <div>
-                        <strong>Доход и прибыль</strong>
-                        <p>Финансовые показатели по выбранному периоду.</p>
-                    </div>
-                </div>
+                <div>
+                    <strong>
+                        {{ t "reports.feature.employees.title" }}
+                    </strong>
 
-                <div class="module-feature">
-                    <span class="module-feature-marker">2</span>
-
-                    <div>
-                        <strong>Эффективность сотрудников</strong>
-                        <p>Количество и стоимость выполненных работ.</p>
-                    </div>
-                </div>
-
-                <div class="module-feature">
-                    <span class="module-feature-marker">3</span>
-
-                    <div>
-                        <strong>Популярные услуги</strong>
-                        <p>Наиболее востребованные типы ремонта.</p>
-                    </div>
+                    <p>
+                        {{ t "reports.feature.employees.description" }}
+                    </p>
                 </div>
             </div>
-        </aside>
-    </div>
+
+            <div class="module-feature">
+                <span class="module-feature-marker">3</span>
+
+                <div>
+                    <strong>
+                        {{ t "reports.feature.services.title" }}
+                    </strong>
+
+                    <p>
+                        {{ t "reports.feature.services.description" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </aside>
 </div>
+
 {{ end }}

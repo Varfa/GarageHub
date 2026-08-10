@@ -1,76 +1,68 @@
 {{ define "content" }}
-<div class="module-page">
-    <div class="page-header">
-        <div>
-            <h1>Запчасти</h1>
-            <p>Каталог деталей, материалов и расходников.</p>
-        </div>
 
-        <div class="page-header-actions">
-            <button class="btn-primary" type="button" disabled>
-                Добавить запчасть
-            </button>
-        </div>
-    </div>
-
-    <div class="module-layout">
-        <section class="module-card">
-            <div class="module-card-header">
-                <div>
-                    <h2>Каталог запчастей</h2>
-                    <p>Поиск и управление номенклатурой автосервиса.</p>
-                </div>
-            </div>
-
-            <div class="module-empty">
-                <span class="module-empty-icon">P</span>
-
-                <h2>Каталог пока пуст</h2>
-
-                <p>
-                    Здесь появятся названия деталей, артикулы,
-                    производители, цены и доступность на складе.
-                </p>
-            </div>
-        </section>
-
-        <aside class="module-card">
-            <div class="module-card-header">
-                <div>
-                    <h2>Возможности</h2>
-                    <p>Будущие функции каталога.</p>
-                </div>
-            </div>
-
-            <div class="module-features">
-                <div class="module-feature">
-                    <span class="module-feature-marker">1</span>
-
-                    <div>
-                        <strong>Каталог деталей</strong>
-                        <p>Название, артикул, бренд и описание.</p>
-                    </div>
-                </div>
-
-                <div class="module-feature">
-                    <span class="module-feature-marker">2</span>
-
-                    <div>
-                        <strong>Закупочная и продажная цена</strong>
-                        <p>Учёт стоимости и маржинальности.</p>
-                    </div>
-                </div>
-
-                <div class="module-feature">
-                    <span class="module-feature-marker">3</span>
-
-                    <div>
-                        <strong>Связь с заказами</strong>
-                        <p>Использование деталей в конкретном ремонте.</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
-    </div>
+<div class="page-header-actions">
+    <button class="btn-primary" type="button" disabled>
+        {{ t "parts.add" }}
+    </button>
 </div>
+
+<div class="module-layout">
+    <section class="module-card">
+        <div class="module-card-header">
+            <div>
+                <h2>{{ t "parts.catalog.title" }}</h2>
+                <p>{{ t "parts.catalog.description" }}</p>
+            </div>
+        </div>
+
+        <div class="module-empty">
+            <span class="module-empty-icon">P</span>
+
+            <h2>{{ t "parts.empty.title" }}</h2>
+
+            <p>
+                {{ t "parts.empty.description" }}
+            </p>
+        </div>
+    </section>
+
+    <aside class="module-card">
+        <div class="module-card-header">
+            <div>
+                <h2>{{ t "common.features" }}</h2>
+                <p>{{ t "parts.features.description" }}</p>
+            </div>
+        </div>
+
+        <div class="module-features">
+            <div class="module-feature">
+                <span class="module-feature-marker">1</span>
+
+                <div>
+                    <strong>{{ t "parts.feature.catalog.title" }}</strong>
+                    <p>{{ t "parts.feature.catalog.description" }}</p>
+                </div>
+            </div>
+
+            <div class="module-feature">
+                <span class="module-feature-marker">2</span>
+
+                <div>
+                    <strong>{{ t "parts.feature.pricing.title" }}</strong>
+                    <p>{{ t "parts.feature.pricing.description" }}</p>
+                </div>
+            </div>
+
+            <div class="module-feature">
+                <span class="module-feature-marker">3</span>
+
+                <div>
+                    <strong>{{ t "parts.feature.orders.title" }}</strong>
+                    <p>{{ t "parts.feature.orders.description" }}</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+
 {{ end }}

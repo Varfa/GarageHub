@@ -1,266 +1,274 @@
 {{ define "content" }}
-<div class="car-details-page">
-    <div class="page-header">
+
+<div class="page-header-actions">
+    <a class="btn-secondary" href="/cars">
+        {{ t "car.back_to_cars" }}
+    </a>
+</div>
+
+<div class="details-card">
+    {{ if .Edit }}
+
+    <form method="POST" action="/cars/update" class="edit-form">
+        <input type="hidden" name="id" value="{{ .Car.ID }}">
+        <input type="hidden" name="client_id" value="{{ .Car.ClientID }}">
+
+        <label>
+            {{ t "car.brand" }}
+
+            <input type="text" name="brand" value="{{ .Car.Brand }}" required>
+        </label>
+
+        <label>
+            {{ t "car.model" }}
+
+            <input type="text" name="model" value="{{ .Car.Model }}" required>
+        </label>
+
+        <label>
+            {{ t "car.year" }}
+
+            <input type="number" name="year" value="{{ .Car.Year }}" min="1900" max="2100">
+        </label>
+
+        <label>
+            {{ t "car.plate_number" }}
+
+            <input type="text" name="plate_number" value="{{ .Car.PlateNumber }}">
+        </label>
+
+        <label>
+            VIN
+
+            <input type="text" name="vin" value="{{ .Car.VIN }}">
+        </label>
+
+        <label>
+            {{ t "car.engine" }}
+
+            <input type="text" name="engine" value="{{ .Car.Engine }}">
+        </label>
+
+        <label>
+            {{ t "car.power_kw" }}
+
+            <input type="number" name="power_kw" value="{{ .Car.PowerKW }}" min="0">
+        </label>
+
+        <label>
+            {{ t "car.color" }}
+
+            <input type="text" name="color" value="{{ .Car.Color }}">
+        </label>
+
+        <label>
+            {{ t "car.mileage" }}
+
+            <input type="number" name="mileage" value="{{ .Car.Mileage }}" min="0">
+        </label>
+
+        <label class="full-width">
+            {{ t "car.note" }}
+
+            <textarea name="note">{{ .Car.Note }}</textarea>
+        </label>
+
+        <div class="form-actions">
+            <a class="btn-secondary" href="/cars/view?id={{ .Car.ID }}">
+                {{ t "car.cancel" }}
+            </a>
+
+            <button class="btn-primary" type="submit">
+                {{ t "car.save_changes" }}
+            </button>
+        </div>
+    </form>
+
+    {{ else }}
+
+    <div class="details-header">
         <div>
-            <h1>Карточка автомобиля</h1>
-            <p>Основные данные, владелец и история автомобиля.</p>
+            <h2>{{ .Car.Brand }} {{ .Car.Model }}</h2>
+            <p class="car-code">{{ .Car.Code }}</p>
         </div>
 
-        <div class="page-header-actions">
-            <a class="btn-secondary" href="/cars">
-                Назад к автомобилям
+        <div class="details-actions">
+            <a class="btn-primary" href="/cars/view?id={{ .Car.ID }}&edit=1">
+                {{ t "car.edit" }}
             </a>
         </div>
     </div>
 
-    <div class="details-card">
-        {{ if .Edit }}
+    <div class="info-grid">
+        <div class="info-item">
+            <span>{{ t "car.plate_number" }}</span>
 
-        <form method="POST" action="/cars/update" class="edit-form">
-            <input type="hidden" name="id" value="{{ .Car.ID }}">
-
-            <input type="hidden" name="client_id" value="{{ .Car.ClientID }}">
-
-            <label>
-                Марка
-
-                <input type="text" name="brand" value="{{ .Car.Brand }}" required>
-            </label>
-
-            <label>
-                Модель
-
-                <input type="text" name="model" value="{{ .Car.Model }}" required>
-            </label>
-
-            <label>
-                Год выпуска
-
-                <input type="number" name="year" value="{{ .Car.Year }}" min="1900" max="2100">
-            </label>
-
-            <label>
-                Госномер
-
-                <input type="text" name="plate_number" value="{{ .Car.PlateNumber }}">
-            </label>
-
-            <label>
-                VIN
-
-                <input type="text" name="vin" value="{{ .Car.VIN }}">
-            </label>
-
-            <label>
-                Двигатель
-
-                <input type="text" name="engine" value="{{ .Car.Engine }}">
-            </label>
-
-            <label>
-                Мощность, кВт
-
-                <input type="number" name="power_kw" value="{{ .Car.PowerKW }}" min="0">
-            </label>
-
-            <label>
-                Цвет
-
-                <input type="text" name="color" value="{{ .Car.Color }}">
-            </label>
-
-            <label>
-                Пробег, км
-
-                <input type="number" name="mileage" value="{{ .Car.Mileage }}" min="0">
-            </label>
-
-            <label class="full-width">
-                Примечание
-
-                <textarea name="note">{{ .Car.Note }}</textarea>
-            </label>
-
-            <div class="form-actions">
-                <a class="btn-secondary" href="/cars/view?id={{ .Car.ID }}">
-                    Отмена
-                </a>
-
-                <button class="btn-primary" type="submit">
-                    Сохранить изменения
-                </button>
-            </div>
-        </form>
-
-        {{ else }}
-
-        <div class="details-header">
-            <div>
-                <h2>{{ .Car.Brand }} {{ .Car.Model }}</h2>
-                <p class="car-code">{{ .Car.Code }}</p>
-            </div>
-
-            <div class="details-actions">
-                <a class="btn-primary" href="/cars/view?id={{ .Car.ID }}&edit=1">
-                    Редактировать
-                </a>
-            </div>
-        </div>
-
-        <div class="info-grid">
-            <div class="info-item">
-                <span>Госномер</span>
-
-                {{ if .Car.PlateNumber }}
-                <strong>{{ .Car.PlateNumber }}</strong>
-                {{ else }}
-                <strong class="empty-value">Не указан</strong>
-                {{ end }}
-            </div>
-
-            <div class="info-item">
-                <span>VIN</span>
-
-                {{ if .Car.VIN }}
-                <strong>{{ .Car.VIN }}</strong>
-                {{ else }}
-                <strong class="empty-value">Не указан</strong>
-                {{ end }}
-            </div>
-
-            <div class="info-item">
-                <span>Год выпуска</span>
-                <strong>{{ .Car.Year }}</strong>
-            </div>
-
-            <div class="info-item">
-                <span>Пробег</span>
-                <strong>{{ .Car.Mileage }} км</strong>
-            </div>
-
-            <div class="info-item">
-                <span>Двигатель</span>
-
-                {{ if .Car.Engine }}
-                <strong>{{ .Car.Engine }}</strong>
-                {{ else }}
-                <strong class="empty-value">Не указан</strong>
-                {{ end }}
-            </div>
-
-            <div class="info-item">
-                <span>Мощность</span>
-                <strong>{{ .Car.PowerKW }} кВт</strong>
-            </div>
-
-            <div class="info-item">
-                <span>Цвет</span>
-
-                {{ if .Car.Color }}
-                <strong>{{ .Car.Color }}</strong>
-                {{ else }}
-                <strong class="empty-value">Не указан</strong>
-                {{ end }}
-            </div>
-
-            <div class="info-item">
-                <span>Владелец</span>
-
-                <div class="owner-details">
-                    <a class="owner-current" href="/clients/view?id={{ .Client.ID }}">
-                        {{ .Client.Name }}
-                    </a>
-
-                    <form method="POST" action="/cars/change-owner" class="owner-change-form">
-                        <input type="hidden" name="car_id" value="{{ .Car.ID }}">
-
-                        <input type="hidden" name="old_client_id" value="{{ .Client.ID }}">
-
-                        <input type="hidden" name="return_to" value="car">
-
-                        <select name="client_id" required>
-                            <option value="">Сменить владельца</option>
-
-                            {{ range .AllClients }}
-                            {{ if ne .ID $.Client.ID }}
-                            <option value="{{ .ID }}">
-                                {{ .Name }} — {{ .Phone }}
-                            </option>
-                            {{ end }}
-                            {{ end }}
-                        </select>
-
-                        <button class="btn-secondary" type="submit">
-                            Сохранить
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="car-details-note">
-            <span>Примечание</span>
-
-            {{ if .Car.Note }}
-            <p>{{ .Car.Note }}</p>
+            {{ if .Car.PlateNumber }}
+            <strong>{{ .Car.PlateNumber }}</strong>
             {{ else }}
-            <p class="empty-value">Примечание отсутствует.</p>
+            <strong class="empty-value">
+                {{ t "car.not_specified" }}
+            </strong>
             {{ end }}
         </div>
 
+        <div class="info-item">
+            <span>VIN</span>
+
+            {{ if .Car.VIN }}
+            <strong>{{ .Car.VIN }}</strong>
+            {{ else }}
+            <strong class="empty-value">
+                {{ t "car.not_specified" }}
+            </strong>
+            {{ end }}
+        </div>
+
+        <div class="info-item">
+            <span>{{ t "car.year" }}</span>
+            <strong>{{ .Car.Year }}</strong>
+        </div>
+
+        <div class="info-item">
+            <span>{{ t "car.mileage_label" }}</span>
+            <strong>
+                {{ .Car.Mileage }} {{ t "car.km" }}
+            </strong>
+        </div>
+
+        <div class="info-item">
+            <span>{{ t "car.engine" }}</span>
+
+            {{ if .Car.Engine }}
+            <strong>{{ .Car.Engine }}</strong>
+            {{ else }}
+            <strong class="empty-value">
+                {{ t "car.not_specified" }}
+            </strong>
+            {{ end }}
+        </div>
+
+        <div class="info-item">
+            <span>{{ t "car.power" }}</span>
+            <strong>
+                {{ .Car.PowerKW }} {{ t "car.kw" }}
+            </strong>
+        </div>
+
+        <div class="info-item">
+            <span>{{ t "car.color" }}</span>
+
+            {{ if .Car.Color }}
+            <strong>{{ .Car.Color }}</strong>
+            {{ else }}
+            <strong class="empty-value">
+                {{ t "car.not_specified" }}
+            </strong>
+            {{ end }}
+        </div>
+
+        <div class="info-item">
+            <span>{{ t "car.owner" }}</span>
+
+            <div class="owner-details">
+                <a class="owner-current" href="/clients/view?id={{ .Client.ID }}">
+                    {{ .Client.Name }}
+                </a>
+
+                <form method="POST" action="/cars/change-owner" class="owner-change-form">
+                    <input type="hidden" name="car_id" value="{{ .Car.ID }}">
+
+                    <input type="hidden" name="old_client_id" value="{{ .Client.ID }}">
+
+                    <input type="hidden" name="return_to" value="car">
+
+                    <select name="client_id" required>
+                        <option value="">
+                            {{ t "car.change_owner" }}
+                        </option>
+
+                        {{ range .AllClients }}
+                        {{ if ne .ID $.Client.ID }}
+                        <option value="{{ .ID }}">
+                            {{ .Name }} — {{ .Phone }}
+                        </option>
+                        {{ end }}
+                        {{ end }}
+                    </select>
+
+                    <button class="btn-secondary" type="submit">
+                        {{ t "car.save" }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="car-details-note">
+        <span>{{ t "car.note" }}</span>
+
+        {{ if .Car.Note }}
+        <p>{{ .Car.Note }}</p>
+        {{ else }}
+        <p class="empty-value">
+            {{ t "car.note_empty" }}
+        </p>
         {{ end }}
     </div>
 
-    <div class="section-card">
-        <div class="section-header">
-            <div>
-                <h3>История ремонтов</h3>
-                <p>Заказы и выполненные работы по автомобилю.</p>
-            </div>
-        </div>
+    {{ end }}
+</div>
 
-        <div class="empty-state compact-empty-state">
-            <p>История ремонтов пока пуста.</p>
+<div class="section-card">
+    <div class="section-header">
+        <div>
+            <h3>{{ t "car.repairs.title" }}</h3>
+            <p>{{ t "car.repairs.description" }}</p>
         </div>
     </div>
 
-    <div class="section-card">
-        <div class="section-header">
-            <div>
-                <h3>Использованные запчасти</h3>
-                <p>Запчасти, установленные на автомобиль.</p>
-            </div>
-        </div>
-
-        <div class="empty-state compact-empty-state">
-            <p>Запчасти пока отсутствуют.</p>
-        </div>
-    </div>
-
-    <div class="section-card">
-        <div class="section-header">
-            <div>
-                <h3>Фотографии</h3>
-                <p>Фотографии состояния и выполненных работ.</p>
-            </div>
-        </div>
-
-        <div class="empty-state compact-empty-state">
-            <p>Фотографии пока отсутствуют.</p>
-        </div>
-    </div>
-
-    <div class="section-card">
-        <div class="section-header">
-            <div>
-                <h3>Документы</h3>
-                <p>Документы и другие вложения автомобиля.</p>
-            </div>
-        </div>
-
-        <div class="empty-state compact-empty-state">
-            <p>Документы пока отсутствуют.</p>
-        </div>
+    <div class="empty-state compact-empty-state">
+        <p>{{ t "car.repairs.empty" }}</p>
     </div>
 </div>
+
+<div class="section-card">
+    <div class="section-header">
+        <div>
+            <h3>{{ t "car.parts.title" }}</h3>
+            <p>{{ t "car.parts.description" }}</p>
+        </div>
+    </div>
+
+    <div class="empty-state compact-empty-state">
+        <p>{{ t "car.parts.empty" }}</p>
+    </div>
+</div>
+
+<div class="section-card">
+    <div class="section-header">
+        <div>
+            <h3>{{ t "car.photos.title" }}</h3>
+            <p>{{ t "car.photos.description" }}</p>
+        </div>
+    </div>
+
+    <div class="empty-state compact-empty-state">
+        <p>{{ t "car.photos.empty" }}</p>
+    </div>
+</div>
+
+<div class="section-card">
+    <div class="section-header">
+        <div>
+            <h3>{{ t "car.documents.title" }}</h3>
+            <p>{{ t "car.documents.description" }}</p>
+        </div>
+    </div>
+
+    <div class="empty-state compact-empty-state">
+        <p>{{ t "car.documents.empty" }}</p>
+    </div>
+</div>
+
 {{ end }}

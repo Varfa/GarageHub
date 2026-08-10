@@ -92,6 +92,7 @@ func (r *EmployeeRepository) listByStatus(
 			e.phone,
 			e.email,
 			p.name,
+			p.code,
 			e.is_active
 		FROM employees e
 		JOIN employee_positions p
@@ -104,6 +105,7 @@ func (r *EmployeeRepository) listByStatus(
 				OR e.phone ILIKE '%' || $2 || '%'
 				OR COALESCE(e.email, '') ILIKE '%' || $2 || '%'
 				OR p.name ILIKE '%' || $2 || '%'
+				OR p.code ILIKE '%' || $2 || '%'
 		  )
 		ORDER BY
 			e.last_name,
@@ -122,6 +124,7 @@ func (r *EmployeeRepository) listByStatus(
 			err,
 		)
 	}
+
 	defer rows.Close()
 
 	var employees []models.EmployeeListItem
@@ -136,6 +139,7 @@ func (r *EmployeeRepository) listByStatus(
 			&employee.Phone,
 			&employee.Email,
 			&employee.PositionName,
+			&employee.PositionCode,
 			&employee.IsActive,
 		)
 		if err != nil {

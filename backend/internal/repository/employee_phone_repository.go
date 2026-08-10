@@ -9,6 +9,24 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
+var (
+	ErrEmployeePhoneAlreadyExists = errors.New(
+		"employee_phone.already_exists",
+	)
+
+	ErrEmployeePhoneNotFound = errors.New(
+		"employee_phone.not_found",
+	)
+
+	ErrEmployeeLastPhone = errors.New(
+		"employee_phone.last_phone",
+	)
+
+	ErrEmployeePrimaryPhoneDelete = errors.New(
+		"employee_phone.primary_delete",
+	)
+)
+
 type EmployeePhoneRepository struct {
 	db DBTX
 }
@@ -63,10 +81,9 @@ func (r *EmployeePhoneRepository) Create(
 	if err != nil {
 		var pgErr *pgconn.PgError
 
-		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
-			return nil, errors.New(
-				"такой номер уже добавлен этому сотруднику",
-			)
+		if errors.As(err, &pgErr) &&
+			pgErr.Code == "23505" {
+			return nil, ErrEmployeePhoneAlreadyExists
 		}
 
 		return nil, fmt.Errorf(
@@ -121,6 +138,7 @@ func (r *EmployeePhoneRepository) ListByEmployeeID(
 			err,
 		)
 	}
+
 	defer rows.Close()
 
 	var phones []models.EmployeePhone
@@ -144,7 +162,10 @@ func (r *EmployeePhoneRepository) ListByEmployeeID(
 			)
 		}
 
-		phones = append(phones, phone)
+		phones = append(
+			phones,
+			phone,
+		)
 	}
 
 	if err := rows.Err(); err != nil {
@@ -178,7 +199,9 @@ func (r *EmployeePhoneRepository) SetPrimary(
 		checkQuery,
 		phoneID,
 		employeeID,
-	).Scan(&exists)
+	).Scan(
+		&exists,
+	)
 	if err != nil {
 		return fmt.Errorf(
 			"проверка телефона сотрудника: %w",
@@ -187,9 +210,7 @@ func (r *EmployeePhoneRepository) SetPrimary(
 	}
 
 	if !exists {
-		return errors.New(
-			"телефон сотрудника не найден",
-		)
+		return ErrEmployeePhoneNotFound
 	}
 
 	resetQuery := `
@@ -236,9 +257,7 @@ func (r *EmployeePhoneRepository) SetPrimary(
 	}
 
 	if commandTag.RowsAffected() == 0 {
-		return errors.New(
-			"телефон сотрудника не найден",
-		)
+		return ErrEmployeePhoneNotFound
 	}
 
 	syncEmployeeQuery := `
@@ -299,21 +318,15 @@ func (r *EmployeePhoneRepository) Delete(
 		&phonesCount,
 	)
 	if err != nil {
-		return errors.New(
-			"телефон сотрудника не найден",
-		)
+		return ErrEmployeePhoneNotFound
 	}
 
 	if phonesCount <= 1 {
-		return errors.New(
-			"нельзя удалить последний телефон сотрудника",
-		)
+		return ErrEmployeeLastPhone
 	}
 
 	if isPrimary {
-		return errors.New(
-			"нельзя удалить основной телефон: сначала назначьте другой номер основным",
-		)
+		return ErrEmployeePrimaryPhoneDelete
 	}
 
 	deleteQuery := `
@@ -337,9 +350,7 @@ func (r *EmployeePhoneRepository) Delete(
 	}
 
 	if commandTag.RowsAffected() == 0 {
-		return errors.New(
-			"телефон сотрудника не найден",
-		)
+		return ErrEmployeePhoneNotFound
 	}
 
 	return nil

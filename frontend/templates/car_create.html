@@ -1,22 +1,20 @@
 {{ define "content" }}
 
-<div class="page-header">
-    <h1>Создать автомобиль</h1>
-    <p>Добавление нового автомобиля в базу.</p>
-</div>
-
 {{ if .Error }}
-<div class="form-error">
+<div class="form-error" role="alert">
     {{ .Error }}
 </div>
 {{ end }}
 
-<form method="POST" action="/cars/create" class="client-edit-form">
-    <label class="full-width">
-        Владелец
+<form method="POST" action="/cars/create" class="edit-form">
+
+    <label>
+        {{ t "car.create.client" }}
 
         <select name="client_id">
-            <option value="">Выберите клиента</option>
+            <option value="">
+                {{ t "car.create.select_client" }}
+            </option>
 
             {{ range .Clients }}
             <option value="{{ .ID }}">
@@ -26,27 +24,27 @@
         </select>
 
         <a class="create-related-link" href="/clients/create">
-            ➕ Создать нового клиента
+            ➕ {{ t "car.create.new_client" }}
         </a>
     </label>
 
     <label>
-        Марка
+        {{ t "car.brand" }}
         <input type="text" name="brand">
     </label>
 
     <label>
-        Модель
+        {{ t "car.model" }}
         <input type="text" name="model">
     </label>
 
     <label>
-        Год выпуска
+        {{ t "car.year" }}
         <input type="number" name="year">
     </label>
 
     <label>
-        Госномер
+        {{ t "car.plate_number" }}
         <input type="text" name="plate_number">
     </label>
 
@@ -56,39 +54,40 @@
     </label>
 
     <label>
-        Двигатель
+        {{ t "car.engine" }}
         <input type="text" name="engine">
     </label>
 
     <label>
-        Мощность, кВт
+        {{ t "car.power_kw" }}
         <input type="number" name="power_kw">
     </label>
 
     <label>
-        Цвет
+        {{ t "car.color" }}
         <input type="text" name="color">
     </label>
 
     <label>
-        Пробег, км
+        {{ t "car.mileage" }}
         <input type="number" name="mileage">
     </label>
 
     <label class="full-width">
-        Примечание
+        {{ t "car.note" }}
         <textarea name="note"></textarea>
     </label>
 
     <div class="edit-actions">
         <button class="btn-primary" type="submit">
-            💾 Создать автомобиль
+            💾 {{ t "car.create.submit" }}
         </button>
 
         <a class="btn-secondary" href="/cars">
-            ❌ Отмена
+            ❌ {{ t "car.cancel" }}
         </a>
     </div>
+
 </form>
 
 {{ end }}

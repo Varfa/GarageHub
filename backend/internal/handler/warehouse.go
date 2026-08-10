@@ -2,13 +2,13 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 
 	"github.com/Varfa/GarageHub/internal/models"
+	"github.com/Varfa/GarageHub/internal/repository"
 	"github.com/Varfa/GarageHub/internal/service"
 )
 
@@ -18,11 +18,13 @@ type WarehouseArchivePageData struct {
 	Error   string
 	Success string
 }
+
 type WarehouseViewPageData struct {
 	Item    *models.WarehouseItem
 	Error   string
 	Success string
 }
+
 type WarehouseHandler struct {
 	service *service.WarehouseService
 }
@@ -61,7 +63,7 @@ func (h *WarehouseHandler) Warehouse(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "warehouse.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
@@ -107,7 +109,7 @@ func (h *WarehouseHandler) Create(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"Method Not Allowed",
+			translate(r, "warehouse.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -116,7 +118,7 @@ func (h *WarehouseHandler) Create(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "warehouse.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -128,7 +130,7 @@ func (h *WarehouseHandler) Create(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректное количество",
+			translate(r, "warehouse.validation.invalid_quantity"),
 			http.StatusBadRequest,
 		)
 		return
@@ -140,7 +142,7 @@ func (h *WarehouseHandler) Create(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректное минимальное количество",
+			translate(r, "warehouse.validation.invalid_min_quantity"),
 			http.StatusBadRequest,
 		)
 		return
@@ -152,7 +154,7 @@ func (h *WarehouseHandler) Create(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректная цена продажи",
+			translate(r, "warehouse.validation.invalid_sale_price"),
 			http.StatusBadRequest,
 		)
 		return
@@ -164,7 +166,7 @@ func (h *WarehouseHandler) Create(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректная цена закупки",
+			translate(r, "warehouse.validation.invalid_purchase_price"),
 			http.StatusBadRequest,
 		)
 		return
@@ -187,7 +189,7 @@ func (h *WarehouseHandler) Create(
 		item,
 	); err != nil {
 		errorMessage := url.QueryEscape(
-			err.Error(),
+			warehouseErrorMessage(r, err),
 		)
 
 		http.Redirect(
@@ -200,7 +202,7 @@ func (h *WarehouseHandler) Create(
 	}
 
 	successMessage := url.QueryEscape(
-		"складская позиция успешно создана",
+		translate(r, "warehouse.success.created"),
 	)
 
 	http.Redirect(
@@ -210,7 +212,11 @@ func (h *WarehouseHandler) Create(
 		http.StatusSeeOther,
 	)
 }
-func (h *WarehouseHandler) View(w http.ResponseWriter, r *http.Request) {
+
+func (h *WarehouseHandler) View(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	id, err := strconv.ParseInt(
 		r.URL.Query().Get("id"),
 		10,
@@ -219,24 +225,38 @@ func (h *WarehouseHandler) View(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id ",
+			translate(r, "warehouse.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
 	}
-	item, err := h.service.GetByID(r.Context(),
-		id)
 
+	item, err := h.service.GetByID(
+		r.Context(),
+		id,
+	)
 	if err != nil {
+		status := http.StatusInternalServerError
+
+		if errors.Is(err, repository.ErrItemNotFound) {
+			status = http.StatusNotFound
+		}
+
+		if errors.Is(err, service.ErrWarehouseInvalidID) {
+			status = http.StatusBadRequest
+		}
+
 		http.Error(
 			w,
-			err.Error(),
-			http.StatusNotFound,
+			warehouseErrorMessage(r, err),
+			status,
 		)
 		return
 	}
+
 	errorMessage := r.URL.Query().Get("error")
 	successMessage := r.URL.Query().Get("success")
+
 	data := WarehouseViewPageData{
 		Item:    item,
 		Error:   errorMessage,
@@ -250,6 +270,7 @@ func (h *WarehouseHandler) View(w http.ResponseWriter, r *http.Request) {
 		data,
 	)
 }
+
 func (h *WarehouseHandler) Update(
 	w http.ResponseWriter,
 	r *http.Request,
@@ -257,7 +278,7 @@ func (h *WarehouseHandler) Update(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"Method Not Allowed",
+			translate(r, "warehouse.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -266,7 +287,7 @@ func (h *WarehouseHandler) Update(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "warehouse.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -280,7 +301,7 @@ func (h *WarehouseHandler) Update(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id складской позиции",
+			translate(r, "warehouse.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -292,7 +313,7 @@ func (h *WarehouseHandler) Update(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректное количество",
+			translate(r, "warehouse.validation.invalid_quantity"),
 			http.StatusBadRequest,
 		)
 		return
@@ -304,7 +325,7 @@ func (h *WarehouseHandler) Update(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректное минимальное количество",
+			translate(r, "warehouse.validation.invalid_min_quantity"),
 			http.StatusBadRequest,
 		)
 		return
@@ -316,7 +337,7 @@ func (h *WarehouseHandler) Update(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректная цена продажи",
+			translate(r, "warehouse.validation.invalid_sale_price"),
 			http.StatusBadRequest,
 		)
 		return
@@ -328,7 +349,7 @@ func (h *WarehouseHandler) Update(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректная цена закупки",
+			translate(r, "warehouse.validation.invalid_purchase_price"),
 			http.StatusBadRequest,
 		)
 		return
@@ -352,7 +373,7 @@ func (h *WarehouseHandler) Update(
 		item,
 	); err != nil {
 		errorMessage := url.QueryEscape(
-			err.Error(),
+			warehouseErrorMessage(r, err),
 		)
 
 		http.Redirect(
@@ -367,7 +388,7 @@ func (h *WarehouseHandler) Update(
 	}
 
 	successMessage := url.QueryEscape(
-		"складская позиция успешно обновлена",
+		translate(r, "warehouse.success.updated"),
 	)
 
 	http.Redirect(
@@ -379,6 +400,7 @@ func (h *WarehouseHandler) Update(
 		http.StatusSeeOther,
 	)
 }
+
 func (h *WarehouseHandler) Archive(
 	w http.ResponseWriter,
 	r *http.Request,
@@ -386,7 +408,7 @@ func (h *WarehouseHandler) Archive(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"Method Not Allowed",
+			translate(r, "warehouse.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -395,7 +417,7 @@ func (h *WarehouseHandler) Archive(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "warehouse.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -409,7 +431,7 @@ func (h *WarehouseHandler) Archive(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id складской позиции",
+			translate(r, "warehouse.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -420,7 +442,7 @@ func (h *WarehouseHandler) Archive(
 		id,
 	); err != nil {
 		errorMessage := url.QueryEscape(
-			err.Error(),
+			warehouseErrorMessage(r, err),
 		)
 
 		http.Redirect(
@@ -435,7 +457,7 @@ func (h *WarehouseHandler) Archive(
 	}
 
 	successMessage := url.QueryEscape(
-		"складская позиция перемещена в архив",
+		translate(r, "warehouse.success.archived"),
 	)
 
 	http.Redirect(
@@ -453,7 +475,7 @@ func (h *WarehouseHandler) Restore(
 	if r.Method != http.MethodPost {
 		http.Error(
 			w,
-			"Method Not Allowed",
+			translate(r, "warehouse.request.method_not_allowed"),
 			http.StatusMethodNotAllowed,
 		)
 		return
@@ -462,7 +484,7 @@ func (h *WarehouseHandler) Restore(
 	if err := r.ParseForm(); err != nil {
 		http.Error(
 			w,
-			"некорректный запрос",
+			translate(r, "warehouse.request.invalid"),
 			http.StatusBadRequest,
 		)
 		return
@@ -476,7 +498,7 @@ func (h *WarehouseHandler) Restore(
 	if err != nil {
 		http.Error(
 			w,
-			"некорректный id складской позиции",
+			translate(r, "warehouse.invalid_id"),
 			http.StatusBadRequest,
 		)
 		return
@@ -487,7 +509,7 @@ func (h *WarehouseHandler) Restore(
 		id,
 	); err != nil {
 		errorMessage := url.QueryEscape(
-			err.Error(),
+			warehouseErrorMessage(r, err),
 		)
 
 		http.Redirect(
@@ -502,7 +524,7 @@ func (h *WarehouseHandler) Restore(
 	}
 
 	successMessage := url.QueryEscape(
-		"складская позиция восстановлена",
+		translate(r, "warehouse.success.restored"),
 	)
 
 	http.Redirect(
@@ -514,6 +536,7 @@ func (h *WarehouseHandler) Restore(
 		http.StatusSeeOther,
 	)
 }
+
 func (h *WarehouseHandler) ArchivePage(
 	w http.ResponseWriter,
 	r *http.Request,
@@ -529,7 +552,7 @@ func (h *WarehouseHandler) ArchivePage(
 	if err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			translate(r, "warehouse.error.internal"),
 			http.StatusInternalServerError,
 		)
 		return
@@ -549,23 +572,144 @@ func (h *WarehouseHandler) ArchivePage(
 		data,
 	)
 }
-func parseMoneyToCents(value string) (int64, error) {
+
+func warehouseErrorMessage(
+	r *http.Request,
+	err error,
+) string {
+	switch {
+	case errors.Is(
+		err,
+		service.ErrWarehouseInvalidID,
+	):
+		return translate(
+			r,
+			"warehouse.invalid_id",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrWarehouseNameRequired,
+	):
+		return translate(
+			r,
+			"warehouse.validation.name_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrWarehouseSKURequired,
+	):
+		return translate(
+			r,
+			"warehouse.validation.sku_required",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrWarehousePurchasePriceNegative,
+	):
+		return translate(
+			r,
+			"warehouse.validation.purchase_price_negative",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrWarehouseSalePriceNegative,
+	):
+		return translate(
+			r,
+			"warehouse.validation.sale_price_negative",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrWarehouseQuantityNegative,
+	):
+		return translate(
+			r,
+			"warehouse.validation.quantity_negative",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrWarehouseMinQuantityNegative,
+	):
+		return translate(
+			r,
+			"warehouse.validation.min_quantity_negative",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrWarehouseAlreadyArchived,
+	):
+		return translate(
+			r,
+			"warehouse.already_archived",
+		)
+
+	case errors.Is(
+		err,
+		service.ErrWarehouseAlreadyActive,
+	):
+		return translate(
+			r,
+			"warehouse.already_active",
+		)
+
+	case errors.Is(
+		err,
+		repository.ErrItemNotFound,
+	):
+		return translate(
+			r,
+			"warehouse.not_found",
+		)
+
+	default:
+		return translate(
+			r,
+			"warehouse.error.internal",
+		)
+	}
+}
+
+func parseMoneyToCents(
+	value string,
+) (int64, error) {
 	value = strings.TrimSpace(value)
-	value = strings.ReplaceAll(value, ",", ".")
+	value = strings.ReplaceAll(
+		value,
+		",",
+		".",
+	)
 
 	if value == "" {
 		return 0, nil
 	}
 
-	parts := strings.Split(value, ".")
+	parts := strings.Split(
+		value,
+		".",
+	)
 
 	if len(parts) > 2 {
-		return 0, errors.New("некорректная цена")
+		return 0, errors.New(
+			"invalid money value",
+		)
 	}
 
-	euros, err := strconv.ParseInt(parts[0], 10, 64)
+	euros, err := strconv.ParseInt(
+		parts[0],
+		10,
+		64,
+	)
 	if err != nil {
-		return 0, errors.New("некорректная цена")
+		return 0, errors.New(
+			"invalid money value",
+		)
 	}
 
 	var cents int64
@@ -578,25 +722,22 @@ func parseMoneyToCents(value string) (int64, error) {
 		}
 
 		if len(fraction) > 2 {
-			return 0, errors.New("некорректная цена")
+			return 0, errors.New(
+				"invalid money value",
+			)
 		}
 
-		cents, err = strconv.ParseInt(fraction, 10, 64)
+		cents, err = strconv.ParseInt(
+			fraction,
+			10,
+			64,
+		)
 		if err != nil {
-			return 0, errors.New("некорректная цена")
+			return 0, errors.New(
+				"invalid money value",
+			)
 		}
 	}
 
 	return euros*100 + cents, nil
-}
-
-func formatMoney(cents int64) string {
-	euros := cents / 100
-	remainder := cents % 100
-
-	return fmt.Sprintf(
-		"%d.%02d",
-		euros,
-		remainder,
-	)
 }

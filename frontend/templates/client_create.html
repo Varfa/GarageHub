@@ -1,66 +1,63 @@
 {{ define "content" }}
-<div class="clients-page">
-    <div class="page-header">
-        <div>
-            <h1>Создать клиента</h1>
-            <p>Добавление нового клиента в клиентскую базу.</p>
-        </div>
 
-        <div class="page-header-actions">
-            <a class="btn-secondary" href="/clients">
-                Назад
-            </a>
-        </div>
-    </div>
-
-    <div class="details-card form-card">
-        {{ if .Error }}
-        <div class="form-error">
-            {{ .Error }}
-        </div>
-        {{ end }}
-
-        <form id="client-form" class="edit-form" method="POST" action="/clients/create">
-            <label>
-                Имя
-
-                <input type="text" name="name" placeholder="Введите имя клиента" autocomplete="name" required>
-            </label>
-
-            <label>
-                Телефон
-
-                <input type="tel" name="phone" placeholder="+370..." autocomplete="tel" required>
-            </label>
-
-            <label>
-                Email
-
-                <input type="email" name="email" placeholder="client@example.com" autocomplete="email">
-            </label>
-
-            <label>
-                Адрес
-
-                <input type="text" name="address" placeholder="Город, улица, дом" autocomplete="street-address">
-            </label>
-
-            <label class="full-width">
-                Примечание
-
-                <textarea name="note" placeholder="Дополнительная информация о клиенте"></textarea>
-            </label>
-
-            <div class="form-actions">
-                <a class="btn-secondary" href="/clients">
-                    Отмена
-                </a>
-
-                <button class="btn-primary" type="submit">
-                    Создать клиента
-                </button>
-            </div>
-        </form>
+<div class="page-header">
+    <div class="page-header-actions">
+        <a class="btn-secondary" href="/clients">
+            {{ t "clients.create_page.back" }}
+        </a>
     </div>
 </div>
+
+<div class="details-card form-card">
+    {{ if .Error }}
+    <div class="form-error">
+        {{ .Error }}
+    </div>
+    {{ end }}
+
+    <form id="client-form" class="edit-form" method="POST" action="/clients/create">
+        <label>
+            {{ t "clients.create_page.name" }}
+
+            <input type="text" name="name" placeholder='{{ t "clients.create_page.name_placeholder" }}'
+                autocomplete="name" required>
+        </label>
+
+        <label>
+            {{ t "clients.create_page.phone" }}
+
+            <input type="tel" name="phone" placeholder="+370..." autocomplete="tel" required>
+        </label>
+
+        <label>
+            {{ t "clients.create_page.email" }}
+
+            <input type="email" name="email" placeholder="client@example.com" autocomplete="email">
+        </label>
+
+        <label>
+            {{ t "clients.create_page.address" }}
+
+            <input type="text" name="address" placeholder='{{ t "clients.create_page.address_placeholder" }}'
+                autocomplete="street-address">
+        </label>
+
+        <label class="full-width">
+            {{ t "clients.create_page.note" }}
+
+            <textarea name="note" placeholder='{{ t "clients.create_page.note_placeholder" }}'></textarea>
+        </label>
+
+        <div class="form-actions">
+            <a class="btn-secondary" href="/clients">
+                {{ t "clients.create_page.cancel" }}
+            </a>
+
+            <button class="btn-primary" type="submit">
+                {{ t "clients.create_page.submit" }}
+            </button>
+        </div>
+    </form>
+</div>
+
 {{ end }}

@@ -21,13 +21,16 @@
 </head>
 
 <body>
-    <header class="app-header">
+
+    <header class="topbar">
         <a class="app-brand" href="/dashboard">
-            <span class="app-brand-mark">GH</span>
+            <span class="app-brand-mark">
+                GH
+            </span>
 
             <span class="app-brand-text">
                 <strong>GarageHub</strong>
-                <small>Service management</small>
+                <small>{{ t "layout.brand_caption" }}</small>
             </span>
         </a>
 
@@ -51,7 +54,7 @@
     </header>
 
     <main class="app-layout">
-        <nav class="sidebar" aria-label="Основная навигация">
+        <nav class="sidebar" aria-label='{{ t "layout.main_navigation" }}'>
             <ul>
                 <li>
                     <a href="/dashboard">
@@ -161,7 +164,10 @@
         </section>
     </main>
 
-    <dialog id="confirm-delete-dialog" class="confirm-dialog" aria-labelledby="confirm-delete-title">
+    <dialog id="confirm-delete-dialog" class="confirm-dialog" aria-labelledby="confirm-delete-title"
+        data-default-delete-message='{{ t "modal.delete.message" }}'
+        data-client-delete-message='{{ t "modal.delete.client_message" }}'
+        data-car-delete-message='{{ t "modal.delete.car_message" }}'>
         <div class="confirm-dialog-content">
             <div class="confirm-dialog-icon">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -172,20 +178,20 @@
             </div>
 
             <h2 id="confirm-delete-title">
-                Подтвердите удаление
+                {{ t "modal.delete.title" }}
             </h2>
 
             <p id="confirm-delete-message">
-                Запись будет удалена. Это действие нельзя отменить.
+                {{ t "modal.delete.message" }}
             </p>
 
             <div class="confirm-dialog-actions">
                 <button id="confirm-delete-cancel" class="btn-secondary" type="button">
-                    Отмена
+                    {{ t "modal.delete.cancel" }}
                 </button>
 
                 <button id="confirm-delete-submit" class="btn-danger" type="button">
-                    Удалить
+                    {{ t "modal.delete.confirm" }}
                 </button>
             </div>
         </div>
@@ -195,6 +201,7 @@
     <script src="/static/js/forms.js"></script>
     <script src="/static/js/modal.js"></script>
     <script src="/static/js/app.js"></script>
+
 </body>
 
 </html>
