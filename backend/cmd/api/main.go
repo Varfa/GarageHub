@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -25,6 +26,14 @@ func main() {
 		log.Fatal(err)
 	}
 	defer dbPool.Close()
+	// Запускаем миграции до старта приложения.
+	// Если миграция не прошла — сервер не запускаем.
+	if err := database.RunMigrations(
+		context.Background(),
+		dbPool,
+	); err != nil {
+		log.Fatal(err)
+	}
 
 	translator, err := i18n.NewManager(
 		[]string{"en", "lt", "uk", "ru"},

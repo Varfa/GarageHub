@@ -39,10 +39,10 @@ CREATE TABLE IF NOT EXISTS warehouse_items (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS warehouse_items_sku_unique
-    ON warehouse_items (LOWER(TRIM(sku)));
+ON warehouse_items (LOWER(TRIM(sku)));
 
 CREATE INDEX IF NOT EXISTS warehouse_items_active_index
-    ON warehouse_items (is_active);
+ON warehouse_items (is_active);
 
 CREATE INDEX IF NOT EXISTS warehouse_items_name_index
-    ON warehouse_items (LOWER(name));
+ON warehouse_items (LOWER(name));

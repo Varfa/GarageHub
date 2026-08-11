@@ -1,6 +1,7 @@
 CREATE TABLE cars (
     id SERIAL PRIMARY KEY,
-    client_id INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+
+    client_id INTEGER NOT NULL REFERENCES clients(id),
 
     brand VARCHAR(100) NOT NULL,
     model VARCHAR(100) NOT NULL,
