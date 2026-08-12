@@ -12,6 +12,7 @@ func SetupRoutes(
 	employeeHandler *handler.EmployeeHandler,
 	warehouseHandler *handler.WarehouseHandler,
 	loginHandler *handler.LoginHandler,
+	orderHandler *handler.OrderHandler,
 ) *http.ServeMux {
 	mux := http.NewServeMux()
 
@@ -178,7 +179,30 @@ func SetupRoutes(
 	// Orders
 	mux.HandleFunc(
 		"/orders",
-		handler.OrdersHandler,
+		orderHandler.Orders,
+	)
+	mux.HandleFunc(
+		"/orders/view",
+		orderHandler.View,
+	)
+	mux.HandleFunc(
+		"/orders/create",
+		func(w http.ResponseWriter, r *http.Request) {
+			if r.Method == http.MethodGet {
+				orderHandler.CreatePage(w, r)
+				return
+			}
+
+			orderHandler.Create(w, r)
+		},
+	)
+	mux.HandleFunc("/orders/status",
+		orderHandler.UpdateStatus,
+	)
+	// Заметки заказа
+	mux.HandleFunc(
+		"/orders/note",
+		orderHandler.AddNote,
 	)
 
 	// Parts

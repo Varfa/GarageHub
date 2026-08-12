@@ -62,3 +62,25 @@ type Notification struct {
 	SentAt    *time.Time
 	CreatedAt time.Time
 }
+
+// OrderListItem содержит данные,
+// которые нужны для отображения заказа в общем списке.
+type OrderListItem struct {
+	ID int
+
+	ClientID   int
+	ClientName string
+
+	CarID          int
+	CarBrand       string
+	CarModel       string
+	CarPlateNumber string
+
+	Complaint string
+	Status    string
+
+	EstimatedCostCents int64
+	FinalCostCents     int64
+
+	CreatedAt time.Time
+}

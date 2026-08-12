@@ -1,0 +1,329 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <div>
+        <h1>
+            {{ t "orders.order_number" }} #{{ .Order.ID }}
+        </h1>
+
+        <p>
+            {{ t "orders.view.description" }}
+        </p>
+    </div>
+
+    <div class="page-header-actions">
+        <a class="btn-secondary" href="/orders">
+            {{ t "orders.view.back" }}
+        </a>
+    </div>
+</div>
+
+<div class="order-view-grid">
+
+    <section class="module-card order-view-main">
+        <div class="order-view-header">
+            <div>
+                <span class="order-view-label">
+                    {{ t "orders.view.status" }}
+                </span>
+
+                <div class="order-status order-status-{{ .Order.Status }}">
+                    {{ t (printf "orders.status.%s" .Order.Status) }}
+                </div>
+
+                <div class="order-status-control">
+                    <form method="POST" action="/orders/status" class="order-status-form">
+                        <input type="hidden" name="id" value="{{ .Order.ID }}">
+
+                        <label for="status">
+                            {{ t "orders.view.change_status" }}
+                        </label>
+
+                        <div class="order-status-actions">
+                            <select id="status" name="status" class="order-status-select">
+                                <option value="new" {{ if eq .Order.Status "new" }}selected{{ end }}>
+                                    {{ t "orders.status.new" }}
+                                </option>
+
+                                <option value="diagnostics" {{ if eq .Order.Status "diagnostics" }}selected{{ end }}>
+                                    {{ t "orders.status.diagnostics" }}
+                                </option>
+
+                                <option value="waiting_approval" {{ if eq .Order.Status "waiting_approval" }}selected{{
+                                    end }}>
+                                    {{ t "orders.status.waiting_approval" }}
+                                </option>
+
+                                <option value="in_progress" {{ if eq .Order.Status "in_progress" }}selected{{ end }}>
+                                    {{ t "orders.status.in_progress" }}
+                                </option>
+
+                                <option value="completed" {{ if eq .Order.Status "completed" }}selected{{ end }}>
+                                    {{ t "orders.status.completed" }}
+                                </option>
+                            </select>
+
+                            <button class="btn-primary" type="submit">
+                                {{ t "orders.view.update_status" }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="order-view-id">
+                ID: {{ .Order.ID }}
+            </div>
+        </div>
+
+        <div class="order-view-section">
+            <h2>{{ t "orders.view.complaint" }}</h2>
+
+            {{ if .Order.Complaint }}
+            <p class="order-view-text">
+                {{ .Order.Complaint }}
+            </p>
+            {{ else }}
+            <p class="order-view-empty">
+                {{ t "orders.not_specified" }}
+            </p>
+            {{ end }}
+        </div>
+
+        <div class="order-view-section">
+            <h2>{{ t "orders.view.diagnosis" }}</h2>
+
+            {{ if .Order.Diagnosis }}
+            <p class="order-view-text">
+                {{ .Order.Diagnosis }}
+            </p>
+            {{ else }}
+            <p class="order-view-empty">
+                {{ t "orders.not_specified" }}
+            </p>
+            {{ end }}
+        </div>
+
+        <div class="order-view-section">
+            <h2>{{ t "orders.view.note" }}</h2>
+
+            {{ if .Order.Note }}
+            <p class="order-view-text">
+                {{ .Order.Note }}
+            </p>
+            {{ else }}
+            <p class="order-view-empty">
+                {{ t "orders.not_specified" }}
+            </p>
+            {{ end }}
+        </div>
+
+        <div class="order-view-section order-notes-section">
+            <div class="order-notes-header">
+                <div>
+                    <h2>{{ t "orders.notes.title" }}</h2>
+
+                    <p>
+                        {{ t "orders.notes.description" }}
+                    </p>
+                </div>
+            </div>
+
+            <form method="POST" action="/orders/note" class="order-note-form">
+                <input type="hidden" name="order_id" value="{{ .Order.ID }}">
+
+                <label for="order-note-text">
+                    {{ t "orders.notes.add" }}
+                </label>
+
+                <textarea id="order-note-text" name="text" rows="4" required
+                    placeholder='{{ t "orders.notes.placeholder" }}'></textarea>
+
+                <div class="order-note-form-actions">
+                    <button class="btn-primary" type="submit">
+                        {{ t "orders.notes.submit" }}
+                    </button>
+                </div>
+            </form>
+
+            <div class="order-notes-list">
+                {{ if .Notes }}
+
+                {{ range .Notes }}
+                <article class="order-note-item">
+                    <div class="order-note-meta">
+                        <span class="order-note-author">
+                            {{ if .EmployeeID }}
+                            {{ t "orders.notes.employee" }} #{{ .EmployeeID }}
+                            {{ else }}
+                            {{ t "orders.notes.unknown_author" }}
+                            {{ end }}
+                        </span>
+
+                        <time>
+                            {{ .CreatedAt.Format "02.01.2006 15:04" }}
+                        </time>
+                    </div>
+
+                    <p class="order-note-text">
+                        {{ .Text }}
+                    </p>
+                </article>
+                {{ end }}
+
+                {{ else }}
+
+                <div class="order-notes-empty">
+                    <p>
+                        {{ t "orders.notes.empty" }}
+                    </p>
+                </div>
+
+                {{ end }}
+            </div>
+        </div>
+    </section>
+
+    <aside class="order-view-sidebar">
+
+        <section class="module-card order-info-card">
+            <div class="module-card-header">
+                <div>
+                    <h2>{{ t "orders.view.client" }}</h2>
+                </div>
+            </div>
+
+            <a class="order-related-link" href="/clients/view?id={{ .Client.ID }}">
+                <strong>{{ .Client.Name }}</strong>
+
+                <span>
+                    {{ .Client.Code }}
+                </span>
+            </a>
+
+            {{ if .Client.Phone }}
+            <div class="order-info-row">
+                <span>{{ t "orders.view.phone" }}</span>
+                <strong>{{ .Client.Phone }}</strong>
+            </div>
+            {{ end }}
+
+            {{ if .Client.Email }}
+            <div class="order-info-row">
+                <span>{{ t "orders.view.email" }}</span>
+                <strong>{{ .Client.Email }}</strong>
+            </div>
+            {{ end }}
+        </section>
+
+        <section class="module-card order-info-card">
+            <div class="module-card-header">
+                <div>
+                    <h2>{{ t "orders.view.car" }}</h2>
+                </div>
+            </div>
+
+            <a class="order-related-link" href="/cars/view?id={{ .Car.ID }}">
+                <strong>
+                    {{ .Car.Brand }} {{ .Car.Model }}
+                </strong>
+
+                <span>
+                    {{ .Car.Code }}
+                </span>
+            </a>
+
+            {{ if .Car.PlateNumber }}
+            <div class="order-info-row">
+                <span>{{ t "orders.view.plate_number" }}</span>
+                <strong>{{ .Car.PlateNumber }}</strong>
+            </div>
+            {{ end }}
+
+            {{ if .Car.VIN }}
+            <div class="order-info-row">
+                <span>{{ t "orders.view.vin" }}</span>
+                <strong>{{ .Car.VIN }}</strong>
+            </div>
+            {{ end }}
+
+            {{ if gt .Car.Year 0 }}
+            <div class="order-info-row">
+                <span>{{ t "orders.view.year" }}</span>
+                <strong>{{ .Car.Year }}</strong>
+            </div>
+            {{ end }}
+
+            {{ if gt .Car.Mileage 0 }}
+            <div class="order-info-row">
+                <span>{{ t "orders.view.mileage" }}</span>
+                <strong>{{ .Car.Mileage }}</strong>
+            </div>
+            {{ end }}
+        </section>
+
+        <section class="module-card order-info-card">
+            <div class="module-card-header">
+                <div>
+                    <h2>{{ t "orders.view.finances" }}</h2>
+                </div>
+            </div>
+
+            <div class="order-info-row">
+                <span>{{ t "orders.view.estimated_cost" }}</span>
+
+                <strong>
+                    {{ formatMoney .Order.EstimatedCostCents }} €
+                </strong>
+            </div>
+
+            <div class="order-info-row">
+                <span>{{ t "orders.view.final_cost" }}</span>
+
+                <strong>
+                    {{ formatMoney .Order.FinalCostCents }} €
+                </strong>
+            </div>
+        </section>
+
+        <section class="module-card order-info-card">
+            <div class="module-card-header">
+                <div>
+                    <h2>{{ t "orders.view.dates" }}</h2>
+                </div>
+            </div>
+
+            <div class="order-info-row">
+                <span>{{ t "orders.view.created_at" }}</span>
+
+                <strong>
+                    {{ .Order.CreatedAt.Format "02.01.2006 15:04" }}
+                </strong>
+            </div>
+
+            {{ if .Order.StartedAt }}
+            <div class="order-info-row">
+                <span>{{ t "orders.view.started_at" }}</span>
+
+                <strong>
+                    {{ .Order.StartedAt.Format "02.01.2006 15:04" }}
+                </strong>
+            </div>
+            {{ end }}
+
+            {{ if .Order.CompletedAt }}
+            <div class="order-info-row">
+                <span>{{ t "orders.view.completed_at" }}</span>
+
+                <strong>
+                    {{ .Order.CompletedAt.Format "02.01.2006 15:04" }}
+                </strong>
+            </div>
+            {{ end }}
+        </section>
+
+    </aside>
+
+</div>
+
+{{ end }}

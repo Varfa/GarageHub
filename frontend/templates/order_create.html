@@ -1,0 +1,201 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <div>
+        <h1>{{ t "orders.create" }}</h1>
+
+        <p>
+            {{ t "orders.create_description" }}
+        </p>
+    </div>
+</div>
+
+{{ if .Error }}
+<div class="form-error" role="alert">
+    {{ .Error }}
+</div>
+{{ end }}
+
+<div class="module-card order-form-card">
+    <form method="POST" action="/orders/create" class="order-form-grid">
+
+        <div class="order-form-group">
+            <label for="client_id">
+                {{ t "orders.form.client" }}
+            </label>
+
+            <select id="client_id" name="client_id" required>
+                <option value="">
+                    {{ t "orders.form.select_client" }}
+                </option>
+
+                {{ range .Clients }}
+                <option value="{{ .ID }}">
+                    {{ .Name }}
+                </option>
+                {{ end }}
+            </select>
+        </div>
+
+        <div class="order-form-group">
+            <label for="car_id">
+                {{ t "orders.form.car" }}
+            </label>
+
+            <select id="car_id" name="car_id" required disabled>
+                <option value="">
+                    {{ t "orders.form.select_client_first" }}
+                </option>
+
+                {{ range .Cars }}
+                <option value="{{ .ID }}" data-client-id="{{ .ClientID }}">
+                    {{ .Brand }} {{ .Model }}{{ if .PlateNumber }} — {{ .PlateNumber }}{{ end }}
+                </option>
+                {{ end }}
+            </select>
+
+            <button id="show_other_cars" class="btn-secondary order-other-cars-btn" type="button" hidden>
+                {{ t "orders.form.show_other_cars" }}
+            </button>
+        </div>
+
+        <div class="order-form-group order-form-group-full">
+            <label for="complaint">
+                {{ t "orders.form.complaint" }}
+            </label>
+
+            <textarea id="complaint" name="complaint" rows="4" required
+                placeholder='{{ t "orders.form.complaint_placeholder" }}'></textarea>
+        </div>
+
+        <div class="order-form-group order-form-group-full">
+            <label for="diagnosis">
+                {{ t "orders.form.diagnosis" }}
+            </label>
+
+            <textarea id="diagnosis" name="diagnosis" rows="3"
+                placeholder='{{ t "orders.form.diagnosis_placeholder" }}'></textarea>
+        </div>
+
+        <div class="order-form-group order-form-group-full">
+            <label for="note">
+                {{ t "orders.form.note" }}
+            </label>
+
+            <textarea id="note" name="note" rows="3" placeholder='{{ t "orders.form.note_placeholder" }}'></textarea>
+        </div>
+
+        <div class="order-form-actions">
+            <a class="btn-secondary" href="/orders">
+                {{ t "orders.form.cancel" }}
+            </a>
+
+            <button class="btn-primary" type="submit">
+                {{ t "orders.form.submit" }}
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const clientSelect = document.getElementById("client_id");
+        const carSelect = document.getElementById("car_id");
+        const showOtherCarsButton = document.getElementById("show_other_cars");
+
+        const allCarOptions = Array.from(
+            carSelect.querySelectorAll("option[data-client-id]")
+        );
+
+        let showingAllCars = false;
+
+        function createPlaceholder(text) {
+            const placeholder = document.createElement("option");
+
+            placeholder.value = "";
+            placeholder.textContent = text;
+
+            return placeholder;
+        }
+
+        function showClientCars() {
+            const clientID = clientSelect.value;
+
+            carSelect.innerHTML = "";
+
+            carSelect.appendChild(
+                createPlaceholder(
+                    clientID
+                        ? '{{ t "orders.form.select_car" }}'
+                        : '{{ t "orders.form.select_client_first" }}'
+                )
+            );
+
+            if (!clientID) {
+                carSelect.disabled = true;
+                showOtherCarsButton.hidden = true;
+                return;
+            }
+
+            const clientCars = allCarOptions.filter(
+                option => option.dataset.clientId === clientID
+            );
+
+            clientCars.forEach(option => {
+                carSelect.appendChild(
+                    option.cloneNode(true)
+                );
+            });
+
+            carSelect.disabled = false;
+
+            showOtherCarsButton.hidden = false;
+            showOtherCarsButton.textContent =
+                '{{ t "orders.form.show_other_cars" }}';
+        }
+
+        function showAllCars() {
+            const currentValue = carSelect.value;
+
+            carSelect.innerHTML = "";
+
+            carSelect.appendChild(
+                createPlaceholder(
+                    '{{ t "orders.form.select_car" }}'
+                )
+            );
+
+            allCarOptions.forEach(option => {
+                carSelect.appendChild(
+                    option.cloneNode(true)
+                );
+            });
+
+            carSelect.value = currentValue;
+
+            showOtherCarsButton.textContent =
+                '{{ t "orders.form.show_client_cars" }}';
+        }
+
+        clientSelect.addEventListener("change", () => {
+            showingAllCars = false;
+            showClientCars();
+        });
+
+        showOtherCarsButton.addEventListener("click", () => {
+            showingAllCars = !showingAllCars;
+
+            if (showingAllCars) {
+                showAllCars();
+                return;
+            }
+
+            showClientCars();
+        });
+
+        showClientCars();
+    });
+</script>
+
+{{ end }}

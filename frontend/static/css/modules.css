@@ -163,3 +163,155 @@
     font-weight: 700;
     color: #dc2626;
 }
+
+/* =========================
+   ORDER NOTES
+========================= */
+
+.order-notes-section {
+    padding-bottom: 0;
+}
+
+.order-notes-header {
+    margin-bottom: 20px;
+}
+
+.order-notes-header h2 {
+    margin: 0 0 6px;
+}
+
+.order-notes-header p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    opacity: 0.65;
+}
+
+.order-note-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px;
+    margin-bottom: 22px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 12px;
+    background: rgba(148, 163, 184, 0.05);
+}
+
+.order-note-form label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.order-note-form textarea {
+    width: 100%;
+    min-height: 110px;
+    box-sizing: border-box;
+    resize: vertical;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 10px;
+
+    background: transparent;
+    color: inherit;
+
+    font: inherit;
+    line-height: 1.5;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.order-note-form textarea:focus {
+    outline: none;
+    border-color: currentColor;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.15);
+}
+
+.order-note-form textarea::placeholder {
+    opacity: 0.5;
+}
+
+.order-note-form-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.order-notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.order-note-item {
+    padding: 16px 18px;
+
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 12px;
+
+    background: rgba(148, 163, 184, 0.04);
+}
+
+.order-note-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    margin-bottom: 10px;
+}
+
+.order-note-author {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.order-note-meta time {
+    font-size: 12px;
+    opacity: 0.55;
+}
+
+.order-note-text {
+    margin: 0;
+
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.order-notes-empty {
+    padding: 18px;
+
+    border: 1px dashed rgba(148, 163, 184, 0.25);
+    border-radius: 12px;
+
+    text-align: center;
+    opacity: 0.6;
+}
+
+.order-notes-empty p {
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .order-note-form {
+        padding: 14px;
+    }
+
+    .order-note-form-actions {
+        display: block;
+    }
+
+    .order-note-form-actions .btn-primary {
+        width: 100%;
+    }
+
+    .order-note-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}

@@ -116,6 +116,22 @@ func main() {
 		warehouseService,
 	)
 
+	// Orders
+
+	orderRepository := repository.NewOrderRepository(dbPool)
+	orderService := service.NewOrderService(orderRepository)
+
+	// Заметки механиков к заказу.
+	orderNoteRepository := repository.NewOrderNoteRepository(dbPool)
+	orderNoteService := service.NewOrderNoteService(orderNoteRepository)
+
+	orderHandler := handler.NewOrderHandler(
+		orderService,
+		clientService,
+		carService,
+		orderNoteService,
+	)
+
 	// Router
 	mux := router.SetupRoutes(
 		clientHandler,
@@ -123,6 +139,7 @@ func main() {
 		employeeHandler,
 		warehouseHandler,
 		loginHandler,
+		orderHandler,
 	)
 
 	addr := ":" + cfg.Server.Port

@@ -1,108 +1,136 @@
 {{ define "content" }}
 
-<div class="page-header-actions">
-    <button class="btn-primary" type="button" disabled>
-        {{ t "orders.create" }}
-    </button>
+<div class="page-header">
+    <div>
+        <h1>{{ t "orders.title" }}</h1>
+
+        <p>
+            {{ t "orders.description" }}
+        </p>
+    </div>
+
+    <div class="page-header-actions">
+        <a class="btn-primary" href="/orders/create">
+            {{ t "orders.create" }}
+        </a>
+    </div>
 </div>
+
+{{ if .Error }}
+<div class="form-error" role="alert">
+    {{ .Error }}
+</div>
+{{ end }}
+
+{{ if .Orders }}
+
+<div class="clients-table-wrapper">
+    <table class="clients-table">
+        <thead>
+            <tr>
+                <th>{{ t "orders.table.order" }}</th>
+                <th>{{ t "orders.table.client" }}</th>
+                <th>{{ t "orders.table.car" }}</th>
+                <th>{{ t "orders.table.complaint" }}</th>
+                <th>{{ t "orders.table.status" }}</th>
+                <th>{{ t "orders.table.estimated_cost" }}</th>
+                <th>{{ t "orders.table.date" }}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{ range .Orders }}
+
+            <tr class="client-row" data-href="/orders/view?id={{ .ID }}" tabindex="0">
+                <td>
+                    <div class="client-identity-text">
+                        <a class="client-name" href="/orders/view?id={{ .ID }}">
+                            {{ t "orders.order_number" }} #{{ .ID }}
+                        </a>
+
+                        <span class="client-code">
+                            ID: {{ .ID }}
+                        </span>
+                    </div>
+                </td>
+
+                <td>
+                    <a class="client-name" href="/clients/view?id={{ .ClientID }}">
+                        {{ .ClientName }}
+                    </a>
+                </td>
+
+                <td>
+                    <div class="client-identity-text">
+                        <a class="client-name" href="/cars/view?id={{ .CarID }}">
+                            {{ .CarBrand }} {{ .CarModel }}
+                        </a>
+
+                        {{ if .CarPlateNumber }}
+                        <span class="client-code">
+                            {{ .CarPlateNumber }}
+                        </span>
+                        {{ else }}
+                        <span class="client-empty-value">
+                            {{ t "orders.not_specified" }}
+                        </span>
+                        {{ end }}
+                    </div>
+                </td>
+
+                <td>
+                    {{ if .Complaint }}
+                    {{ .Complaint }}
+                    {{ else }}
+                    <span class="client-empty-value">
+                        {{ t "orders.not_specified" }}
+                    </span>
+                    {{ end }}
+                </td>
+
+                <td>
+                    <span class="client-visit">
+                        {{ t (printf "orders.status.%s" .Status) }}
+                    </span>
+                </td>
+
+                <td>
+                    {{ if gt .EstimatedCostCents 0 }}
+                    {{ formatMoney .EstimatedCostCents }} €
+                    <span class="client-empty-value">
+                        {{ t "orders.not_specified" }}
+                    </span>
+                    {{ end }}
+                </td>
+
+                <td>
+                    <span class="client-date">
+                        {{ .CreatedAt.Format "02.01.2006" }}
+                    </span>
+                </td>
+            </tr>
+
+            {{ end }}
+        </tbody>
+    </table>
 </div>
 
-<div class="module-layout">
-    <section class="module-card">
-        <div class="module-card-header">
-            <div>
-                <h2>{{ t "orders.list.title" }}</h2>
+{{ else }}
 
-                <p>
-                    {{ t "orders.list.subtitle" }}
-                </p>
-            </div>
-        </div>
+<div class="clients-table-wrapper">
+    <div class="clients-empty">
+        <h2>{{ t "orders.empty.title" }}</h2>
 
-        <div class="module-empty">
-            <span class="module-empty-icon">O</span>
+        <p>
+            {{ t "orders.empty.text" }}
+        </p>
 
-            <h2>
-                {{ t "orders.empty.title" }}
-            </h2>
-
-            <p>
-                {{ t "orders.empty.text" }}
-            </p>
-        </div>
-    </section>
-
-    <aside class="module-card">
-        <div class="module-card-header">
-            <div>
-                <h2>
-                    {{ t "orders.features.title" }}
-                </h2>
-
-                <p>
-                    {{ t "orders.features.subtitle" }}
-                </p>
-            </div>
-        </div>
-
-        <div class="module-features">
-            <div class="module-feature">
-                <span class="module-feature-marker">1</span>
-
-                <div>
-                    <strong>
-                        {{ t "orders.features.work_orders.title" }}
-                    </strong>
-
-                    <p>
-                        {{ t "orders.features.work_orders.text" }}
-                    </p>
-                </div>
-            </div>
-
-            <div class="module-feature">
-                <span class="module-feature-marker">2</span>
-
-                <div>
-                    <strong>
-                        {{ t "orders.features.parts.title" }}
-                    </strong>
-
-                    <p>
-                        {{ t "orders.features.parts.text" }}
-                    </p>
-                </div>
-            </div>
-
-            <div class="module-feature">
-                <span class="module-feature-marker">3</span>
-
-                <div>
-                    <strong>
-                        {{ t "orders.features.statuses.title" }}
-                    </strong>
-
-                    <p>
-                        {{ t "orders.features.statuses.text" }}
-                    </p>
-                </div>
-            </div>
-
-            <div class="module-feature">
-                <span class="module-feature-marker">4</span>
-
-                <div>
-                    <strong>
-                        {{ t "orders.features.employees.title" }}
-                    </strong>
-
-                    <p>
-                        {{ t "orders.features.employees.text" }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </aside>
+        <a class="btn-primary" href="/orders/create">
+            {{ t "orders.create" }}
+        </a>
+    </div>
 </div>
+
+{{ end }}
 
 {{ end }}

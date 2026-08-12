@@ -1,0 +1,325 @@
+/* =========================
+   ORDERS
+   ========================= */
+
+.order-form-card {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 28px;
+}
+
+.order-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.order-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.order-form-group-full {
+    grid-column: 1 / -1;
+}
+
+.order-form-group label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.order-form-group select,
+.order-form-group textarea,
+.order-form-group input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 10px;
+    padding: 11px 13px;
+    font: inherit;
+    background: transparent;
+    color: inherit;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.order-form-group select {
+    min-height: 44px;
+}
+
+.order-form-group textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.5;
+}
+
+.order-form-group select:focus,
+.order-form-group textarea:focus,
+.order-form-group input:focus {
+    outline: none;
+    border-color: currentColor;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.15);
+}
+
+.order-form-group select:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.order-other-cars-btn {
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 7px 11px;
+    font-size: 13px;
+}
+
+.order-form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    padding-top: 18px;
+    margin-top: 4px;
+    border-top: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 760px) {
+    .order-form-card {
+        padding: 18px;
+    }
+
+    .order-form-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .order-form-group-full,
+    .order-form-actions {
+        grid-column: 1;
+    }
+
+    .order-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .order-form-actions .btn-primary,
+    .order-form-actions .btn-secondary {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+}
+
+/* =========================
+   ORDER VIEW
+   ========================= */
+
+.order-view-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+    gap: 22px;
+    align-items: start;
+}
+
+.order-view-main {
+    padding: 26px;
+}
+
+.order-view-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.order-view-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.65;
+}
+
+.order-view-id {
+    font-size: 13px;
+    opacity: 0.55;
+}
+
+.order-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    background: rgba(148, 163, 184, 0.15);
+}
+
+.order-status-new {
+    background: rgba(59, 130, 246, 0.14);
+}
+
+.order-view-section {
+    padding: 22px 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.order-view-section:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.order-view-section h2 {
+    margin: 0 0 10px;
+    font-size: 16px;
+}
+
+.order-view-text {
+    margin: 0;
+    line-height: 1.65;
+    white-space: pre-wrap;
+}
+
+.order-view-empty {
+    margin: 0;
+    opacity: 0.55;
+}
+
+.order-view-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.order-info-card {
+    padding: 20px;
+}
+
+.order-related-link {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 16px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.order-related-link strong {
+    font-size: 16px;
+}
+
+.order-related-link span {
+    font-size: 12px;
+    opacity: 0.55;
+}
+
+.order-info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.order-info-row span {
+    font-size: 13px;
+    opacity: 0.65;
+}
+
+.order-info-row strong {
+    text-align: right;
+    font-size: 13px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+    .order-view-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .order-view-main,
+    .order-info-card {
+        padding: 17px;
+    }
+
+    .order-view-header {
+        flex-direction: column;
+    }
+
+    .order-info-row {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .order-info-row strong {
+        text-align: left;
+    }
+}
+
+/* =========================
+   ORDER STATUS CONTROL
+   ========================= */
+
+.order-status-control {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.order-status-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.order-status-form label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.order-status-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.order-status-select {
+    min-height: 42px;
+    min-width: 220px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+}
+
+@media (max-width: 600px) {
+    .order-status-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .order-status-select,
+    .order-status-actions .btn-primary {
+        width: 100%;
+    }
+}
