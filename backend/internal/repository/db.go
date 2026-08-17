@@ -25,4 +25,7 @@ type DBTX interface {
 		sql string,
 		args ...any,
 	) pgx.Row
+	Begin(
+		ctx context.Context,
+	) (pgx.Tx, error)
 }

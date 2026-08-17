@@ -76,6 +76,8 @@ type OrderListItem struct {
 	CarModel       string
 	CarPlateNumber string
 
+	AssignedEmployees string
+
 	Complaint string
 	Status    string
 

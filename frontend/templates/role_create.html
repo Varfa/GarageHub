@@ -1,0 +1,65 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <div>
+        <h1>{{ t "roles.create.title" }}</h1>
+        <p>{{ t "roles.create.subtitle" }}</p>
+    </div>
+
+    <a class="btn-secondary" href="/settings/roles">
+        {{ t "common.back" }}
+    </a>
+</div>
+
+{{ if .Error }}
+<div class="form-error" role="alert">
+    {{ .Error }}
+</div>
+{{ end }}
+
+<section class="module-card">
+
+    <form method="POST" action="/settings/roles/create" class="form-grid role-create-form">
+        <div class="form-group">
+            <label for="name">
+                {{ t "roles.create.name" }}
+            </label>
+
+            <input id="name" name="name" type="text" required>
+        </div>
+
+        <div class="form-group">
+            <label for="code">
+                {{ t "roles.create.code" }}
+            </label>
+
+            <input id="code" name="code" type="text" required>
+
+            <p class="role-code-hint">
+                {{ t "roles.create.code_hint" }}
+            </p>
+        </div>
+
+        <div class="form-group role-create-description">
+            <label for="description">
+                {{ t "roles.create.description" }}
+            </label>
+
+            <textarea id="description" name="description" rows="4"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <a class="btn-secondary" href="/settings/roles">
+                {{ t "common.back" }}
+            </a>
+
+            <button class="btn-primary" type="submit">
+                {{ t "roles.create.submit" }}
+            </button>
+        </div>
+
+    </form>
+
+</section>
+
+{{ end }}

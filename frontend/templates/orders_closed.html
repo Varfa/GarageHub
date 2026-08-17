@@ -1,0 +1,176 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <div>
+        <h1>{{ t "orders.closed.title" }}</h1>
+
+        <p>
+            {{ t "orders.closed.description" }}
+        </p>
+    </div>
+
+    <div class="page-header-actions">
+        <a class="btn-secondary" href="/orders">
+            {{ t "orders.closed.back_to_active" }}
+        </a>
+    </div>
+</div>
+
+{{ if .Error }}
+<div class="form-error" role="alert">
+    {{ .Error }}
+</div>
+{{ end }}
+<form method="GET" action="/orders/closed" class="clients-search">
+    <input type="search" name="search" value="{{ .Search }}" placeholder='{{ t "orders.search.placeholder" }}'
+        autocomplete="off">
+
+    <button class="btn-primary" type="submit">
+        {{ t "orders.search.button" }}
+    </button>
+
+    {{ if .Search }}
+    <a class="btn-secondary" href="/orders/closed">
+        {{ t "orders.search.clear" }}
+    </a>
+    {{ end }}
+</form>
+{{ if .Orders }}
+
+<div class="clients-table-wrapper">
+    <table class="clients-table">
+        <thead>
+            <tr>
+                <th>{{ t "orders.table.order" }}</th>
+                <th>{{ t "orders.table.client" }}</th>
+                <th>{{ t "orders.table.car" }}</th>
+                <th>{{ t "orders.table.employees" }}</th>
+                <th>{{ t "orders.table.complaint" }}</th>
+                <th>{{ t "orders.table.status" }}</th>
+                <th>{{ t "orders.table.estimated_cost" }}</th>
+                <th>{{ t "orders.table.date" }}</th>
+                <th>{{ t "orders.closed.actions" }}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{ range .Orders }}
+
+            <tr class="client-row" data-href="/orders/view?id={{ .ID }}" tabindex="0">
+
+                <td>
+                    <div class="client-identity-text">
+                        <a class="client-name" href="/orders/view?id={{ .ID }}">
+                            {{ t "orders.order_number" }} #{{ .ID }}
+                        </a>
+
+                        <span class="client-code">
+                            ID: {{ .ID }}
+                        </span>
+                    </div>
+                </td>
+
+                <td>
+                    <a class="client-name" href="/clients/view?id={{ .ClientID }}">
+                        {{ .ClientName }}
+                    </a>
+                </td>
+
+                <td>
+                    <div class="client-identity-text">
+                        <a class="client-name" href="/cars/view?id={{ .CarID }}">
+                            {{ .CarBrand }} {{ .CarModel }}
+                        </a>
+
+                        {{ if .CarPlateNumber }}
+                        <span class="client-code">
+                            {{ .CarPlateNumber }}
+                        </span>
+                        {{ else }}
+                        <span class="client-empty-value">
+                            {{ t "orders.not_specified" }}
+                        </span>
+                        {{ end }}
+                    </div>
+                </td>
+
+                <td>
+                    {{ if .AssignedEmployees }}
+                    <span class="order-assigned-employees">
+                        {{ .AssignedEmployees }}
+                    </span>
+                    {{ else }}
+                    <span class="client-empty-value">
+                        {{ t "orders.employees.empty" }}
+                    </span>
+                    {{ end }}
+                </td>
+
+                <td>
+                    {{ if .Complaint }}
+                    {{ .Complaint }}
+                    {{ else }}
+                    <span class="client-empty-value">
+                        {{ t "orders.not_specified" }}
+                    </span>
+                    {{ end }}
+                </td>
+
+                <td>
+                    <span class="client-visit">
+                        {{ t (printf "orders.status.%s" .Status) }}
+                    </span>
+                </td>
+
+                <td>
+                    {{ if gt .EstimatedCostCents 0 }}
+                    {{ formatMoney .EstimatedCostCents }} €
+                    {{ else }}
+                    <span class="client-empty-value">
+                        {{ t "orders.not_specified" }}
+                    </span>
+                    {{ end }}
+                </td>
+
+                <td>
+                    <span class="client-date">
+                        {{ .CreatedAt.Format "02.01.2006" }}
+                    </span>
+                </td>
+
+                <td>
+                    <form method="POST" action="/orders/restore">
+                        <input type="hidden" name="id" value="{{ .ID }}">
+
+                        <button class="btn-secondary" type="submit">
+                            {{ t "orders.closed.restore" }}
+                        </button>
+                    </form>
+                </td>
+
+            </tr>
+
+            {{ end }}
+        </tbody>
+    </table>
+</div>
+
+{{ else }}
+
+<div class="clients-table-wrapper">
+    <div class="clients-empty">
+        <h2>{{ t "orders.closed.empty_title" }}</h2>
+
+        <p>
+            {{ t "orders.closed.empty_text" }}
+        </p>
+
+        <a class="btn-secondary" href="/orders">
+            {{ t "orders.closed.back_to_active" }}
+        </a>
+    </div>
+</div>
+
+{{ end }}
+
+{{ end }}

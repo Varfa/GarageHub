@@ -1,18 +1,23 @@
 package handler
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"net/http"
 
 	"github.com/Varfa/GarageHub/internal/i18n"
+	"github.com/Varfa/GarageHub/internal/middleware"
+	"github.com/Varfa/GarageHub/internal/models"
 )
 
 var translator *i18n.Manager
 
 type TemplateData struct {
-	PageData   any
-	CurrentURL string
+	PageData    any
+	CurrentURL  string
+	CurrentUser *models.User
+	IsOwner     bool
 }
 
 func SetTranslator(manager *i18n.Manager) {
@@ -78,7 +83,23 @@ func RenderTemplate(
 		"lte": func(a, b int) bool {
 			return a <= b
 		},
+		"roleName": func(
+			code string,
+			fallback string,
+		) string {
+			key := "roles." + code
 
+			translated := translator.Translate(
+				language,
+				key,
+			)
+
+			if translated == key {
+				return fallback
+			}
+
+			return translated
+		},
 		"positionName": func(
 			code string,
 			fallback string,
@@ -128,14 +149,23 @@ func RenderTemplate(
 		)
 		return
 	}
+	currentUser, ok := middleware.CurrentUser(r)
 
+	isOwner := false
+	if ok {
+		isOwner = currentUser.IsOwner
+	}
 	templateData := TemplateData{
-		PageData:   data,
-		CurrentURL: r.URL.RequestURI(),
+		PageData:    data,
+		CurrentURL:  r.URL.RequestURI(),
+		CurrentUser: currentUser,
+		IsOwner:     isOwner,
 	}
 
+	var buffer bytes.Buffer
+
 	err = tmpl.ExecuteTemplate(
-		w,
+		&buffer,
 		"layout.html",
 		templateData,
 	)
@@ -145,6 +175,11 @@ func RenderTemplate(
 			err.Error(),
 			http.StatusInternalServerError,
 		)
+		return
+	}
+
+	_, err = buffer.WriteTo(w)
+	if err != nil {
 		return
 	}
 }

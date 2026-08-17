@@ -10,6 +10,10 @@
     </div>
 
     <div class="page-header-actions">
+        <a class="btn-secondary" href="/orders/closed">
+            {{ t "orders.closed.title" }}
+        </a>
+
         <a class="btn-primary" href="/orders/create">
             {{ t "orders.create" }}
         </a>
@@ -21,7 +25,20 @@
     {{ .Error }}
 </div>
 {{ end }}
+<form method="GET" action="/orders" class="clients-search">
+    <input type="search" name="search" value="{{ .Search }}" placeholder='{{ t "orders.search.placeholder" }}'
+        autocomplete="off">
 
+    <button class="btn-primary" type="submit">
+        {{ t "orders.search.button" }}
+    </button>
+
+    {{ if .Search }}
+    <a class="btn-secondary" href="/orders">
+        {{ t "orders.search.clear" }}
+    </a>
+    {{ end }}
+</form>
 {{ if .Orders }}
 
 <div class="clients-table-wrapper">
@@ -31,6 +48,7 @@
                 <th>{{ t "orders.table.order" }}</th>
                 <th>{{ t "orders.table.client" }}</th>
                 <th>{{ t "orders.table.car" }}</th>
+                <th>{{ t "orders.table.employees" }}</th>
                 <th>{{ t "orders.table.complaint" }}</th>
                 <th>{{ t "orders.table.status" }}</th>
                 <th>{{ t "orders.table.estimated_cost" }}</th>
@@ -42,6 +60,7 @@
             {{ range .Orders }}
 
             <tr class="client-row" data-href="/orders/view?id={{ .ID }}" tabindex="0">
+
                 <td>
                     <div class="client-identity-text">
                         <a class="client-name" href="/orders/view?id={{ .ID }}">
@@ -79,6 +98,18 @@
                 </td>
 
                 <td>
+                    {{ if .AssignedEmployees }}
+                    <span class="order-assigned-employees">
+                        {{ .AssignedEmployees }}
+                    </span>
+                    {{ else }}
+                    <span class="client-empty-value">
+                        {{ t "orders.employees.empty" }}
+                    </span>
+                    {{ end }}
+                </td>
+
+                <td>
                     {{ if .Complaint }}
                     {{ .Complaint }}
                     {{ else }}
@@ -97,6 +128,7 @@
                 <td>
                     {{ if gt .EstimatedCostCents 0 }}
                     {{ formatMoney .EstimatedCostCents }} €
+                    {{ else }}
                     <span class="client-empty-value">
                         {{ t "orders.not_specified" }}
                     </span>
@@ -108,6 +140,7 @@
                         {{ .CreatedAt.Format "02.01.2006" }}
                     </span>
                 </td>
+
             </tr>
 
             {{ end }}

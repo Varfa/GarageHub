@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Varfa/GarageHub/internal/middleware"
 	"github.com/Varfa/GarageHub/internal/models"
 	"github.com/Varfa/GarageHub/internal/service"
 )
@@ -39,6 +40,7 @@ type EmployeePageData struct {
 	Phones    []models.EmployeePhone
 	Positions []models.EmployeePosition
 	Edit      bool
+	IsOwner   bool
 	Error     string
 	Success   string
 }
@@ -175,12 +177,20 @@ func (h *EmployeeHandler) View(
 		return
 	}
 
+	currentUser, ok := middleware.CurrentUser(r)
+
+	isOwner := false
+	if ok && currentUser != nil {
+		isOwner = currentUser.IsOwner
+	}
+
 	data := EmployeePageData{
 		Employee:  *employee,
 		Phones:    phones,
 		Positions: positions,
 		Edit: employee.IsActive &&
 			r.URL.Query().Get("edit") == "1",
+		IsOwner: isOwner,
 		Error:   r.URL.Query().Get("error"),
 		Success: r.URL.Query().Get("success"),
 	}

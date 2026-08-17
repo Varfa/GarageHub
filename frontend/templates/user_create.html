@@ -1,0 +1,79 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <div>
+        <h1>{{ t "users.create.title" }}</h1>
+
+        <p>
+            {{ t "users.create.description" }}
+        </p>
+    </div>
+</div>
+
+{{ if .Error }}
+<div class="form-error" role="alert">
+    {{ .Error }}
+</div>
+{{ end }}
+
+<div class="module-card order-form-card">
+    <form method="POST" action="/users/create" class="order-form-grid">
+
+        <input type="hidden" name="employee_id" value="{{ .Employee.ID }}">
+
+        <div class="order-form-group order-form-group-full">
+            <label>
+                {{ t "users.create.employee" }}
+            </label>
+
+            <input type="text" value="{{ .Employee.FirstName }} {{ .Employee.LastName }}" disabled>
+        </div>
+
+        <div class="order-form-group order-form-group-full">
+            <label for="role_id">
+                {{ t "users.create.role" }}
+            </label>
+
+            <select id="role_id" name="role_id" required>
+                <option value="">
+                    {{ t "users.create.select_role" }}
+                </option>
+
+                {{ range .Roles }}
+                <option value="{{ .ID }}">
+                    {{ .Name }}
+                </option>
+                {{ end }}
+            </select>
+        </div>
+
+        <div class="order-form-group order-form-group-full">
+            <label for="email">
+                {{ t "users.create.email" }}
+            </label>
+
+            <input id="email" name="email" type="email" autocomplete="email" required>
+        </div>
+
+        <div class="order-form-group order-form-group-full">
+            <label for="password">
+                {{ t "users.create.password" }}
+            </label>
+
+            <input id="password" name="password" type="password" autocomplete="new-password" required>
+        </div>
+
+        <div class="order-form-actions">
+            <a class="btn-secondary" href="/employees/view?id={{ .Employee.ID }}">
+                {{ t "users.create.cancel" }}
+            </a>
+
+            <button class="btn-primary" type="submit">
+                {{ t "users.create.submit" }}
+            </button>
+        </div>
+
+    </form>
+</div>
+
+{{ end }}

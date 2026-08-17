@@ -42,20 +42,20 @@ func NewOrderService(repo *repository.OrderRepository) *OrderService {
 func (s *OrderService) Create(
 	ctx context.Context,
 	order models.Order,
-) error {
+) (int64, error) {
 	order.Complaint = strings.TrimSpace(
 		order.Complaint)
 
 	if order.ClientID <= 0 {
-		return ErrOrderClientRequired
+		return 0, ErrOrderClientRequired
 	}
 
 	if order.CarID <= 0 {
-		return ErrOrderCarRequired
+		return 0, ErrOrderCarRequired
 	}
 
 	if order.Complaint == "" {
-		return ErrOrderComplaintRequired
+		return 0, ErrOrderComplaintRequired
 	}
 
 	order.Status = "new"
@@ -67,10 +67,24 @@ func (s *OrderService) Create(
 }
 func (s *OrderService) List(
 	ctx context.Context,
+	search string,
 ) ([]models.OrderListItem, error) {
+	search = strings.TrimSpace(search)
 
 	return s.repo.List(
 		ctx,
+		search,
+	)
+}
+func (s *OrderService) ListClosed(
+	ctx context.Context,
+	search string,
+) ([]models.OrderListItem, error) {
+	search = strings.TrimSpace(search)
+
+	return s.repo.ListClosed(
+		ctx,
+		search,
 	)
 }
 func (s *OrderService) GetByID(
@@ -100,7 +114,8 @@ func (s *OrderService) UpdateStatus(
 		"diagnostics",
 		"waiting_approval",
 		"in_progress",
-		"completed":
+		"completed",
+		"cancelled":
 	default:
 		return ErrOrderInvalidStatus
 	}
@@ -110,4 +125,24 @@ func (s *OrderService) UpdateStatus(
 		id,
 		status,
 	)
+}
+func (s *OrderService) Restore(
+	ctx context.Context,
+	id int,
+) error {
+	if id <= 0 {
+		return ErrOrderInvalidID
+	}
+	return s.repo.UpdateStatus(
+		ctx, id, "new",
+	)
+}
+func (s *OrderService) Delete(
+	ctx context.Context,
+	id int,
+) error {
+	if id <= 0 {
+		return ErrOrderInvalidID
+	}
+	return s.repo.Delete(ctx, id)
 }

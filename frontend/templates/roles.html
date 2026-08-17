@@ -1,0 +1,119 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <div>
+        <h1>{{ t "roles.title" }}</h1>
+        <p>{{ t "roles.subtitle" }}</p>
+    </div>
+    <div class="page-header-actions">
+        <a class="btn-primary" href="/settings/roles/create">
+            {{ t "roles.create.button" }}
+        </a>
+
+        <a class="btn-secondary" href="/settings">
+            {{ t "common.back" }}
+        </a>
+    </div>
+</div>
+
+<section class="module-card">
+
+    <div class="module-card-header">
+        <div>
+            <h2>{{ t "roles.list.title" }}</h2>
+            <p>{{ t "roles.list.description" }}</p>
+        </div>
+    </div>
+
+    {{ if .Error }}
+    <div class="form-error" role="alert">
+        {{ .Error }}
+    </div>
+    {{ end }}
+
+    {{ if .Roles }}
+
+    <div class="table-wrapper roles-table-wrapper">
+        <table class="data-table roles-table">
+            <thead>
+                <tr>
+                    <th>{{ t "roles.name" }}</th>
+                    <th>{{ t "roles.code" }}</th>
+                    <th>{{ t "roles.type" }}</th>
+                    <th>{{ t "roles.permissions" }}</th>
+                    <th>{{ t "roles.status" }}</th>
+                    <th>{{ t "roles.actions" }}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {{ range .Roles }}
+                <tr>
+                    <td>
+                        <strong>
+                            {{ roleName .Code .Name }}
+                        </strong>
+
+                        {{ if .Description }}
+                        <div class="role-description">
+                            {{ .Description }}
+                        </div>
+                        {{ end }}
+                    </td>
+
+                    <td>
+                        {{ .Code }}
+                    </td>
+
+                    <td>
+                        {{ if .IsSystem }}
+                        {{ t "roles.type.system" }}
+                        {{ else }}
+                        {{ t "roles.type.custom" }}
+                        {{ end }}
+                    </td>
+
+                    <td>
+                        {{ .PermissionsCount }}
+                    </td>
+
+                    <td>
+                        {{ if .IsActive }}
+                        <span class="role-status role-status-active">
+                            {{ t "roles.status.active" }}
+                        </span>
+                        {{ else }}
+                        <span class="role-status role-status-inactive">
+                            {{ t "roles.status.inactive" }}
+                        </span>
+                        {{ end }}
+                    </td>
+
+                    <td>
+                        <a class="btn-secondary" href="/settings/roles/view?id={{ .ID }}">
+                            {{ t "roles.actions.manage" }}
+                        </a>
+                    </td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+
+    {{ else }}
+
+    <div class="module-empty">
+        <span class="module-empty-icon">R</span>
+
+        <h2>{{ t "roles.empty.title" }}</h2>
+
+        <p>
+            {{ t "roles.empty.description" }}
+        </p>
+    </div>
+
+    {{ end }}
+
+</section>
+
+{{ end }}

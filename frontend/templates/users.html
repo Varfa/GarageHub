@@ -1,0 +1,115 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <div>
+        <h1>{{ t "users.title" }}</h1>
+        <p>{{ t "users.subtitle" }}</p>
+    </div>
+</div>
+
+{{ if .Error }}
+<div class="form-error" role="alert">
+    {{ .Error }}
+</div>
+{{ end }}
+
+<section class="module-card">
+
+    <div class="module-card-header">
+        <div>
+            <h2>{{ t "users.accounts.title" }}</h2>
+            <p>{{ t "users.accounts.description" }}</p>
+        </div>
+    </div>
+
+    {{ if .Users }}
+
+    <div class="table-wrapper users-table-wrapper">
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>{{ t "users.employee" }}</th>
+                    <th>{{ t "users.position" }}</th>
+                    <th>{{ t "users.email" }}</th>
+                    <th>{{ t "users.role" }}</th>
+                    <th>{{ t "users.status" }}</th>
+                    <th>{{ t "users.actions" }}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {{ range .Users }}
+
+                <tr>
+                    <td>
+                        {{ if .IsOwner }}
+                        <strong>Owner</strong>
+                        {{ else }}
+                        <strong>
+                            {{ .FirstName }} {{ .LastName }}
+                        </strong>
+                        {{ end }}
+                    </td>
+
+                    <td>
+                        {{ if .PositionName }}
+                        {{ .PositionName }}
+                        {{ else }}
+                        —
+                        {{ end }}
+                    </td>
+
+                    <td>
+                        {{ .Email }}
+                    </td>
+
+                    <td>
+                        {{ if .IsOwner }}
+                        {{ t "roles.owner" }}
+                        {{ else if .RoleName }}
+                        {{ roleName .RoleCode .RoleName }}
+                        {{ else }}
+                        —
+                        {{ end }}
+                    </td>
+
+                    <td>
+                        {{ if .IsActive }}
+                        <span class="employee-status employee-status-active">
+                            {{ t "users.status.active" }}
+                        </span>
+                        {{ else }}
+                        <span class="employee-status employee-status-inactive">
+                            {{ t "users.status.inactive" }}
+                        </span>
+                        {{ end }}
+                    </td>
+
+                    <td>
+                        {{ if not .IsOwner }}
+                        <a class="btn-secondary btn-small" href="/settings/users/edit?id={{ .ID }}">
+                            {{ t "users.actions.manage" }}
+                        </a>
+                        {{ else }}
+                        —
+                        {{ end }}
+                    </td>
+                </tr>
+
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+
+    {{ else }}
+
+    <div class="dashboard-empty">
+        <strong>{{ t "users.empty.title" }}</strong>
+        <p>{{ t "users.empty.text" }}</p>
+    </div>
+
+    {{ end }}
+
+</section>
+
+{{ end }}

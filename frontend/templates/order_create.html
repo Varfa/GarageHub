@@ -60,6 +60,24 @@
         </div>
 
         <div class="order-form-group order-form-group-full">
+            <label for="employee_id">
+                {{ t "orders.form.employee" }}
+            </label>
+
+            <select id="employee_id" name="employee_id">
+                <option value="">
+                    {{ t "orders.form.employee_optional" }}
+                </option>
+
+                {{ range .Employees }}
+                <option value="{{ .ID }}">
+                    {{ .FirstName }} {{ .LastName }} — {{ .PositionName }}
+                </option>
+                {{ end }}
+            </select>
+        </div>
+
+        <div class="order-form-group order-form-group-full">
             <label for="complaint">
                 {{ t "orders.form.complaint" }}
             </label>

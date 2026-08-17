@@ -383,3 +383,7 @@ nav a.is-active:hover {
         gap: 8px;
     }
 }
+
+.logout-form {
+    margin: 0;
+}

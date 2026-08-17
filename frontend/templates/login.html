@@ -105,15 +105,28 @@
                         {{ t "login.subtitle" }}
                     </p>
                 </div>
+                {{ if .Error }}
+                <div class="form-error" role="alert">
+                    {{ .Error }}
+                </div>
+                {{ end }}
+                {{ if .Error }}
+                <div class="login-error" role="alert">
+                    <span class="login-error-icon">!</span>
 
-                <form action="/dashboard" method="get">
+                    <span>
+                        {{ .Error }}
+                    </span>
+                </div>
+                {{ end }}
+                <form action="/login" method="post">
                     <div class="form-group">
                         <label for="email">
                             {{ t "login.email" }}
                         </label>
 
-                        <input id="email" name="email" type="email" placeholder='{{ t "login.email_placeholder" }}'
-                            autocomplete="email">
+                        <input id="email" name="email" type="email" value="{{ .Email }}"
+                            placeholder='{{ t "login.email_placeholder" }}' autocomplete="email" required>
                     </div>
 
                     <div class="form-group">
@@ -128,7 +141,7 @@
                         </div>
 
                         <input id="password" name="password" type="password"
-                            placeholder='{{ t "login.password_placeholder" }}' autocomplete="current-password">
+                            placeholder='{{ t "login.password_placeholder" }}' autocomplete="current-password" required>
                     </div>
 
                     <label class="remember">

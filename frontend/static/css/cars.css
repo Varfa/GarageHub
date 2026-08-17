@@ -226,6 +226,10 @@
     width: 100%;
 }
 
+.car-details-actions {
+    margin-bottom: 20px;
+}
+
 .car-code {
     color: var(--color-text-secondary);
     font-size: 13px;

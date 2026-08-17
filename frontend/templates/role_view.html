@@ -1,0 +1,206 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <div>
+        <h1>{{ roleName .Role.Code .Role.Name }}</h1>
+        <p>{{ t "roles.view.subtitle" }}</p>
+    </div>
+
+    <a class="btn-secondary" href="/settings/roles">
+        {{ t "common.back" }}
+    </a>
+</div>
+
+{{ if eq .Error "role_in_use" }}
+<div class="form-error" role="alert">
+    {{ t "roles.delete.in_use" }}
+</div>
+{{ end }}
+
+<section class="module-card">
+
+    <div class="module-card-header">
+        <div>
+            <h2>{{ t "roles.view.details" }}</h2>
+            <p>{{ t "roles.view.details_description" }}</p>
+        </div>
+    </div>
+
+    <form method="POST" action="/settings/roles/update" class="form-grid role-details-form">
+        <input type="hidden" name="role_id" value="{{ .Role.ID }}">
+
+        <div class="form-group">
+            <label for="name">
+                {{ t "roles.name" }}
+            </label>
+
+            {{ if .Role.IsSystem }}
+
+            <input id="name" type="text" value="{{ roleName .Role.Code .Role.Name }}" disabled>
+
+            <input type="hidden" name="name" value="{{ .Role.Name }}">
+
+            {{ else }}
+
+            <input id="name" name="name" type="text" value="{{ .Role.Name }}" required>
+
+            {{ end }}
+        </div>
+
+        <div class="form-group">
+            <label>
+                {{ t "roles.code" }}
+            </label>
+
+            <input type="text" value="{{ .Role.Code }}" disabled>
+        </div>
+
+        <div class="form-group">
+            <label for="description">
+                {{ t "roles.create.description" }}
+            </label>
+
+            {{ if .Role.IsSystem }}
+
+            <textarea id="description" rows="4" disabled>{{ .Role.Description }}</textarea>
+
+            <input type="hidden" name="description" value="{{ .Role.Description }}">
+
+            {{ else }}
+
+            <textarea id="description" name="description" rows="4">{{ .Role.Description }}</textarea>
+
+            {{ end }}
+        </div>
+
+        <div class="form-group">
+            <label>
+                {{ t "roles.status" }}
+            </label>
+
+            {{ if .Role.IsActive }}
+            <div class="role-status-options">
+                <label>
+                    <input type="radio" name="is_active" value="true" checked>
+                    {{ t "roles.status.active" }}
+                </label>
+
+                <label>
+                    <input type="radio" name="is_active" value="false">
+                    {{ t "roles.status.inactive" }}
+                </label>
+
+                {{ else }}
+
+                <label>
+                    <input type="radio" name="is_active" value="true">
+                    {{ t "roles.status.active" }}
+                </label>
+
+                <label>
+                    <input type="radio" name="is_active" value="false" checked>
+                    {{ t "roles.status.inactive" }}
+                </label>
+
+                {{ end }}
+            </div>
+
+            <div class="form-actions">
+                <button class="btn-primary" type="submit">
+                    {{ t "roles.actions.save_details" }}
+                </button>
+            </div>
+
+    </form>
+
+</section>
+
+<section class="module-card">
+
+    <div class="module-card-header">
+        <div>
+            <h2>{{ t "roles.view.permissions" }}</h2>
+            <p>{{ t "roles.edit.permissions_description" }}</p>
+        </div>
+    </div>
+
+    <form method="POST" action="/settings/roles/permissions" class="permissions-form">
+        <input type="hidden" name="role_id" value="{{ .Role.ID }}">
+
+        {{ range .PermissionGroups }}
+
+        <div class="permission-group">
+
+            <h3>
+                {{ .Module }}
+            </h3>
+
+            <div class="module-features">
+
+                {{ range .Permissions }}
+
+                <label class="module-feature">
+
+                    <input type="checkbox" name="permission_id" value="{{ .ID }}" {{ if .Assigned }}checked{{ end }}>
+
+                    <div>
+                        <strong>
+                            {{ .Code }}
+                        </strong>
+
+                        {{ if .Description }}
+                        <p>
+                            {{ .Description }}
+                        </p>
+                        {{ end }}
+                    </div>
+
+                </label>
+
+                {{ end }}
+
+            </div>
+
+        </div>
+
+        {{ end }}
+
+        <div class="form-actions">
+
+            <a class="btn-secondary" href="/settings/roles">
+                {{ t "common.back" }}
+            </a>
+
+            <button class="btn-primary" type="submit">
+                {{ t "roles.actions.save_permissions" }}
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+{{ if not .Role.IsSystem }}
+
+<section class="module-card role-danger-zone">
+    <div class="module-card-header">
+        <div>
+            <h2>{{ t "roles.delete.title" }}</h2>
+            <p>{{ t "roles.delete.description" }}</p>
+        </div>
+    </div>
+
+    <form method="POST" action="/settings/roles/delete">
+        <input type="hidden" name="role_id" value="{{ .Role.ID }}">
+
+        <button class="btn-danger" type="submit">
+            {{ t "roles.delete.button" }}
+        </button>
+    </form>
+
+</section>
+
+{{ end }}
+
+{{ end }}

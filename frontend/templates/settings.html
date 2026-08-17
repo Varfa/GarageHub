@@ -1,7 +1,7 @@
 {{ define "content" }}
 
-<div class="module-layout">
-    <section class="module-card">
+<div class="module-layout settings-layout">
+    <section class="module-card settings-card">
         <div class="module-card-header">
             <div>
                 <h2>{{ t "settings.system.title" }}</h2>
@@ -9,18 +9,67 @@
             </div>
         </div>
 
-        <div class="module-empty">
-            <span class="module-empty-icon">S</span>
+        <div class="module-features settings-grid">
+            <a class="module-feature settings-item" href="/settings/users">
+                <span class="module-feature-marker">U</span>
 
-            <h2>{{ t "settings.empty.title" }}</h2>
+                <div>
+                    <strong>
+                        {{ t "settings.users.title" }}
+                    </strong>
 
-            <p>
-                {{ t "settings.empty.description" }}
-            </p>
+                    <p>
+                        {{ t "settings.users.description" }}
+                    </p>
+                </div>
+            </a>
+
+            <a class="module-feature settings-item" href="/settings/roles">
+                <span class="module-feature-marker">R</span>
+
+                <div>
+                    <strong>
+                        {{ t "settings.roles.title" }}
+                    </strong>
+
+                    <p>
+                        {{ t "settings.roles.description" }}
+                    </p>
+                </div>
+            </a>
+
+            <a a class="module-feature settings-item" href="/settings/positions">
+                <span class="module-feature-marker">P</span>
+
+                <div>
+                    <strong>
+                        {{ t "settings.positions.title" }}
+                    </strong>
+
+                    <p>
+                        {{ t "settings.positions.description" }}
+                    </p>
+                </div>
+            </a>
+
+            <a a class="module-feature settings-item" href="/settings/modules">
+                <span class="module-feature-marker">M</span>
+
+                <div>
+                    <strong>
+                        {{ t "settings.modules.title" }}
+                    </strong>
+
+                    <p>
+                        {{ t "settings.modules.description" }}
+                    </p>
+                </div>
+            </a>
+
         </div>
     </section>
 
-    <aside class="module-card">
+    <aside class="module-card settings-card settings-card-secondary">
         <div class="module-card-header">
             <div>
                 <h2>{{ t "settings.sections.title" }}</h2>
@@ -28,7 +77,7 @@
             </div>
         </div>
 
-        <div class="module-features">
+        <div class="module-features settings-grid settings-grid-secondary">
             <div class="module-feature">
                 <span class="module-feature-marker">1</span>
 
@@ -48,20 +97,6 @@
 
                 <div>
                     <strong>
-                        {{ t "settings.feature.positions.title" }}
-                    </strong>
-
-                    <p>
-                        {{ t "settings.feature.positions.description" }}
-                    </p>
-                </div>
-            </div>
-
-            <div class="module-feature">
-                <span class="module-feature-marker">3</span>
-
-                <div>
-                    <strong>
                         {{ t "settings.feature.languages.title" }}
                     </strong>
 
@@ -72,7 +107,7 @@
             </div>
 
             <div class="module-feature">
-                <span class="module-feature-marker">4</span>
+                <span class="module-feature-marker">3</span>
 
                 <div>
                     <strong>
@@ -84,8 +119,10 @@
                     </p>
                 </div>
             </div>
+
         </div>
     </aside>
+
 </div>
 
 {{ end }}

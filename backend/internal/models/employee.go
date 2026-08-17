@@ -44,3 +44,14 @@ type EmployeePhone struct {
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }
+type OrderEmployeeListItem struct {
+	ID           int64
+	OrderID      int64
+	EmployeeID   int64
+	FirstName    string
+	LastName     string
+	PositionName string
+	PositionCode string
+	AssignedAt   time.Time
+	UnassignedAt *time.Time
+}

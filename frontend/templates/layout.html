@@ -19,6 +19,11 @@
     <link rel="stylesheet" href="/static/css/mobile.css">
     <link rel="stylesheet" href="/static/css/modal.css">
     <link rel="stylesheet" href="/static/css/orders.css">
+    <link rel="stylesheet" href="/static/css/users.css">
+    <link rel="stylesheet" href="/static/css/roles.css">
+    <link rel="stylesheet" href="/static/css/settings.css">
+
+
 
 </head>
 
@@ -44,14 +49,23 @@
                 <a href="/language?lang=ru&redirect={{ .CurrentURL }}">RU</a>
             </div>
 
+            {{ if .CurrentUser }}
             <div class="user">
-                <span class="user-avatar">R</span>
-                <span class="user-name">Roman</span>
+                <span class="user-avatar">
+                    {{ if .CurrentUser.IsOwner }}A{{ else }}U{{ end }}
+                </span>
 
-                <button type="button">
-                    {{ t "button.logout" }}
-                </button>
+                <span class="user-name">
+                    {{ .CurrentUser.Email }}
+                </span>
+
+                <form method="POST" action="/logout" class="logout-form">
+                    <button type="submit" class="logout-button">
+                        {{ t "button.logout" }}
+                    </button>
+                </form>
             </div>
+            {{ end }}
         </div>
     </header>
 
@@ -200,7 +214,7 @@
     </dialog>
 
     <script src="/static/js/menu.js"></script>
-    <script src="/static/js/forms.js"></script>
+    <script src="/static/js/form.js"></script>
     <script src="/static/js/modal.js"></script>
     <script src="/static/js/app.js"></script>
 

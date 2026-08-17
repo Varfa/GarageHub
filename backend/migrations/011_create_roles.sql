@@ -1,0 +1,14 @@
+CREATE TABLE roles (
+    id BIGSERIAL PRIMARY KEY,
+
+    code VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(150) NOT NULL,
+
+    description TEXT,
+
+    is_system BOOLEAN NOT NULL DEFAULT FALSE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

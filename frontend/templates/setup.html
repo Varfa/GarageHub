@@ -1,0 +1,58 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <div>
+        <h1>{{ t "setup.title" }}</h1>
+
+        <p>
+            {{ t "setup.description" }}
+        </p>
+    </div>
+</div>
+
+{{ if .Error }}
+<div class="form-error" role="alert">
+    {{ .Error }}
+</div>
+{{ end }}
+
+<div class="module-card order-form-card">
+    <form method="POST" action="/setup" class="order-form-grid">
+
+        <div class="order-form-group order-form-group-full">
+            <label for="email">
+                {{ t "setup.email" }}
+            </label>
+
+            <input id="email" name="email" type="email" autocomplete="email" required
+                placeholder='{{ t "setup.email_placeholder" }}'>
+        </div>
+
+        <div class="order-form-group order-form-group-full">
+            <label for="password">
+                {{ t "setup.password" }}
+            </label>
+
+            <input id="password" name="password" type="password" autocomplete="new-password" required minlength="8"
+                placeholder='{{ t "setup.password_placeholder" }}'>
+        </div>
+
+        <div class="order-form-group order-form-group-full">
+            <label for="password_confirm">
+                {{ t "setup.password_confirm" }}
+            </label>
+
+            <input id="password_confirm" name="password_confirm" type="password" autocomplete="new-password" required
+                minlength="8" placeholder='{{ t "setup.password_confirm_placeholder" }}'>
+        </div>
+
+        <div class="order-form-actions">
+            <button class="btn-primary" type="submit">
+                {{ t "setup.submit" }}
+            </button>
+        </div>
+
+    </form>
+</div>
+
+{{ end }}

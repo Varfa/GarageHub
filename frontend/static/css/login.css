@@ -345,3 +345,37 @@ button:active {
         font-size: 29px;
     }
 }
+
+.login-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 20px;
+    padding: 12px 14px;
+
+    color: #b42318;
+    background: #fef3f2;
+    border: 1px solid #fecdca;
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.login-error-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+
+    color: #ffffff;
+    background: #d92d20;
+    border-radius: 50%;
+
+    font-size: 14px;
+    font-weight: 700;
+}

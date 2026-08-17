@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Varfa/GarageHub/internal/handler"
+	"github.com/Varfa/GarageHub/internal/middleware"
 )
 
 func SetupRoutes(
@@ -13,28 +14,75 @@ func SetupRoutes(
 	warehouseHandler *handler.WarehouseHandler,
 	loginHandler *handler.LoginHandler,
 	orderHandler *handler.OrderHandler,
+	setupHandler *handler.SetupHandler,
+	authMiddleware *middleware.AuthMiddleware,
+	userHandler *handler.UserHandler,
+	roleHandler *handler.RoleHandler,
 ) *http.ServeMux {
 	mux := http.NewServeMux()
 
+	private := func(
+		handlerFunc http.HandlerFunc,
+	) http.Handler {
+		return authMiddleware.RequireAuth(
+			handlerFunc,
+		)
+	}
+
+	// ---------------------------------------------------------
 	// Static files
+	// ---------------------------------------------------------
+
 	static := http.FileServer(
 		http.Dir("../frontend/static"),
 	)
 
 	mux.Handle(
 		"/static/",
-		http.StripPrefix("/static/", static),
+		http.StripPrefix(
+			"/static/",
+			static,
+		),
 	)
 
-	// Pages
+	// ---------------------------------------------------------
+	// Public pages
+	// ---------------------------------------------------------
+
 	mux.HandleFunc(
 		"/language",
 		loginHandler.ChangeLanguage,
 	)
-
+	mux.Handle(
+		"/logout",
+		private(
+			loginHandler.Logout,
+		),
+	)
 	mux.HandleFunc(
 		"/",
 		handler.RootRedirectHandler,
+	)
+
+	mux.HandleFunc(
+		"/setup",
+		func(
+			w http.ResponseWriter,
+			r *http.Request,
+		) {
+			if r.Method == http.MethodGet {
+				setupHandler.SetupPage(
+					w,
+					r,
+				)
+				return
+			}
+
+			setupHandler.CreateOwner(
+				w,
+				r,
+			)
+		},
 	)
 
 	mux.HandleFunc(
@@ -42,243 +90,789 @@ func SetupRoutes(
 		loginHandler.Login,
 	)
 
-	mux.HandleFunc(
+	// ---------------------------------------------------------
+	// Dashboard
+	// ---------------------------------------------------------
+
+	mux.Handle(
 		"/dashboard",
-		handler.DashboardHandler,
+		private(
+			handler.DashboardHandler,
+		),
 	)
 
+	// ---------------------------------------------------------
 	// Clients
-	mux.HandleFunc(
+	// ---------------------------------------------------------
+
+	mux.Handle(
 		"/clients",
-		clientHandler.Clients,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"clients.view",
+				http.HandlerFunc(
+					clientHandler.Clients,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/clients/create",
-		func(w http.ResponseWriter, r *http.Request) {
-			if r.Method == http.MethodGet {
-				clientHandler.CreatePage(w, r)
-				return
-			}
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"clients.create",
+				http.HandlerFunc(
+					func(
+						w http.ResponseWriter,
+						r *http.Request,
+					) {
+						if r.Method == http.MethodGet {
+							clientHandler.CreatePage(
+								w,
+								r,
+							)
+							return
+						}
 
-			clientHandler.Create(w, r)
-		},
+						clientHandler.Create(
+							w,
+							r,
+						)
+					},
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/clients/delete",
-		clientHandler.Delete,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"clients.delete",
+				http.HandlerFunc(
+					clientHandler.Delete,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/clients/view",
-		clientHandler.View,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"clients.view",
+				http.HandlerFunc(
+					clientHandler.View,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/clients/update",
-		clientHandler.Update,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"clients.edit",
+				http.HandlerFunc(
+					clientHandler.Update,
+				),
+			),
+		),
 	)
-
+	// ---------------------------------------------------------
 	// Cars
-	mux.HandleFunc(
+	// ---------------------------------------------------------
+
+	mux.Handle(
 		"/cars",
-		carHandler.Cars,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"cars.view",
+				http.HandlerFunc(
+					carHandler.Cars,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/cars/create",
-		func(w http.ResponseWriter, r *http.Request) {
-			if r.Method == http.MethodGet {
-				carHandler.CreatePage(w, r)
-				return
-			}
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"cars.create",
+				http.HandlerFunc(
+					func(
+						w http.ResponseWriter,
+						r *http.Request,
+					) {
+						if r.Method == http.MethodGet {
+							carHandler.CreatePage(
+								w,
+								r,
+							)
+							return
+						}
 
-			carHandler.Create(w, r)
-		},
+						carHandler.Create(
+							w,
+							r,
+						)
+					},
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/cars/delete",
-		carHandler.Delete,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"cars.delete",
+				http.HandlerFunc(
+					carHandler.Delete,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/cars/view",
-		carHandler.View,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"cars.view",
+				http.HandlerFunc(
+					carHandler.View,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/cars/update",
-		carHandler.Update,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"cars.edit",
+				http.HandlerFunc(
+					carHandler.Update,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/cars/change-owner",
-		carHandler.ChangeOwner,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"cars.edit",
+				http.HandlerFunc(
+					carHandler.ChangeOwner,
+				),
+			),
+		),
 	)
-
+	// ---------------------------------------------------------
 	// Employees
-	mux.HandleFunc(
+	// ---------------------------------------------------------
+
+	mux.Handle(
 		"/employees",
-		employeeHandler.Employees,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"employees.view",
+				http.HandlerFunc(
+					employeeHandler.Employees,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/employees/archive",
-		employeeHandler.ArchivePage,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"employees.view",
+				http.HandlerFunc(
+					employeeHandler.ArchivePage,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/employees/view",
-		employeeHandler.View,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"employees.view",
+				http.HandlerFunc(
+					employeeHandler.View,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/employees/update",
-		employeeHandler.Update,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"employees.edit",
+				http.HandlerFunc(
+					employeeHandler.Update,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/employees/archive-action",
-		employeeHandler.Archive,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"employees.archive",
+				http.HandlerFunc(
+					employeeHandler.Archive,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/employees/restore",
-		employeeHandler.Restore,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"employees.archive",
+				http.HandlerFunc(
+					employeeHandler.Restore,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/employees/create",
-		func(w http.ResponseWriter, r *http.Request) {
-			if r.Method == http.MethodGet {
-				employeeHandler.CreatePage(w, r)
-				return
-			}
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"employees.create",
+				http.HandlerFunc(
+					func(
+						w http.ResponseWriter,
+						r *http.Request,
+					) {
+						if r.Method == http.MethodGet {
+							employeeHandler.CreatePage(
+								w,
+								r,
+							)
+							return
+						}
 
-			employeeHandler.Create(w, r)
-		},
+						employeeHandler.Create(
+							w,
+							r,
+						)
+					},
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/employees/phones/create",
-		employeeHandler.AddPhone,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"employees.edit",
+				http.HandlerFunc(
+					employeeHandler.AddPhone,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/employees/phones/primary",
-		employeeHandler.SetPrimaryPhone,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"employees.edit",
+				http.HandlerFunc(
+					employeeHandler.SetPrimaryPhone,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/employees/phones/delete",
-		employeeHandler.DeletePhone,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"employees.edit",
+				http.HandlerFunc(
+					employeeHandler.DeletePhone,
+				),
+			),
+		),
 	)
+	// ---------------------------------------------------------
+	// Users
+	// ---------------------------------------------------------
 
+	mux.Handle(
+		"/users/create",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"users.create",
+				http.HandlerFunc(
+					func(
+						w http.ResponseWriter,
+						r *http.Request,
+					) {
+						if r.Method == http.MethodGet {
+							userHandler.CreatePage(
+								w,
+								r,
+							)
+							return
+						}
+
+						userHandler.Create(
+							w,
+							r,
+						)
+					},
+				),
+			),
+		),
+	)
+	mux.Handle(
+		"/settings/users",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"users.view",
+				http.HandlerFunc(
+					userHandler.Users,
+				),
+			),
+		),
+	)
+	mux.Handle(
+		"/settings/users/edit",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"users.edit",
+				http.HandlerFunc(
+					userHandler.EditPage,
+				),
+			),
+		),
+	)
+	mux.Handle(
+		"/settings/users/role",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"users.edit",
+				http.HandlerFunc(
+					userHandler.UpdateRole,
+				),
+			),
+		),
+	)
+	mux.Handle(
+		"/settings/users/active",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"users.deactivate",
+				http.HandlerFunc(
+					userHandler.SetActive,
+				),
+			),
+		),
+	)
+	// ---------------------------------------------------------
 	// Orders
-	mux.HandleFunc(
+	// ---------------------------------------------------------
+
+	mux.Handle(
 		"/orders",
-		orderHandler.Orders,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"orders.view",
+				http.HandlerFunc(
+					orderHandler.Orders,
+				),
+			),
+		),
 	)
-	mux.HandleFunc(
+
+	mux.Handle(
 		"/orders/view",
-		orderHandler.View,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"orders.view",
+				http.HandlerFunc(
+					orderHandler.View,
+				),
+			),
+		),
 	)
-	mux.HandleFunc(
+
+	mux.Handle(
 		"/orders/create",
-		func(w http.ResponseWriter, r *http.Request) {
-			if r.Method == http.MethodGet {
-				orderHandler.CreatePage(w, r)
-				return
-			}
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"orders.create",
+				http.HandlerFunc(
+					func(
+						w http.ResponseWriter,
+						r *http.Request,
+					) {
+						if r.Method == http.MethodGet {
+							orderHandler.CreatePage(
+								w,
+								r,
+							)
+							return
+						}
 
-			orderHandler.Create(w, r)
-		},
+						orderHandler.Create(
+							w,
+							r,
+						)
+					},
+				),
+			),
+		),
 	)
-	mux.HandleFunc("/orders/status",
-		orderHandler.UpdateStatus,
+
+	mux.Handle(
+		"/orders/status",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"orders.change_status",
+				http.HandlerFunc(
+					orderHandler.UpdateStatus,
+				),
+			),
+		),
 	)
-	// Заметки заказа
-	mux.HandleFunc(
+
+	mux.Handle(
 		"/orders/note",
-		orderHandler.AddNote,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"orders.add_note",
+				http.HandlerFunc(
+					orderHandler.AddNote,
+				),
+			),
+		),
 	)
 
+	mux.Handle(
+		"/orders/closed",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"orders.view",
+				http.HandlerFunc(
+					orderHandler.Closed,
+				),
+			),
+		),
+	)
+
+	mux.Handle(
+		"/orders/restore",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"orders.restore",
+				http.HandlerFunc(
+					orderHandler.Restore,
+				),
+			),
+		),
+	)
+
+	mux.Handle(
+		"/orders/employees/assign",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"orders.assign_employee",
+				http.HandlerFunc(
+					orderHandler.AssignEmployee,
+				),
+			),
+		),
+	)
+
+	mux.Handle(
+		"/orders/employees/unassign",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"orders.assign_employee",
+				http.HandlerFunc(
+					orderHandler.UnassignEmployee,
+				),
+			),
+		),
+	)
+
+	mux.Handle(
+		"/orders/delete",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"orders.delete",
+				http.HandlerFunc(
+					orderHandler.Delete,
+				),
+			),
+		),
+	)
+	// ---------------------------------------------------------
 	// Parts
-	mux.HandleFunc(
+	// ---------------------------------------------------------
+
+	mux.Handle(
 		"/parts",
-		handler.PartsHandler,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"parts.view",
+				http.HandlerFunc(
+					handler.PartsHandler,
+				),
+			),
+		),
 	)
-
+	// ---------------------------------------------------------
 	// Warehouse
-	mux.HandleFunc(
+	// ---------------------------------------------------------
+
+	mux.Handle(
 		"/warehouse",
-		warehouseHandler.Warehouse,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"warehouse.view",
+				http.HandlerFunc(
+					warehouseHandler.Warehouse,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/warehouse/create",
-		func(w http.ResponseWriter, r *http.Request) {
-			if r.Method == http.MethodGet {
-				warehouseHandler.CreatePage(w, r)
-				return
-			}
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"warehouse.manage",
+				http.HandlerFunc(
+					func(
+						w http.ResponseWriter,
+						r *http.Request,
+					) {
+						if r.Method == http.MethodGet {
+							warehouseHandler.CreatePage(
+								w,
+								r,
+							)
+							return
+						}
 
-			warehouseHandler.Create(w, r)
-		},
+						warehouseHandler.Create(
+							w,
+							r,
+						)
+					},
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/warehouse/view",
-		warehouseHandler.View,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"warehouse.view",
+				http.HandlerFunc(
+					warehouseHandler.View,
+				),
+			),
+		),
 	)
 
-	mux.HandleFunc(
+	mux.Handle(
 		"/warehouse/update",
-		warehouseHandler.Update,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"warehouse.manage",
+				http.HandlerFunc(
+					warehouseHandler.Update,
+				),
+			),
+		),
 	)
 
-	// GET: страница архива
-	mux.HandleFunc(
+	mux.Handle(
 		"/warehouse/archive",
-		warehouseHandler.ArchivePage,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"warehouse.view",
+				http.HandlerFunc(
+					warehouseHandler.ArchivePage,
+				),
+			),
+		),
 	)
 
-	// POST: отправить позицию в архив
-	mux.HandleFunc(
+	mux.Handle(
 		"/warehouse/archive-item",
-		warehouseHandler.Archive,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"warehouse.writeoff",
+				http.HandlerFunc(
+					warehouseHandler.Archive,
+				),
+			),
+		),
 	)
 
-	// POST: восстановить позицию
-	mux.HandleFunc(
+	mux.Handle(
 		"/warehouse/restore",
-		warehouseHandler.Restore,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"warehouse.manage",
+				http.HandlerFunc(
+					warehouseHandler.Restore,
+				),
+			),
+		),
 	)
-
+	// ---------------------------------------------------------
 	// Reports
-	mux.HandleFunc(
+	// ---------------------------------------------------------
+
+	mux.Handle(
 		"/reports",
-		handler.ReportsHandler,
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"reports.view",
+				http.HandlerFunc(
+					handler.ReportsHandler,
+				),
+			),
+		),
 	)
-
+	// ---------------------------------------------------------
 	// Settings
-	mux.HandleFunc(
-		"/settings",
-		handler.SettingsHandler,
-	)
+	// ---------------------------------------------------------
 
+	mux.Handle(
+		"/settings",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"settings.view",
+				http.HandlerFunc(
+					handler.SettingsHandler,
+				),
+			),
+		),
+	)
+	mux.Handle(
+		"/settings/roles",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"roles.view",
+				http.HandlerFunc(
+					roleHandler.Roles,
+				),
+			),
+		),
+	)
+	mux.Handle(
+		"/settings/roles/view",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"roles.view",
+				http.HandlerFunc(
+					roleHandler.View,
+				),
+			),
+		),
+	)
+	mux.Handle(
+		"/settings/roles/permissions",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"roles.edit",
+				http.HandlerFunc(
+					roleHandler.UpdatePermissions,
+				),
+			),
+		),
+	)
+	mux.Handle(
+		"/settings/roles/create",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"roles.create",
+				http.HandlerFunc(
+					func(
+						w http.ResponseWriter,
+						r *http.Request,
+					) {
+						if r.Method == http.MethodGet {
+							roleHandler.CreatePage(
+								w,
+								r,
+							)
+							return
+						}
+
+						roleHandler.Create(
+							w,
+							r,
+						)
+					},
+				),
+			),
+		),
+	)
+	mux.Handle(
+		"/settings/roles/update",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"roles.edit",
+				http.HandlerFunc(
+					roleHandler.Update,
+				),
+			),
+		),
+	)
+	mux.Handle(
+		"/settings/roles/delete",
+		authMiddleware.RequireAuth(
+			authMiddleware.RequirePermission(
+				"roles.delete",
+				http.HandlerFunc(
+					roleHandler.Delete,
+				),
+			),
+		),
+	)
+	// ---------------------------------------------------------
 	// System
+	// ---------------------------------------------------------
+
 	mux.HandleFunc(
 		"/health",
 		handler.HealthHandler,
 	)
 
+	// ---------------------------------------------------------
 	// API
+	// ---------------------------------------------------------
+
 	mux.HandleFunc(
 		"/api/v1/hello",
-		func(w http.ResponseWriter, r *http.Request) {
+		func(
+			w http.ResponseWriter,
+			r *http.Request,
+		) {
 			_, _ = w.Write(
 				[]byte("Hello from API 👋"),
 			)

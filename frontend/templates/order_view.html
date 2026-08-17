@@ -15,8 +15,24 @@
         <a class="btn-secondary" href="/orders">
             {{ t "orders.view.back" }}
         </a>
+
+        {{ if .IsOwner }}
+        <form method="POST" action="/orders/delete">
+            <input type="hidden" name="id" value="{{ .Order.ID }}">
+
+            <button type="submit" class="btn-danger">
+                {{ t "orders.delete" }}
+            </button>
+        </form>
+        {{ end }}
     </div>
 </div>
+
+{{ if eq .Error "employee_already_assigned" }}
+<div class="form-error" role="alert">
+    {{ t "orders.employees.already_assigned" }}
+</div>
+{{ end }}
 
 <div class="order-view-grid">
 
@@ -60,6 +76,10 @@
 
                                 <option value="completed" {{ if eq .Order.Status "completed" }}selected{{ end }}>
                                     {{ t "orders.status.completed" }}
+                                </option>
+
+                                <option value="cancelled" {{ if eq .Order.Status "cancelled" }}selected{{ end }}>
+                                    {{ t "orders.status.cancelled" }}
                                 </option>
                             </select>
 
@@ -260,6 +280,76 @@
                 <strong>{{ .Car.Mileage }}</strong>
             </div>
             {{ end }}
+        </section>
+
+        <section class="module-card order-info-card">
+            <div class="module-card-header">
+                <div>
+                    <h2>{{ t "orders.employees.title" }}</h2>
+                </div>
+            </div>
+
+            {{ if .Employees }}
+
+            <div class="order-employees-list">
+                {{ range .Employees }}
+
+                <div class="order-employee-item">
+                    <div class="order-employee-info">
+                        <strong>
+                            {{ .FirstName }} {{ .LastName }}
+                        </strong>
+
+                        <span>
+                            {{ .PositionName }}
+                        </span>
+                    </div>
+
+                    <form method="POST" action="/orders/employees/unassign" class="order-employee-remove-form">
+                        <input type="hidden" name="order_id" value="{{ $.Order.ID }}">
+
+                        <input type="hidden" name="employee_id" value="{{ .EmployeeID }}">
+
+                        <button type="submit" class="btn-secondary">
+                            {{ t "orders.employees.unassign" }}
+                        </button>
+                    </form>
+                </div>
+
+                {{ end }}
+            </div>
+
+            {{ else }}
+
+            <p class="order-view-empty">
+                {{ t "orders.employees.empty" }}
+            </p>
+
+            {{ end }}
+
+            <form method="POST" action="/orders/employees/assign" class="order-employee-assign-form">
+                <input type="hidden" name="order_id" value="{{ .Order.ID }}">
+
+                <label for="employee_id">
+                    {{ t "orders.employees.assign" }}
+                </label>
+
+                <select id="employee_id" name="employee_id" class="order-status-select" required>
+                    <option value="">
+                        {{ t "orders.employees.select" }}
+                    </option>
+
+                    {{ range .AvailableEmployees }}
+                    <option value="{{ .ID }}">
+                        {{ .FirstName }} {{ .LastName }} — {{ .PositionName }}
+                    </option>
+                    {{ end }}
+                </select>
+
+                <button type="submit" class="btn-primary">
+                    {{ t "orders.employees.assign_button" }}
+                </button>
+            </form>
         </section>
 
         <section class="module-card order-info-card">

@@ -1,0 +1,111 @@
+{{ define "content" }}
+
+<div class="page-header">
+    <div>
+        <h1>{{ t "users.edit.title" }}</h1>
+        <p>{{ t "users.edit.subtitle" }}</p>
+    </div>
+
+    <a class="btn-secondary" href="/settings/users">
+        {{ t "common.back" }}
+    </a>
+</div>
+
+{{ if .Error }}
+<div class="form-error" role="alert">
+    {{ .Error }}
+</div>
+{{ end }}
+
+<section class="module-card user-edit-card">
+
+    <div class="module-card-header">
+        <div>
+            <h2>
+                {{ .User.FirstName }} {{ .User.LastName }}
+            </h2>
+
+            {{ if .User.PositionName }}
+            <p>{{ .User.PositionName }}</p>
+            {{ end }}
+        </div>
+    </div>
+
+    <form method="POST" action="/settings/users/role" class="form-grid user-edit-form">
+        <input type="hidden" name="user_id" value="{{ .User.ID }}">
+
+        <div class="form-group">
+            <label>
+                {{ t "users.email" }}
+            </label>
+
+            <input type="email" value="{{ .User.Email }}" disabled>
+        </div>
+
+        <div class="form-group">
+            <label for="role_id">
+                {{ t "users.role" }}
+            </label>
+
+            <select id="role_id" name="role_id" required>
+                {{ range .Roles }}
+                <option value="{{ .ID }}" {{ if eq $.User.RoleIDValue .ID }}selected{{ end }}>
+                    {{ roleName .Code .Name }}
+                </option>
+                {{ end }}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>
+                {{ t "users.status" }}
+            </label>
+
+            {{ if .User.IsActive }}
+            <span class="employee-status employee-status-active">
+                {{ t "users.status.active" }}
+            </span>
+            {{ else }}
+            <span class="employee-status employee-status-inactive">
+                {{ t "users.status.inactive" }}
+            </span>
+            {{ end }}
+        </div>
+
+        <div class="form-actions">
+            <a class="btn-secondary" href="/settings/users">
+                {{ t "common.back" }}
+            </a>
+
+            <button class="btn-primary" type="submit">
+                {{ t "users.actions.save_role" }}
+            </button>
+        </div>
+
+    </form>
+
+    <form method="POST" action="/settings/users/active" class="form-actions user-account-actions">
+        <input type="hidden" name="user_id" value="{{ .User.ID }}">
+
+        {{ if .User.IsActive }}
+
+        <input type="hidden" name="is_active" value="false">
+
+        <button class="btn-danger" type="submit">
+            {{ t "users.actions.deactivate" }}
+        </button>
+
+        {{ else }}
+
+        <input type="hidden" name="is_active" value="true">
+
+        <button class="btn-primary" type="submit">
+            {{ t "users.actions.activate" }}
+        </button>
+
+        {{ end }}
+    </form>
+
+</section>
+
+{{ end }}

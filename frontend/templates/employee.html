@@ -380,6 +380,11 @@
             <a class="btn-primary" href="/employees/view?id={{ .Employee.ID }}&edit=1">
                 {{ t "employee.edit_employee" }}
             </a>
+            {{ if $.IsOwner }}
+            <a class="btn-secondary" href="/users/create?id={{ .Employee.ID }}">
+                {{ t "users.create.button" }}
+            </a>
+            {{ end }}
 
             <form method="POST" action="/employees/archive-action" class="inline-form"
                 onsubmit='return confirm("{{ t "employee.archive_confirm" }}")'>

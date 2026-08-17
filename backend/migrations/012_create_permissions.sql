@@ -1,0 +1,13 @@
+CREATE TABLE permissions (
+    id BIGSERIAL PRIMARY KEY,
+
+    code VARCHAR(150) NOT NULL UNIQUE,
+    name VARCHAR(150) NOT NULL,
+
+    description TEXT,
+
+    module VARCHAR(100) NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

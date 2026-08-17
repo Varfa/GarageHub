@@ -11,11 +11,11 @@
 .dashboard-welcome {
     position: relative;
     display: flex;
-    min-height: 190px;
+    min-height: 130px;
     align-items: center;
     justify-content: space-between;
     gap: 30px;
-    padding: 32px;
+    padding: 26px 32px;
     overflow: hidden;
     border-radius: var(--radius-large);
     color: #ffffff;
@@ -25,6 +25,7 @@
             transparent 30%),
         linear-gradient(135deg, #111d35 0%, #18335d 100%);
     box-shadow: var(--shadow-medium);
+    margin-bottom: 22px;
 }
 
 .dashboard-welcome::after {
@@ -100,6 +101,7 @@
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 16px;
+    margin-bottom: 22px;
 }
 
 .dashboard-stat-card {
@@ -184,6 +186,7 @@
 
 .dashboard-grid-main {
     grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.8fr);
+    margin-bottom: 22px;
 }
 
 .dashboard-grid-activity {
